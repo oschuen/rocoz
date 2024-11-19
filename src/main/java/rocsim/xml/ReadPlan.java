@@ -21,6 +21,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import rocsim.gui.Block;
 import rocsim.gui.Curve;
 import rocsim.gui.LeftSwitch;
 import rocsim.gui.RightSwitch;
@@ -29,6 +30,13 @@ import rocsim.gui.Tile.Direction;
 import rocsim.gui.Track;
 
 public class ReadPlan {
+
+  /**
+   * @return the tiles
+   */
+  public List<Tile> getTiles() {
+    return this.tiles;
+  }
 
   private List<Tile> tiles = new ArrayList<>();
 
@@ -60,6 +68,21 @@ public class ReadPlan {
     }
 
     this.tiles.add(new Track(x, y, dir));
+  }
+
+  private void addBlock(int x, int y, String orientation) {
+    Direction dir = Direction.NORTH;
+    if (orientation.equals("north")) {
+      dir = Direction.NORTH;
+    } else if (orientation.equals("west")) {
+      dir = Direction.WEST;
+    } else if (orientation.equals("south")) {
+      dir = Direction.SOUTH;
+    } else if (orientation.equals("east")) {
+      dir = Direction.EAST;
+    }
+
+    this.tiles.add(new Block(x, y, dir));
   }
 
   private void readTk(Node tk) {
@@ -166,6 +189,48 @@ public class ReadPlan {
     }
   }
 
+  private void readBk(Node tk) {
+    NamedNodeMap attributes = tk.getAttributes();
+    int x = 0;
+    int y = 0;
+    String orientation = "west";
+    for (int i = 0; i < attributes.getLength(); i++) {
+      Node attr = attributes.item(i);
+      if (attr.getNodeName().equals("x")) {
+        x = Integer.valueOf(attr.getNodeValue());
+      } else if (attr.getNodeName().equals("y")) {
+        y = Integer.valueOf(attr.getNodeValue());
+      } else if (attr.getNodeName().equals("ori")) {
+        orientation = attr.getNodeValue();
+      }
+    }
+    addBlock(x, y, orientation);
+  }
+
+  private void readBKList(Node swList) {
+    NodeList childs = swList.getChildNodes();
+    for (int i = 0; i < childs.getLength(); i++) {
+      Node child = childs.item(i);
+      if (child.getNodeType() == Node.ELEMENT_NODE) {
+        if (child.getNodeName().equals("bk")) {
+          readBk(child);
+        }
+      }
+    }
+  }
+
+  private void readSBList(Node swList) {
+    NodeList childs = swList.getChildNodes();
+    for (int i = 0; i < childs.getLength(); i++) {
+      Node child = childs.item(i);
+      if (child.getNodeType() == Node.ELEMENT_NODE) {
+        if (child.getNodeName().equals("sb")) {
+          readBk(child);
+        }
+      }
+    }
+  }
+
   public void readPlan(File f) {
     String rawDoc;
     try {
@@ -185,6 +250,10 @@ public class ReadPlan {
             readTkList(subNode);
           } else if (subNode.getNodeName().equals("swlist")) {
             readSWList(subNode);
+          } else if (subNode.getNodeName().equals("bklist")) {
+            readBKList(subNode);
+          } else if (subNode.getNodeName().equals("sblist")) {
+            readSBList(subNode);
           }
         }
       }

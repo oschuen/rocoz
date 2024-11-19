@@ -5,6 +5,8 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import javax.imageio.ImageIO;
@@ -41,9 +43,19 @@ public class Curve extends Tile {
   }
 
   @Override
-  public Direction[] getPossibleDirections() {
-    return new Direction[] { Direction.values()[getOrientation().ordinal()],
-        Direction.values()[(getOrientation().ordinal() + 3) % 4] };
+  public void enableFollowUp(Direction from, Direction to) {
+    // do nothing
+  }
+
+  @Override
+  public List<Direction> getPossibleDirections(Direction dir) {
+    List<Direction> follows = new ArrayList<>();
+    if (getOrientation().ordinal() == (dir.ordinal() + 2) % 4) {
+      follows.add(Direction.values()[(dir.ordinal() + 1) % 4]);
+    } else if (getOrientation().ordinal() == (dir.ordinal() + 3) % 4) {
+      follows.add(getOrientation());
+    }
+    return follows;
   }
 
   @Override

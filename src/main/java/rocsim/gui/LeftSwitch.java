@@ -5,6 +5,8 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import javax.imageio.ImageIO;
@@ -78,14 +80,33 @@ public class LeftSwitch extends Tile {
       innerDrawSwitch(raster, (Graphics2D) g.create());
       innerDrawStraight(raster, (Graphics2D) g.create());
     }
-
   }
 
   @Override
-  public Direction[] getPossibleDirections() {
-    return new Direction[] { Direction.values()[getOrientation().ordinal()],
-        Direction.values()[(getOrientation().ordinal() + 2) % 4],
-        Direction.values()[(getOrientation().ordinal() + 1) % 4] };
+  public void enableFollowUp(Direction from, Direction to) {
+    List<Direction> possibles = getPossibleDirections(from);
+    if (possibles.contains(to)) {
+      getFollowUpDirection(from).ifPresent(possible -> {
+        if (possible != to) {
+          this.switched = !this.switched;
+        }
+      });
+    }
+  }
+
+  @Override
+  public List<Direction> getPossibleDirections(Direction dir) {
+    List<Direction> follows = new ArrayList<>();
+    if (getOrientation().ordinal() == dir.ordinal()) {
+      follows.add(Direction.values()[(dir.ordinal() + 3) % 4]);
+    }
+    if (getOrientation().ordinal() == (dir.ordinal() + 3) % 4) {
+      follows.add(Direction.values()[(dir.ordinal() + 1) % 4]);
+    }
+    if (getOrientation().ordinal() % 2 == dir.ordinal() % 2) {
+      follows.add(dir);
+    }
+    return follows;
   }
 
   @Override

@@ -1,6 +1,7 @@
 package rocsim.gui;
 
 import java.awt.Graphics2D;
+import java.util.List;
 import java.util.Optional;
 
 public abstract class Tile {
@@ -44,7 +45,9 @@ public abstract class Tile {
     innerDraw(scaler, subGraphics);
   }
 
-  public abstract Direction[] getPossibleDirections();
+  public abstract void enableFollowUp(Direction from, Direction to);
+
+  public abstract List<Direction> getPossibleDirections(Direction dir);
 
   public abstract Optional<Direction> getFollowUpDirection(Direction dir);
 
