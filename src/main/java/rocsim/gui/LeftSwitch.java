@@ -13,8 +13,8 @@ import javax.imageio.ImageIO;
 
 public class LeftSwitch extends Tile {
 
-  public LeftSwitch(int x, int y, Direction orientation) {
-    super(x, y, orientation);
+  public LeftSwitch(String id, int x, int y, Direction orientation) {
+    super(id, x, y, orientation);
   }
 
   protected void innerDrawSwitch(int raster, Graphics2D g) {
@@ -86,10 +86,12 @@ public class LeftSwitch extends Tile {
   public void enableFollowUp(Direction from, Direction to) {
     List<Direction> possibles = getPossibleDirections(from);
     if (possibles.contains(to)) {
-      getFollowUpDirection(from).ifPresent(possible -> {
+      getFollowUpDirection(from).ifPresentOrElse(possible -> {
         if (possible != to) {
           this.switched = !this.switched;
         }
+      }, () -> {
+        this.switched = !this.switched;
       });
     }
   }
@@ -144,7 +146,7 @@ public class LeftSwitch extends Tile {
 
   public static void main(String[] args) {
     BufferedImage br = new BufferedImage(400, 400, BufferedImage.TYPE_INT_RGB);
-    LeftSwitch weiche = new LeftSwitch(3, 4, Direction.NORTH);
+    LeftSwitch weiche = new LeftSwitch("", 3, 4, Direction.NORTH);
     Graphics2D gr = br.createGraphics();
     gr.setColor(Color.WHITE);
     gr.fillRect(1, 1, 398, 398);

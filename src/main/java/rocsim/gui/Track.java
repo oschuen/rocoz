@@ -8,8 +8,8 @@ import java.util.Optional;
 
 public class Track extends Tile {
 
-  public Track(int x, int y, Direction orientation) {
-    super(x, y, orientation);
+  public Track(String id, int x, int y, Direction orientation) {
+    super(id, x, y, orientation);
   }
 
   @Override

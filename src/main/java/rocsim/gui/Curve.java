@@ -13,8 +13,8 @@ import javax.imageio.ImageIO;
 
 public class Curve extends Tile {
 
-  public Curve(int x, int y, Direction orientation) {
-    super(x, y, orientation);
+  public Curve(String id, int x, int y, Direction orientation) {
+    super(id, x, y, orientation);
   }
 
   @Override
@@ -70,7 +70,7 @@ public class Curve extends Tile {
 
   public static void main(String[] args) {
     BufferedImage br = new BufferedImage(400, 400, BufferedImage.TYPE_INT_RGB);
-    Curve curve = new Curve(3, 4, Direction.NORTH);
+    Curve curve = new Curve("", 3, 4, Direction.NORTH);
     Graphics2D gr = br.createGraphics();
     gr.setColor(Color.WHITE);
     gr.fillRect(1, 1, 398, 398);

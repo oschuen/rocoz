@@ -13,7 +13,7 @@ public class LeftSwitchTest {
 
   @Test
   public void testUnswitched() {
-    LeftSwitch weiche = new LeftSwitch(3, 4, Direction.NORTH);
+    LeftSwitch weiche = new LeftSwitch("", 3, 4, Direction.NORTH);
     weiche.setSwitched(false);
     assertEquals(Optional.of(Direction.NORTH), weiche.getFollowUpDirection(Direction.NORTH));
     assertEquals(Optional.of(Direction.SOUTH), weiche.getFollowUpDirection(Direction.SOUTH));
@@ -28,7 +28,7 @@ public class LeftSwitchTest {
 
   @Test
   public void testswitched() {
-    LeftSwitch weiche = new LeftSwitch(3, 4, Direction.NORTH);
+    LeftSwitch weiche = new LeftSwitch("", 3, 4, Direction.NORTH);
     weiche.setSwitched(true);
     assertEquals(Optional.of(Direction.WEST), weiche.getFollowUpDirection(Direction.NORTH));
     assertEquals(Optional.of(Direction.SOUTH), weiche.getFollowUpDirection(Direction.EAST));

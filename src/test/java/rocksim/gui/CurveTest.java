@@ -13,7 +13,7 @@ public class CurveTest {
 
   @Test
   public void testFollowUp() {
-    Curve weiche = new Curve(3, 4, Direction.NORTH);
+    Curve weiche = new Curve("", 3, 4, Direction.NORTH);
     assertEquals(Optional.of(Direction.WEST), weiche.getFollowUpDirection(Direction.SOUTH));
     assertEquals(Optional.of(Direction.NORTH), weiche.getFollowUpDirection(Direction.EAST));
     assertEquals(Optional.empty(), weiche.getFollowUpDirection(Direction.WEST));

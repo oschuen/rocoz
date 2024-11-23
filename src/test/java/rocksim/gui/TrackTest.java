@@ -13,7 +13,7 @@ public class TrackTest {
 
   @Test
   public void testFollowUp() {
-    Track weiche = new Track(3, 4, Direction.NORTH);
+    Track weiche = new Track("", 3, 4, Direction.NORTH);
     assertEquals(Optional.of(Direction.NORTH), weiche.getFollowUpDirection(Direction.NORTH));
     assertEquals(Optional.of(Direction.SOUTH), weiche.getFollowUpDirection(Direction.SOUTH));
     assertEquals(Optional.empty(), weiche.getFollowUpDirection(Direction.EAST));

@@ -4,32 +4,40 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.util.HashMap;
+import java.awt.Toolkit;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.JPanel;
+
+import rocsim.gui.Tile.UseState;
+import rocsim.track.TrackPlan;
 
 public class PlanPannel extends JPanel {
 
   private static final long serialVersionUID = 1L;
 
-  private Map<Point, Tile> tiles = new HashMap<>();
-
   private Point origin = new Point(0, 0);
   private int raster = 40;
+  private TrackPlan plan;
 
   public PlanPannel(List<Tile> tilesList) {
     super();
-    int maxX = 0;
-    int maxY = 0;
-    for (Tile tile : tilesList) {
-      Point p = new Point(tile.getX(), tile.getY());
-      this.tiles.put(p, tile);
-      maxX = Math.max(maxX, tile.getX() + 1);
-      maxY = Math.max(maxY, tile.getY() + 1);
-    }
-    setPreferredSize(new Dimension(maxX * this.raster, maxY * this.raster));
+    this.plan = new TrackPlan(tilesList);
+
+    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    int prefWidth = Math.max(6 * screenSize.width / 8, (this.plan.getDimension().width + 1) * this.raster);
+    int prefHeight = Math.max(6 * screenSize.height / 8, (this.plan.getDimension().height + 1) * this.raster);
+
+    setPreferredSize(new Dimension(prefWidth, prefHeight));
+    Tile tile = this.plan.getTile("bk1");
+    tile.setState(UseState.TRAIN);
+    rocsim.track.Block block = this.plan.getBlock(this.plan.getTile("bk2"), this.plan.getTile("bk1"));
+    block.markBlocked();
+    block.layBlock();
+
+//    rocsim.track.Block block2 = this.plan.getBlock(this.plan.getTile("bk3"), this.plan.getTile("bk1"));
+//    block2.markBlocked();
+//    block2.layBlock();
   }
 
   @Override
@@ -41,12 +49,11 @@ public class PlanPannel extends JPanel {
     int yw = getHeight() / this.raster;
     for (int x = 0; x < xw; x++) {
       for (int y = 0; y < yw; y++) {
-        Tile tile = this.tiles.get(new Point(this.origin.x + x, this.origin.y + y));
+        Tile tile = this.plan.getTile(new Point(this.origin.x + x, this.origin.y + y));
         if (tile != null) {
           tile.draw(this.raster, gr);
         }
       }
     }
   }
-
 }

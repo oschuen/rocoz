@@ -8,8 +8,8 @@ import java.util.Optional;
 
 public class Block extends Tile {
 
-  public Block(int x, int y, Direction orientation) {
-    super(x, y, orientation);
+  public Block(String id, int x, int y, Direction orientation) {
+    super(id, x, y, orientation);
   }
 
   @Override
@@ -41,7 +41,9 @@ public class Block extends Tile {
   @Override
   public List<Direction> getPossibleDirections(Direction dir) {
     List<Direction> follows = new ArrayList<>();
-    follows.add(dir);
+    if (getOrientation().ordinal() % 2 == dir.ordinal() % 2) {
+      follows.add(dir);
+    }
     return follows;
   }
 

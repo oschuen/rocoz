@@ -14,8 +14,9 @@ public abstract class Tile {
     FREE, BLOCK, TRAIN
   }
 
-  public Tile(int x, int y, Direction orientation) {
+  public Tile(String id, int x, int y, Direction orientation) {
     super();
+    this.id = id;
     this.x = x;
     this.y = y;
     this.orientation = orientation;
@@ -107,6 +108,32 @@ public abstract class Tile {
     this.state = state;
   }
 
+  /**
+   * @return the id
+   */
+  public String getId() {
+    return this.id;
+  }
+
+  /**
+   * @param id the id to set
+   */
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public Direction getDirectionTo(Tile other) {
+    if (other.y < this.y) {
+      return Direction.NORTH;
+    } else if (other.y > this.y) {
+      return Direction.SOUTH;
+    } else if (other.x < this.x) {
+      return Direction.WEST;
+    }
+    return Direction.EAST;
+  }
+
+  private String id = "";
   private int x;
   private int y;
   private Direction orientation = Direction.NORTH;

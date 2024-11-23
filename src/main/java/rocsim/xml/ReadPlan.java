@@ -40,7 +40,7 @@ public class ReadPlan {
 
   private List<Tile> tiles = new ArrayList<>();
 
-  private void addCurve(int x, int y, String orientation) {
+  private void addCurve(String id, int x, int y, String orientation) {
     Direction dir = Direction.NORTH;
     if (orientation.equals("north")) {
       dir = Direction.SOUTH;
@@ -52,10 +52,10 @@ public class ReadPlan {
       dir = Direction.EAST;
     }
 
-    this.tiles.add(new Curve(x, y, dir));
+    this.tiles.add(new Curve(id, x, y, dir));
   }
 
-  private void addTrack(int x, int y, String orientation) {
+  private void addTrack(String id, int x, int y, String orientation) {
     Direction dir = Direction.NORTH;
     if (orientation.equals("north")) {
       dir = Direction.NORTH;
@@ -67,10 +67,10 @@ public class ReadPlan {
       dir = Direction.EAST;
     }
 
-    this.tiles.add(new Track(x, y, dir));
+    this.tiles.add(new Track(id, x, y, dir));
   }
 
-  private void addBlock(int x, int y, String orientation) {
+  private void addBlock(String id, int x, int y, String orientation) {
     Direction dir = Direction.NORTH;
     if (orientation.equals("north")) {
       dir = Direction.NORTH;
@@ -82,12 +82,13 @@ public class ReadPlan {
       dir = Direction.EAST;
     }
 
-    this.tiles.add(new Block(x, y, dir));
+    this.tiles.add(new Block(id, x, y, dir));
   }
 
   private void readTk(Node tk) {
     NamedNodeMap attributes = tk.getAttributes();
     String type = "field";
+    String id = "";
     int x = 0;
     int y = 0;
     String orientation = "west";
@@ -95,6 +96,8 @@ public class ReadPlan {
       Node attr = attributes.item(i);
       if (attr.getNodeName().equals("type")) {
         type = attr.getNodeValue();
+      } else if (attr.getNodeName().equals("id")) {
+        id = attr.getNodeValue();
       } else if (attr.getNodeName().equals("x")) {
         x = Integer.valueOf(attr.getNodeValue());
       } else if (attr.getNodeName().equals("y")) {
@@ -104,9 +107,9 @@ public class ReadPlan {
       }
     }
     if (type.equals("curve")) {
-      addCurve(x, y, orientation);
+      addCurve(id, x, y, orientation);
     } else if (type.equals("straight")) {
-      addTrack(x, y, orientation);
+      addTrack(id, x, y, orientation);
     }
   }
 
@@ -122,7 +125,7 @@ public class ReadPlan {
     }
   }
 
-  private void addRightSwitch(int x, int y, String orientation) {
+  private void addRightSwitch(String id, int x, int y, String orientation) {
     Direction dir = Direction.NORTH;
     if (orientation.equals("north")) {
       dir = Direction.NORTH;
@@ -134,10 +137,10 @@ public class ReadPlan {
       dir = Direction.WEST;
     }
 
-    this.tiles.add(new RightSwitch(x, y, dir));
+    this.tiles.add(new RightSwitch(id, x, y, dir));
   }
 
-  private void addLeftSwitch(int x, int y, String orientation) {
+  private void addLeftSwitch(String id, int x, int y, String orientation) {
     Direction dir = Direction.NORTH;
     if (orientation.equals("north")) {
       dir = Direction.SOUTH;
@@ -149,12 +152,13 @@ public class ReadPlan {
       dir = Direction.EAST;
     }
 
-    this.tiles.add(new LeftSwitch(x, y, dir));
+    this.tiles.add(new LeftSwitch(id, x, y, dir));
   }
 
   private void readSw(Node sw) {
     NamedNodeMap attributes = sw.getAttributes();
     String type = "left";
+    String id = "";
     int x = 0;
     int y = 0;
     String orientation = "west";
@@ -162,6 +166,8 @@ public class ReadPlan {
       Node attr = attributes.item(i);
       if (attr.getNodeName().equals("type")) {
         type = attr.getNodeValue();
+      } else if (attr.getNodeName().equals("id")) {
+        id = attr.getNodeValue();
       } else if (attr.getNodeName().equals("x")) {
         x = Integer.valueOf(attr.getNodeValue());
       } else if (attr.getNodeName().equals("y")) {
@@ -171,9 +177,9 @@ public class ReadPlan {
       }
     }
     if (type.equals("right")) {
-      addRightSwitch(x, y, orientation);
+      addRightSwitch(id, x, y, orientation);
     } else if (type.equals("left")) {
-      addLeftSwitch(x, y, orientation);
+      addLeftSwitch(id, x, y, orientation);
     }
   }
 
@@ -193,18 +199,21 @@ public class ReadPlan {
     NamedNodeMap attributes = tk.getAttributes();
     int x = 0;
     int y = 0;
+    String id = "";
     String orientation = "west";
     for (int i = 0; i < attributes.getLength(); i++) {
       Node attr = attributes.item(i);
       if (attr.getNodeName().equals("x")) {
         x = Integer.valueOf(attr.getNodeValue());
+      } else if (attr.getNodeName().equals("id")) {
+        id = attr.getNodeValue();
       } else if (attr.getNodeName().equals("y")) {
         y = Integer.valueOf(attr.getNodeValue());
       } else if (attr.getNodeName().equals("ori")) {
         orientation = attr.getNodeValue();
       }
     }
-    addBlock(x, y, orientation);
+    addBlock(id, x, y, orientation);
   }
 
   private void readBKList(Node swList) {
