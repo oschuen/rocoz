@@ -2,6 +2,7 @@ package rocsim.track;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import rocsim.gui.Tile;
 import rocsim.gui.Tile.Direction;
@@ -26,6 +27,22 @@ public class Block {
     for (Tile tile : this.tilesList) {
       tile.setState(UseState.BLOCK);
     }
+  }
+
+  public void markUnBlocked() {
+    for (Tile tile : this.tilesList) {
+      if (tile.getState() == UseState.BLOCK) {
+        tile.setState(UseState.FREE);
+      }
+    }
+  }
+
+  public Optional<Tile> getNextTile(Tile tile) {
+    int index = this.tilesList.indexOf(tile);
+    if (index >= 0 && index + 1 < this.tilesList.size()) {
+      return Optional.of(this.tilesList.get(index + 1));
+    }
+    return Optional.empty();
   }
 
   public void layBlock() {

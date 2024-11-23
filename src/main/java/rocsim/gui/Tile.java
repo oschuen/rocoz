@@ -1,6 +1,7 @@
 package rocsim.gui;
 
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,8 +18,8 @@ public abstract class Tile {
   public Tile(String id, int x, int y, Direction orientation) {
     super();
     this.id = id;
-    this.x = x;
-    this.y = y;
+    this.location.x = x;
+    this.location.y = y;
     this.orientation = orientation;
   }
 
@@ -56,28 +57,28 @@ public abstract class Tile {
    * @param x the x to set
    */
   public void setX(int x) {
-    this.x = x;
+    this.location.x = x;
   }
 
   /**
    * @param y the y to set
    */
   public void setY(int y) {
-    this.y = y;
+    this.location.y = y;
   }
 
   /**
    * @return the x
    */
   public int getX() {
-    return this.x;
+    return this.location.x;
   }
 
   /**
    * @return the y
    */
   public int getY() {
-    return this.y;
+    return this.location.y;
   }
 
   /**
@@ -122,20 +123,40 @@ public abstract class Tile {
     this.id = id;
   }
 
+  /**
+   * @return the location
+   */
+  public Point getLocation() {
+    return new Point(this.location);
+  }
+
+  /**
+   * @param location the location to set
+   */
+  public void setLocation(Point location) {
+    this.location = location;
+  }
+
+  public int getDrivingTime(int speed) {
+    if (speed > 0) {
+      return (int) (0.087F / speed * 3600.0F) + 1;
+    }
+    return 3600;
+  }
+
   public Direction getDirectionTo(Tile other) {
-    if (other.y < this.y) {
+    if (other.location.y < this.location.y) {
       return Direction.NORTH;
-    } else if (other.y > this.y) {
+    } else if (other.location.y > this.location.y) {
       return Direction.SOUTH;
-    } else if (other.x < this.x) {
+    } else if (other.location.x < this.location.x) {
       return Direction.WEST;
     }
     return Direction.EAST;
   }
 
   private String id = "";
-  private int x;
-  private int y;
   private Direction orientation = Direction.NORTH;
   private UseState state = UseState.FREE;
+  private Point location = new Point(0, 0);
 }

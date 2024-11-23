@@ -5,11 +5,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Toolkit;
-import java.util.List;
 
 import javax.swing.JPanel;
 
-import rocsim.gui.Tile.UseState;
 import rocsim.track.TrackPlan;
 
 public class PlanPannel extends JPanel {
@@ -20,20 +18,20 @@ public class PlanPannel extends JPanel {
   private int raster = 40;
   private TrackPlan plan;
 
-  public PlanPannel(List<Tile> tilesList) {
+  public PlanPannel(TrackPlan plan) {
     super();
-    this.plan = new TrackPlan(tilesList);
+    this.plan = plan;
 
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     int prefWidth = Math.max(6 * screenSize.width / 8, (this.plan.getDimension().width + 1) * this.raster);
     int prefHeight = Math.max(6 * screenSize.height / 8, (this.plan.getDimension().height + 1) * this.raster);
 
     setPreferredSize(new Dimension(prefWidth, prefHeight));
-    Tile tile = this.plan.getTile("bk1");
-    tile.setState(UseState.TRAIN);
-    rocsim.track.Block block = this.plan.getBlock(this.plan.getTile("bk2"), this.plan.getTile("bk1"));
-    block.markBlocked();
-    block.layBlock();
+//    Tile tile = this.plan.getTile("sb1");
+//    tile.setState(UseState.TRAIN);
+//    rocsim.track.Block block = this.plan.getBlock(this.plan.getTile("sb1"), this.plan.getTile("sb3"));
+//    block.markBlocked();
+//    block.layBlock();
 
 //    rocsim.track.Block block2 = this.plan.getBlock(this.plan.getTile("bk3"), this.plan.getTile("bk1"));
 //    block2.markBlocked();
