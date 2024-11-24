@@ -12,13 +12,16 @@ public class Block extends Tile {
 
   public Block(String id, int x, int y, Direction orientation, boolean stellBlock) {
     super(id, x, y, orientation);
+    this.stellBlock = stellBlock;
   }
 
   @Override
   public void innerDraw(int raster, Graphics2D g) {
 
-    g.setColor(Color.PINK);
-    g.fillRect(raster / 8, 0, 3 * raster / 4, raster);
+    if (this.stellBlock) {
+      g.setColor(Color.PINK);
+      g.fillRect(raster / 8, 0, 3 * raster / 4, raster);
+    }
     g.setColor(Color.BLACK);
     g.drawRect(raster / 8, 0, 3 * raster / 4, raster);
     switch (getState()) {

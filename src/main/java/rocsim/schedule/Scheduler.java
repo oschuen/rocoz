@@ -55,7 +55,13 @@ public class Scheduler {
         tile.setState(UseState.TRAIN);
         Scheduler.this.jobList.add(this);
       }, () -> {
-        this.block.markUnBlocked();
+        if (this.currentLocation instanceof rocsim.gui.Block) {
+          if (((rocsim.gui.Block) this.currentLocation).isStellBlock()) {
+            this.currentLocation.setState(UseState.BLOCK);
+            this.loco.setInBw(true);
+          }
+          this.block.markUnBlocked();
+        }
       });
     }
 

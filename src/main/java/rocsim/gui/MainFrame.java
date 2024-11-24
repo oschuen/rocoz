@@ -12,7 +12,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.JFrame;
-import javax.swing.JScrollBar;
 
 import rocsim.schedule.Scheduler;
 import rocsim.track.TrackPlan;
@@ -26,7 +25,7 @@ public class MainFrame extends JFrame {
   private int currentTime = 55;
   private int currentWishTime = 55;
   private PlanPannel panel;
-  private JScrollBar scrollBar;
+  private ControlPanel controlPanel;
 
   public MainFrame() {
     enableEvents(AWTEvent.WINDOW_EVENT_MASK);
@@ -38,21 +37,22 @@ public class MainFrame extends JFrame {
 
     getContentPane().add(this.panel, BorderLayout.CENTER);
 
-    this.scrollBar = new JScrollBar();
-    this.scrollBar.addAdjustmentListener(new AdjustmentListener() {
+    this.controlPanel = new ControlPanel();
+
+    this.controlPanel.addAdjustmentListener(new AdjustmentListener() {
 
       @Override
       public void adjustmentValueChanged(AdjustmentEvent arg0) {
-        MainFrame.this.currentWishTime = MainFrame.this.scrollBar.getValue();
+        MainFrame.this.currentWishTime = MainFrame.this.controlPanel.getCurrentTime();
       }
     });
-    this.currentTime = this.scheduler.getMinTime() - 2;
+    this.currentTime = this.scheduler.getMinTime();
     this.currentWishTime = this.currentTime;
-    this.scrollBar.setMinimum(this.scheduler.getMinTime());
-    this.scrollBar.setMaximum(this.scheduler.getMaxTime());
-    this.scrollBar.setValue(this.scheduler.getMinTime());
-    this.scrollBar.setOrientation(JScrollBar.HORIZONTAL);
-    getContentPane().add(this.scrollBar, BorderLayout.SOUTH);
+    this.controlPanel.setMinTime(this.scheduler.getMinTime());
+    this.controlPanel.setMaxTime(this.scheduler.getMaxTime());
+    this.controlPanel.setCurrentTime(this.scheduler.getMinTime());
+
+    getContentPane().add(this.controlPanel, BorderLayout.SOUTH);
     pack();
 
     this.service.scheduleAtFixedRate(() -> {
@@ -67,12 +67,15 @@ public class MainFrame extends JFrame {
           this.currentTime = this.currentWishTime;
           repaint = true;
         } else {
-          this.currentTime++;
-          if (this.scheduler.schedule(this.currentTime)) {
-            repaint = true;
+          for (int i = 0; i < this.controlPanel.getIncrement(); i++) {
+            this.currentTime++;
+            if (this.scheduler.schedule(this.currentTime)) {
+              repaint = true;
+            }
           }
         }
-        this.scrollBar.setValue(this.currentTime);
+        this.controlPanel.setCurrentTime(this.currentTime);
+        this.currentWishTime = this.currentTime;
         if (repaint) {
           java.awt.EventQueue.invokeLater(() -> {
             this.panel.repaint();

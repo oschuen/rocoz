@@ -2,10 +2,7 @@ package rocsim.schedule;
 
 import java.awt.Point;
 
-import rocsim.gui.Tile.Direction;
-
 public class Loco {
-  private Direction drivingDirection = Direction.NORTH;
   private Point location = new Point(-1, -1);
   private String id = "";
   private int vMax = 80;
@@ -15,20 +12,6 @@ public class Loco {
     super();
     this.id = id;
     this.vMax = vMax;
-  }
-
-  /**
-   * @return the drivingDirection
-   */
-  public Direction getDrivingDirection() {
-    return this.drivingDirection;
-  }
-
-  /**
-   * @param drivingDirection the drivingDirection to set
-   */
-  public void setDrivingDirection(Direction drivingDirection) {
-    this.drivingDirection = drivingDirection;
   }
 
   /**

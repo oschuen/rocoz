@@ -27,15 +27,6 @@ public class PlanPannel extends JPanel {
     int prefHeight = Math.max(6 * screenSize.height / 8, (this.plan.getDimension().height + 1) * this.raster);
 
     setPreferredSize(new Dimension(prefWidth, prefHeight));
-//    Tile tile = this.plan.getTile("sb1");
-//    tile.setState(UseState.TRAIN);
-//    rocsim.track.Block block = this.plan.getBlock(this.plan.getTile("sb1"), this.plan.getTile("sb3"));
-//    block.markBlocked();
-//    block.layBlock();
-
-//    rocsim.track.Block block2 = this.plan.getBlock(this.plan.getTile("bk3"), this.plan.getTile("bk1"));
-//    block2.markBlocked();
-//    block2.layBlock();
   }
 
   @Override
