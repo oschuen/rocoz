@@ -48,6 +48,12 @@ public class TrackPlan {
     return result;
   }
 
+  public void reset() {
+    for (Tile tile : this.tilesList) {
+      tile.setState(UseState.FREE);
+    }
+  }
+
   private Tile getTileInDirection(Tile tile, Tile.Direction dir) {
     switch (dir) {
     case EAST:

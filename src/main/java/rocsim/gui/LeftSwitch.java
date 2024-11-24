@@ -2,14 +2,9 @@ package rocsim.gui;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import javax.imageio.ImageIO;
 
 public class LeftSwitch extends Tile {
 
@@ -143,50 +138,4 @@ public class LeftSwitch extends Tile {
   }
 
   private boolean switched = false;
-
-  public static void main(String[] args) {
-    BufferedImage br = new BufferedImage(400, 400, BufferedImage.TYPE_INT_RGB);
-    LeftSwitch weiche = new LeftSwitch("", 3, 4, Direction.NORTH);
-    Graphics2D gr = br.createGraphics();
-    gr.setColor(Color.WHITE);
-    gr.fillRect(1, 1, 398, 398);
-    weiche.setSwitched(true);
-
-    gr.setColor(Color.BLACK);
-    gr.drawRect(0, 0, 40, 40);
-
-    weiche.setX(1);
-    weiche.setY(1);
-    weiche.setOrientation(Direction.NORTH);
-    weiche.setState(UseState.BLOCK);
-    weiche.draw(40, gr);
-    System.out.println(weiche.getFollowUpDirection(Direction.NORTH));
-    System.out.println(weiche.getFollowUpDirection(Direction.WEST));
-    System.out.println(weiche.getFollowUpDirection(Direction.SOUTH));
-    System.out.println(weiche.getFollowUpDirection(Direction.EAST));
-
-    weiche.setX(3);
-    weiche.setY(1);
-    weiche.setOrientation(Direction.WEST);
-    weiche.setState(UseState.TRAIN);
-    weiche.draw(40, gr);
-
-    weiche.setX(5);
-    weiche.setY(1);
-    weiche.setOrientation(Direction.SOUTH);
-    weiche.setState(UseState.FREE);
-    weiche.draw(40, gr);
-
-    weiche.setX(7);
-    weiche.setY(1);
-    weiche.setOrientation(Direction.EAST);
-    weiche.draw(40, gr);
-
-    try {
-      ImageIO.write(br, "PNG", new File("track.png"));
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
 }

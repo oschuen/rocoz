@@ -13,6 +13,9 @@ import rocsim.track.TrackPlan;
 public class Scheduler {
   private TrackPlan plan;
   private List<Loco> locos;
+  private List<Trip> trips;
+  private int minTime = 0;
+  private int maxTime = 0;
 
   private interface Job {
     int getSchedule();
@@ -48,8 +51,7 @@ public class Scheduler {
         this.block.markBlocked();
         this.loco.setLocation(tile.getLocation());
         this.currentLocation = tile;
-        // this.scheduleTime = time + tile.getDrivingTime(this.loco.getvMax());
-        this.scheduleTime = time + 1;
+        this.scheduleTime = time + tile.getDrivingTime(this.loco.getvMax());
         tile.setState(UseState.TRAIN);
         Scheduler.this.jobList.add(this);
       }, () -> {
@@ -151,9 +153,8 @@ public class Scheduler {
     super();
     this.plan = plan;
     this.locos = locos;
-    for (Trip trip : trips) {
-      this.jobList.add(new StartTripJob(trip));
-    }
+    this.trips = trips;
+    setUpScheduler();
   }
 
   private Optional<Loco> getLoco(String id) {
@@ -163,6 +164,61 @@ public class Scheduler {
       }
     }
     return Optional.empty();
+  }
+
+  /**
+   * @return the minTime
+   */
+  public int getMinTime() {
+    return this.minTime;
+  }
+
+  /**
+   * @return the maxTime
+   */
+  public int getMaxTime() {
+    return this.maxTime;
+  }
+
+  private void setUpScheduler() {
+    boolean first = true;
+    this.jobList.clear();
+    this.plan.reset();
+    for (Loco loco : this.locos) {
+      loco.setInBw(true);
+    }
+    for (Trip trip : this.trips) {
+      this.jobList.add(new StartTripJob(trip));
+      if (first) {
+        this.minTime = trip.getStartTime();
+        this.maxTime = trip.getEndTime();
+        first = false;
+      } else {
+        this.maxTime = trip.getEndTime();
+      }
+    }
+  }
+
+  public void resetTo(int time) {
+    setUpScheduler();
+    fastForwardTo(time);
+  }
+
+  public void fastForwardTo(int time) {
+    Job nextJob = this.jobList.peek();
+    boolean end = false;
+    if (nextJob != null) {
+      while (!(end || nextJob == null)) {
+        int jobTime = nextJob.getSchedule();
+        if (jobTime > time) {
+          end = true;
+        } else {
+          nextJob = this.jobList.poll();
+          nextJob.run(jobTime);
+          nextJob = this.jobList.peek();
+        }
+      }
+    }
   }
 
   public boolean schedule(int time) {

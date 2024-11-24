@@ -115,7 +115,6 @@ public class ReadPlan {
               Schedule schedule = new Schedule(entryK1.block, entry.block, entryK1.departTime, entry.arrivalTime,
                   entry.minWaitTime);
               trip.addSchedule(schedule);
-              System.out.println(schedule);
             }
             entryK1 = entry;
           }
