@@ -15,10 +15,12 @@ public class ClockPanel extends JPanel {
 
   private static final long serialVersionUID = 1L;
   private int time;
+  private boolean secShow;
 
-  ClockPanel(int time) {
+  ClockPanel(int time, boolean secShow) {
     super();
     this.time = time;
+    this.secShow = secShow;
     setPreferredSize(new Dimension(100, 100));
   }
 
@@ -56,10 +58,13 @@ public class ClockPanel extends JPanel {
 
     g2.draw(new Line2D.Double(r, r, r + (r * 0.5) * Math.sin(w), r - (r * 0.5) * Math.cos(w)));
 
-    w = Math.toRadians(6 * sec);
+    if (this.secShow) {
+      w = Math.toRadians(6 * sec);
 
-    gr.setColor(Color.RED);
-    g2.draw(new Line2D.Double(r, r, r + (r - 15) * Math.sin(w), r - (r - 15) * Math.cos(w)));
+      gr.setColor(Color.RED);
+      g2.draw(new Line2D.Double(r, r, r + (r - 15) * Math.sin(w), r - (r - 15) * Math.cos(w)));
+
+    }
 
   }
 
