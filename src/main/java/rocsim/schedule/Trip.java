@@ -3,6 +3,9 @@ package rocsim.schedule;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Trip {
   private String id = "";
   private String trainId = "";
@@ -10,6 +13,7 @@ public class Trip {
   private List<Schedule> schedules = new ArrayList<>();
   private int startTime = 0;
   private int endTime = 0;
+  private final Logger logger = LoggerFactory.getLogger(getClass());
 
   public Trip(String trainId, String id, String followUpTripId) {
     super();
@@ -66,9 +70,9 @@ public class Trip {
       this.endTime = schedule.getEndTime() + schedule.getMinWaitTime();
     } else {
       if (schedule.getStartTime() < this.endTime) {
-        System.err.println("This Schedule of " + this.id + " starts to early");
-        System.err.println(schedule);
-        System.err.println("Earlies allowed time is " + this.endTime);
+        this.logger.error("This Schedule {} starts to early", this.id);
+        this.logger.error(schedule.toString());
+        this.logger.error("Earlies allowed time is {}", this.endTime);
       }
       this.endTime = Math.max(schedule.getEndTime() + schedule.getMinWaitTime(), this.endTime);
     }

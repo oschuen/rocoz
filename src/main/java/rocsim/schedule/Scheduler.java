@@ -5,6 +5,9 @@ import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import rocsim.gui.Tile;
 import rocsim.gui.Tile.UseState;
 import rocsim.track.Block;
@@ -16,6 +19,7 @@ public class Scheduler {
   private List<Trip> trips;
   private int minTime = 0;
   private int maxTime = 0;
+  private final Logger logger = LoggerFactory.getLogger(getClass());
 
   private interface Job {
     int getSchedule();
@@ -61,6 +65,8 @@ public class Scheduler {
             this.loco.setInBw(true);
           }
           this.block.markUnBlocked();
+          Scheduler.this.logger.info("[{}] Loco {} arrived at {}", time, this.loco.getId(),
+              this.currentLocation.getId());
         }
       });
     }
@@ -110,13 +116,15 @@ public class Scheduler {
         }
       }
       if (error) {
-        System.err.println("Can't schedule " + this.schedule);
-        System.err.println("Message : " + message);
+        Scheduler.this.logger.error("Can't schedule {}", this.schedule);
+        Scheduler.this.logger.error("Message {}", message);
       } else {
         block.markBlocked();
         block.layBlock();
         startTile.setState(UseState.TRAIN);
         int drivingTime = startTile.getDrivingTime(this.loco.getvMax());
+        Scheduler.this.logger.info("[{}] Start Trip. Loco: {} from: {} to {}", time, this.loco.getId(),
+            startTile.getId(), endTile.getId());
         Scheduler.this.jobList.add(new RunScheduleJob(block, this.loco, startTile, time + drivingTime));
       }
     }
@@ -145,8 +153,8 @@ public class Scheduler {
           Scheduler.this.jobList.add(new StartScheduleJob(schedule, theLoco));
         }
       }, () -> {
-        System.err.println(
-            "Can't perform Trip " + this.trip.getId() + " Lok Id " + this.trip.getTrainId() + " not availablöe");
+        Scheduler.this.logger.error("Can't perform Trip {}. Lok Id {} not available", this.trip.getId(),
+            this.trip.getTrainId());
       });
     }
   }

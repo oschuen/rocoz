@@ -1,6 +1,7 @@
 package rocsim.gui;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,6 +12,10 @@ import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollBar;
+
+import rocsim.gui.model.IncrementModel;
+import rocsim.gui.widgets.PauseButton;
+import rocsim.gui.widgets.PlayButton;
 
 public class ControlPanel extends JPanel {
   private static final long serialVersionUID = 1L;
@@ -33,10 +38,13 @@ public class ControlPanel extends JPanel {
   private JRadioButton fremoTimeButton_5;
   private JRadioButton fremoTimeButton_6;
   private ButtonGroup fremoTimeButtonGroup = new ButtonGroup();
-  private int increment = 1;
-  private int fremoTimeIncrement = 1;
+  private IncrementModel model;
+  private PlayButton playButton;
+  private PauseButton pauseButton;
+  private boolean paused = false;
 
-  public ControlPanel() {
+  public ControlPanel(IncrementModel model) {
+    this.model = model;
     setLayout(new BorderLayout(10, 10));
 
     this.fremoClock = new ClockPanel(0, false);
@@ -50,8 +58,33 @@ public class ControlPanel extends JPanel {
     this.scrollBar.setOrientation(JScrollBar.HORIZONTAL);
 
     JPanel panel2 = new JPanel();
-    panel2.setLayout(new GridLayout(1, 2, 0, 0));
+    panel2.setLayout(new GridLayout(1, 3, 0, 0));
     add(panel2, BorderLayout.CENTER);
+
+    JPanel buttonPannel = new JPanel();
+    buttonPannel.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+    this.playButton = new PlayButton();
+    buttonPannel.add(this.playButton);
+    this.playButton.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        ControlPanel.this.paused = false;
+      }
+    });
+
+    this.pauseButton = new PauseButton();
+    buttonPannel.add(this.pauseButton);
+    this.pauseButton.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        ControlPanel.this.paused = true;
+      }
+    });
+
+    panel2.add(buttonPannel);
 
     JPanel animationTimePanel = new JPanel();
     animationTimePanel.setLayout(new GridLayout(3, 2, 0, 0));
@@ -68,17 +101,17 @@ public class ControlPanel extends JPanel {
       @Override
       public void actionPerformed(ActionEvent arg0) {
         if (ControlPanel.this.animationSpeedButton_1.isSelected()) {
-          ControlPanel.this.increment = 1;
+          model.setIncrement(1);
         } else if (ControlPanel.this.animationSpeedButton_2.isSelected()) {
-          ControlPanel.this.increment = 2;
+          model.setIncrement(2);
         } else if (ControlPanel.this.animationSpeedButton_3.isSelected()) {
-          ControlPanel.this.increment = 3;
+          model.setIncrement(3);
         } else if (ControlPanel.this.animationSpeedButton_4.isSelected()) {
-          ControlPanel.this.increment = 4;
+          model.setIncrement(4);
         } else if (ControlPanel.this.animationSpeedButton_5.isSelected()) {
-          ControlPanel.this.increment = 5;
+          model.setIncrement(5);
         } else if (ControlPanel.this.animationSpeedButton_6.isSelected()) {
-          ControlPanel.this.increment = 6;
+          model.setIncrement(6);
         }
       }
     };
@@ -88,17 +121,17 @@ public class ControlPanel extends JPanel {
       @Override
       public void actionPerformed(ActionEvent arg0) {
         if (ControlPanel.this.fremoTimeButton_1.isSelected()) {
-          ControlPanel.this.fremoTimeIncrement = 1;
+          model.setFremoTimeIncrement(1);
         } else if (ControlPanel.this.fremoTimeButton_2.isSelected()) {
-          ControlPanel.this.fremoTimeIncrement = 2;
+          model.setFremoTimeIncrement(2);
         } else if (ControlPanel.this.fremoTimeButton_3.isSelected()) {
-          ControlPanel.this.fremoTimeIncrement = 3;
+          model.setFremoTimeIncrement(3);
         } else if (ControlPanel.this.fremoTimeButton_4.isSelected()) {
-          ControlPanel.this.fremoTimeIncrement = 4;
+          model.setFremoTimeIncrement(4);
         } else if (ControlPanel.this.fremoTimeButton_5.isSelected()) {
-          ControlPanel.this.fremoTimeIncrement = 5;
+          model.setFremoTimeIncrement(5);
         } else if (ControlPanel.this.fremoTimeButton_6.isSelected()) {
-          ControlPanel.this.fremoTimeIncrement = 6;
+          model.setFremoTimeIncrement(6);
         }
       }
     };
@@ -200,7 +233,7 @@ public class ControlPanel extends JPanel {
   public void setCurrentTime(int currentTime) {
     this.scrollBar.setValue(currentTime);
     this.clock.setTime(currentTime);
-    this.fremoClock.setTime(currentTime * this.fremoTimeIncrement);
+    this.fremoClock.setTime(currentTime * this.model.getFremoTimeIncrement());
   }
 
   public int getCurrentTime() {
@@ -211,10 +244,21 @@ public class ControlPanel extends JPanel {
    * @return the increment
    */
   public int getIncrement() {
-    return this.increment;
+    return this.model.getIncrement();
   }
 
-  void addAdjustmentListener(AdjustmentListener listener) {
+  /**
+   * @return the fremoTimeIncrement
+   */
+  public int getFremoTimeIncrement() {
+    return this.model.getFremoTimeIncrement();
+  }
+
+  public void addAdjustmentListener(AdjustmentListener listener) {
     this.scrollBar.addAdjustmentListener(listener);
+  }
+
+  public boolean isPaused() {
+    return this.paused;
   }
 }

@@ -12,7 +12,11 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 
+import rocsim.gui.model.IncrementModel;
+import rocsim.gui.widgets.ListFrame;
 import rocsim.schedule.Scheduler;
 import rocsim.track.TrackPlan;
 import rocsim.xml.ReadPlan;
@@ -24,20 +28,37 @@ public class MainFrame extends JFrame {
   private ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
   private int currentTime = 55;
   private int currentWishTime = 55;
-  private PlanPannel panel;
+  private PlanPanel panel;
+  private LogPanel logPanel;
   private ControlPanel controlPanel;
+  private JTabbedPane tabbedPane;
+  private IncrementModel incrModel = new IncrementModel();
+  private JScrollPane locoScrollPane;
+  private ListFrame<LocoPanel> locoPanel;
 
   public MainFrame() {
     enableEvents(AWTEvent.WINDOW_EVENT_MASK);
     ReadPlan planner = new ReadPlan();
     planner.readPlan(new File("/home/oliver/bin/Rocrail/fremo/plan.xml"));
+
+    this.tabbedPane = new JTabbedPane();
+
     TrackPlan plan = new TrackPlan(planner.getTiles());
-    this.panel = new PlanPannel(plan);
+    this.panel = new PlanPanel(plan, planner.getLocos());
     this.scheduler = new Scheduler(plan, planner.getTrips(), planner.getLocos());
 
-    getContentPane().add(this.panel, BorderLayout.CENTER);
+    this.logPanel = new LogPanel(this.incrModel);
 
-    this.controlPanel = new ControlPanel();
+    this.locoPanel = new ListFrame<>(new LocoPanel.LocoPanelFactory());
+    this.locoScrollPane = new JScrollPane(this.locoPanel);
+
+    this.tabbedPane.addTab("Track", this.panel);
+    this.tabbedPane.addTab("Locos", this.locoScrollPane);
+    this.tabbedPane.addTab("Logs", this.logPanel);
+
+    getContentPane().add(this.tabbedPane, BorderLayout.CENTER);
+
+    this.controlPanel = new ControlPanel(this.incrModel);
 
     this.controlPanel.addAdjustmentListener(new AdjustmentListener() {
 
@@ -66,7 +87,7 @@ public class MainFrame extends JFrame {
           }
           this.currentTime = this.currentWishTime;
           repaint = true;
-        } else {
+        } else if (!this.controlPanel.isPaused()) {
           for (int i = 0; i < this.controlPanel.getIncrement(); i++) {
             this.currentTime++;
             if (this.scheduler.schedule(this.currentTime)) {
