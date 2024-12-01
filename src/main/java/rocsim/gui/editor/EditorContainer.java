@@ -6,7 +6,7 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
-import rocsim.schedule.model.TimeModel;
+import rocsim.schedule.time.TimeModel;
 import rocsim.xml.ReadPlan;
 
 public class EditorContainer {

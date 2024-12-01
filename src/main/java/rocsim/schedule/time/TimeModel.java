@@ -1,4 +1,4 @@
-package rocsim.schedule.model;
+package rocsim.schedule.time;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,9 +46,10 @@ public class TimeModel {
   }
 
   public String getTimeSecString(int time) {
-    int hour = (time % 86400) / 3600;
-    int min = (time % 3600) / 60;
-    int sec = time % 60;
+    int temp = (time % 86400) + 86400;
+    int hour = (temp % 86400) / 3600;
+    int min = (temp % 3600) / 60;
+    int sec = temp % 60;
     return String.format("%02d:%02d:%02d", hour, min, sec);
   }
 
@@ -58,8 +59,9 @@ public class TimeModel {
   }
 
   public String getTimeMinString(int time) {
-    int hour = (time % 86400) / 3600;
-    int min = (time % 3600) / 60;
+    int temp = (time % 86400) + 86400;
+    int hour = (temp % 86400) / 3600;
+    int min = (temp % 3600) / 60;
     return String.format("%02d:%02d", hour, min);
   }
 

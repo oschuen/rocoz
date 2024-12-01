@@ -55,7 +55,7 @@ public class ListItemFrame<T extends DataPanel> extends DataPanel {
     this.panel = new JPanel();
     GridBagConstraints gbc = new GridBagConstraints();
     gbc.fill = GridBagConstraints.NONE;
-    gbc.anchor = GridBagConstraints.WEST;
+    gbc.anchor = GridBagConstraints.NORTH;
     gbc.insets = new Insets(0, 0, 0, 0);
     gbc.gridx = 11;
     gbc.gridy = 0;
@@ -63,7 +63,7 @@ public class ListItemFrame<T extends DataPanel> extends DataPanel {
     add(this.panel, gbc);
 
     this.buttonPanel = new JPanel();
-    this.buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+    this.buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
     JButton okButton = new JButton("OK");
     this.buttonPanel.add(okButton);
     okButton.addActionListener(new ActionListener() {

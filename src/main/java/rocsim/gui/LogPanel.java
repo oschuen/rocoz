@@ -15,8 +15,8 @@ import javax.swing.table.AbstractTableModel;
 import rocsim.log.PlanLogAdapter;
 import rocsim.log.PlanLogAdapter.LogEvent;
 import rocsim.log.PlanLogAdapter.LogEventListener;
-import rocsim.schedule.model.TimeModel;
-import rocsim.schedule.model.TimeModel.TimeModelChangeListener;
+import rocsim.schedule.time.TimeModel;
+import rocsim.schedule.time.TimeModel.TimeModelChangeListener;
 
 public class LogPanel extends JPanel implements LogEventListener, TimeModelChangeListener {
   private static final long serialVersionUID = 1L;

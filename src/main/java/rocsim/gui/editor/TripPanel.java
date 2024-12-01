@@ -6,12 +6,11 @@ import java.awt.Insets;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import rocsim.gui.widgets.DataPanel;
-import rocsim.schedule.model.TimeModel;
 import rocsim.schedule.model.TripModel;
+import rocsim.schedule.time.TimeModel;
 
 public class TripPanel extends DataPanel {
   private static final long serialVersionUID = 1L;
@@ -21,6 +20,7 @@ public class TripPanel extends DataPanel {
   private JTextField fremoTimeTextField;
   private JComboBox<String> comboBox;
   private TimeModel timeModel;
+  private ScheduleFrame panel;
 
   public TripPanel(TimeModel timeModel) {
     this.timeModel = timeModel;
@@ -109,15 +109,15 @@ public class TripPanel extends DataPanel {
     add(this.commentTextField, gbc_commentTextField);
     this.commentTextField.setColumns(20);
 
-    JPanel panel = new JPanel();
+    this.panel = new ScheduleFrame();
     GridBagConstraints gbc_panel = new GridBagConstraints();
     gbc_panel.weightx = 10.0;
-    gbc_panel.gridwidth = 10;
+    gbc_panel.gridwidth = 9;
     gbc_panel.insets = new Insets(0, 0, 0, 5);
     gbc_panel.fill = GridBagConstraints.HORIZONTAL;
-    gbc_panel.gridx = 0;
+    gbc_panel.gridx = 1;
     gbc_panel.gridy = 1;
-    add(panel, gbc_panel);
+    add(this.panel, gbc_panel);
   }
 
   public void setLocoIdComboBoxModel(LocoIdComboBoxModel model) {

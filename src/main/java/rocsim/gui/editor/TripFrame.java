@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rocsim.gui.widgets.ListFrame;
-import rocsim.schedule.model.TimeModel;
-import rocsim.schedule.model.TimeModel.TimeModelChangeListener;
 import rocsim.schedule.model.TripModel;
+import rocsim.schedule.time.TimeModel;
+import rocsim.schedule.time.TimeModel.TimeModelChangeListener;
 
 public class TripFrame extends ListFrame<TripPanel> {
 

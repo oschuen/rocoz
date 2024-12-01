@@ -16,7 +16,7 @@ import javax.swing.JTabbedPane;
 
 import rocsim.gui.editor.EditorContainer;
 import rocsim.schedule.Scheduler;
-import rocsim.schedule.model.TimeModel;
+import rocsim.schedule.time.TimeModel;
 import rocsim.track.TrackPlan;
 import rocsim.xml.ReadPlan;
 

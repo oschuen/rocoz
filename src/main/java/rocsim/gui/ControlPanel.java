@@ -15,7 +15,7 @@ import javax.swing.JScrollBar;
 
 import rocsim.gui.widgets.PauseButton;
 import rocsim.gui.widgets.PlayButton;
-import rocsim.schedule.model.TimeModel;
+import rocsim.schedule.time.TimeModel;
 
 public class ControlPanel extends JPanel {
   private static final long serialVersionUID = 1L;
