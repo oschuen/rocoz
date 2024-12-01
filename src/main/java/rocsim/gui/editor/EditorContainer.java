@@ -6,6 +6,7 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
+import rocsim.schedule.model.TimeModel;
 import rocsim.xml.ReadPlan;
 
 public class EditorContainer {
@@ -13,7 +14,7 @@ public class EditorContainer {
   private LocoFrame locoFrame;
   private TripFrame tripFrame;
 
-  public EditorContainer(ReadPlan planner) {
+  public EditorContainer(ReadPlan planner, TimeModel timeModel) {
 
     this.locoFrame = new LocoFrame();
     this.locoFrame.setLocoModels(planner.getLocoModels());
@@ -36,7 +37,7 @@ public class EditorContainer {
       }
     });
 
-    this.tripFrame = new TripFrame();
+    this.tripFrame = new TripFrame(timeModel);
     this.tripFrame.setLocoIds(this.locoFrame.getLocoIds());
     this.tripFrame.setTripModels(planner.getTripModels());
   }

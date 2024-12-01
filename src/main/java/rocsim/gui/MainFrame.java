@@ -47,7 +47,7 @@ public class MainFrame extends JFrame {
     this.timeModel.setBase(this.scheduler.getMinTime());
 
     this.logPanel = new LogPanel(this.timeModel);
-    this.container = new EditorContainer(planner);
+    this.container = new EditorContainer(planner, this.timeModel);
 
     this.tabbedPane.addTab("Track", this.panel);
     this.tabbedPane.addTab("Locos", this.container.getLocoFrame());

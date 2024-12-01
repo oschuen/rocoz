@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import rocsim.gui.widgets.DataPanel;
+import rocsim.schedule.model.TimeModel;
 import rocsim.schedule.model.TripModel;
 
 public class TripPanel extends DataPanel {
@@ -19,16 +20,10 @@ public class TripPanel extends DataPanel {
   private JTextField realTimeTextField;
   private JTextField fremoTimeTextField;
   private JComboBox<String> comboBox;
+  private TimeModel timeModel;
 
-  public static class TripPanelFactory implements rocsim.gui.widgets.ListFrame.ListItemFactory<TripPanel> {
-
-    @Override
-    public TripPanel createNewItem() {
-      return new TripPanel();
-    }
-  };
-
-  public TripPanel() {
+  public TripPanel(TimeModel timeModel) {
+    this.timeModel = timeModel;
     GridBagLayout gridBagLayout = new GridBagLayout();
     setLayout(gridBagLayout);
 
@@ -132,7 +127,20 @@ public class TripPanel extends DataPanel {
   public void setModel(TripModel tripModel) {
     this.idTextField.setText(tripModel.getId());
     this.comboBox.setSelectedItem(tripModel.getLocoId());
-    this.realTimeTextField.setText(Integer.toString(tripModel.getStartTime()));
+    this.realTimeTextField.setText(this.timeModel.getTimeSecString(tripModel.getStartTime()));
+    this.fremoTimeTextField.setText(this.timeModel.getFremoTimeSecString(tripModel.getStartTime()));
+  }
+
+  public TripModel getModel() {
+    TripModel model = new TripModel();
+    model.setId(this.idTextField.getText());
+    model.setLocoId((String) this.comboBox.getSelectedItem());
+    model.setStartTime(this.timeModel.convertTimeString(this.realTimeTextField.getText()));
+    return model;
+  }
+
+  public void adjustTime() {
+    this.fremoTimeTextField.setText(this.timeModel.getFremoTimeSecString(getModel().getStartTime()));
   }
 
 }

@@ -25,6 +25,22 @@ public class TimeModel {
     this.listeners.add(listener);
   }
 
+  public int convertTimeString(String time) {
+    int convTime = 0;
+    int max = 0;
+    String[] timeElem = time.split(":");
+    for (int i = 0; i < timeElem.length && max < 3; i++) {
+      convTime = convTime * 60;
+      try {
+        convTime += Integer.valueOf(timeElem[i]);
+      } catch (Exception e) {
+      }
+      max++;
+    }
+    return convTime;
+
+  }
+
   public int getFremoTime() {
     return this.base + (this.currentTime - this.base) * this.radix;
   }
