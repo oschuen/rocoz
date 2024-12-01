@@ -13,9 +13,9 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollBar;
 
-import rocsim.gui.model.IncrementModel;
 import rocsim.gui.widgets.PauseButton;
 import rocsim.gui.widgets.PlayButton;
+import rocsim.schedule.model.TimeModel;
 
 public class ControlPanel extends JPanel {
   private static final long serialVersionUID = 1L;
@@ -38,12 +38,12 @@ public class ControlPanel extends JPanel {
   private JRadioButton fremoTimeButton_5;
   private JRadioButton fremoTimeButton_6;
   private ButtonGroup fremoTimeButtonGroup = new ButtonGroup();
-  private IncrementModel model;
+  private TimeModel model;
   private PlayButton playButton;
   private PauseButton pauseButton;
   private boolean paused = false;
 
-  public ControlPanel(IncrementModel model) {
+  public ControlPanel(TimeModel model) {
     this.model = model;
     setLayout(new BorderLayout(10, 10));
 
@@ -121,17 +121,17 @@ public class ControlPanel extends JPanel {
       @Override
       public void actionPerformed(ActionEvent arg0) {
         if (ControlPanel.this.fremoTimeButton_1.isSelected()) {
-          model.setFremoTimeIncrement(1);
+          model.setRadix(1);
         } else if (ControlPanel.this.fremoTimeButton_2.isSelected()) {
-          model.setFremoTimeIncrement(2);
+          model.setRadix(2);
         } else if (ControlPanel.this.fremoTimeButton_3.isSelected()) {
-          model.setFremoTimeIncrement(3);
+          model.setRadix(3);
         } else if (ControlPanel.this.fremoTimeButton_4.isSelected()) {
-          model.setFremoTimeIncrement(4);
+          model.setRadix(4);
         } else if (ControlPanel.this.fremoTimeButton_5.isSelected()) {
-          model.setFremoTimeIncrement(5);
+          model.setRadix(5);
         } else if (ControlPanel.this.fremoTimeButton_6.isSelected()) {
-          model.setFremoTimeIncrement(6);
+          model.setRadix(6);
         }
       }
     };
@@ -230,10 +230,10 @@ public class ControlPanel extends JPanel {
   /**
    * @param currentTime the currentTime to set
    */
-  public void setCurrentTime(int currentTime) {
-    this.scrollBar.setValue(currentTime);
-    this.clock.setTime(currentTime);
-    this.fremoClock.setTime(currentTime * this.model.getFremoTimeIncrement());
+  public void applyCurrentTime() {
+    this.scrollBar.setValue(this.model.getCurrentTime());
+    this.clock.setTime(this.model.getCurrentTime());
+    this.fremoClock.setTime(this.model.getFremoTime());
   }
 
   public int getCurrentTime() {
@@ -247,12 +247,12 @@ public class ControlPanel extends JPanel {
     return this.model.getIncrement();
   }
 
-  /**
-   * @return the fremoTimeIncrement
-   */
-  public int getFremoTimeIncrement() {
-    return this.model.getFremoTimeIncrement();
-  }
+//  /**
+//   * @return the fremoTimeIncrement
+//   */
+//  public int getFremoTimeIncrement() {
+//    return this.model.getFremoTimeIncrement();
+//  }
 
   public void addAdjustmentListener(AdjustmentListener listener) {
     this.scrollBar.addAdjustmentListener(listener);

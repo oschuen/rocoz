@@ -9,17 +9,15 @@ import org.slf4j.LoggerFactory;
 public class Trip {
   private String id = "";
   private String trainId = "";
-  private String followUpTripId = "";
   private List<Schedule> schedules = new ArrayList<>();
   private int startTime = 0;
   private int endTime = 0;
   private final Logger logger = LoggerFactory.getLogger(getClass());
 
-  public Trip(String trainId, String id, String followUpTripId) {
+  public Trip(String trainId, String id) {
     super();
     this.trainId = trainId;
     this.id = id;
-    this.followUpTripId = followUpTripId;
   }
 
   /**
@@ -34,13 +32,6 @@ public class Trip {
    */
   public String getTrainId() {
     return this.trainId;
-  }
-
-  /**
-   * @return the followUpTripId
-   */
-  public String getFollowUpTripId() {
-    return this.followUpTripId;
   }
 
   /**

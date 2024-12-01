@@ -16,7 +16,7 @@ public class MinusButton extends PaintedImageButton {
     gr.fillRect(0, 0, 20, 20);
 
     gr.setColor(Color.RED);
-    gr.fillRect(2, 6, 16, 8);
+    gr.fillRect(2, 7, 16, 6);
     return image;
   }
 

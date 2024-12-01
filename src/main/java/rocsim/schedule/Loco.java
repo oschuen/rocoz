@@ -2,6 +2,8 @@ package rocsim.schedule;
 
 import java.awt.Point;
 
+import rocsim.schedule.model.LocoModel;
+
 public class Loco {
   private Point location = new Point(-1, -1);
   private String id = "";
@@ -12,6 +14,12 @@ public class Loco {
     super();
     this.id = id;
     this.vMax = vMax;
+  }
+
+  public Loco(LocoModel model) {
+    super();
+    this.id = model.getId();
+    this.vMax = model.getvMax();
   }
 
   /**

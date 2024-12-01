@@ -12,19 +12,19 @@ import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.table.AbstractTableModel;
 
-import rocsim.gui.model.IncrementModel;
-import rocsim.gui.model.IncrementModel.IncrementModelChangeListener;
 import rocsim.log.PlanLogAdapter;
 import rocsim.log.PlanLogAdapter.LogEvent;
 import rocsim.log.PlanLogAdapter.LogEventListener;
+import rocsim.schedule.model.TimeModel;
+import rocsim.schedule.model.TimeModel.TimeModelChangeListener;
 
-public class LogPanel extends JPanel implements LogEventListener, IncrementModelChangeListener {
+public class LogPanel extends JPanel implements LogEventListener, TimeModelChangeListener {
   private static final long serialVersionUID = 1L;
   private JTable logTable;
   private TableModel model = new TableModel();
-  private IncrementModel incrModel;
+  private TimeModel incrModel;
 
-  public LogPanel(IncrementModel incrModel) {
+  public LogPanel(TimeModel incrModel) {
     this.incrModel = incrModel;
     incrModel.addListener(this);
     setLayout(new BorderLayout(0, 0));
@@ -79,13 +79,6 @@ public class LogPanel extends JPanel implements LogEventListener, IncrementModel
       fireTableRowsInserted(row - 1, row - 1);
     }
 
-    private String timeString(int time) {
-      int hour = time / 3600;
-      int min = (time % 3600) / 60;
-      int sec = time % 60;
-      return String.format("%02d:%02d:%02d", hour, min, sec);
-    }
-
     @Override
     public Object getValueAt(int row, int column) {
       String value = "";
@@ -94,10 +87,10 @@ public class LogPanel extends JPanel implements LogEventListener, IncrementModel
         if (row < this.events.size()) {
           LogEvent event = this.events.get(row);
           if (column == 0) {
-            value = timeString(event.time);
+            value = LogPanel.this.incrModel.getTimeSecString(event.time);
 
           } else if (column == 1) {
-            value = timeString(event.time * LogPanel.this.incrModel.getFremoTimeIncrement());
+            value = LogPanel.this.incrModel.getFremoTimeSecString(event.time);
 
           } else {
             value = event.message;
@@ -116,7 +109,7 @@ public class LogPanel extends JPanel implements LogEventListener, IncrementModel
   }
 
   @Override
-  public void modelChanged(IncrementModel model) {
+  public void timeModelChanged() {
     this.model.fireTableDataChanged();
   }
 }

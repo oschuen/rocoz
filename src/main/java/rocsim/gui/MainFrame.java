@@ -12,12 +12,11 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.JFrame;
-import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
-import rocsim.gui.model.IncrementModel;
-import rocsim.gui.widgets.ListFrame;
+import rocsim.gui.editor.EditorContainer;
 import rocsim.schedule.Scheduler;
+import rocsim.schedule.model.TimeModel;
 import rocsim.track.TrackPlan;
 import rocsim.xml.ReadPlan;
 
@@ -32,9 +31,8 @@ public class MainFrame extends JFrame {
   private LogPanel logPanel;
   private ControlPanel controlPanel;
   private JTabbedPane tabbedPane;
-  private IncrementModel incrModel = new IncrementModel();
-  private JScrollPane locoScrollPane;
-  private ListFrame<LocoPanel> locoPanel;
+  private EditorContainer container;
+  private TimeModel timeModel = new TimeModel();
 
   public MainFrame() {
     enableEvents(AWTEvent.WINDOW_EVENT_MASK);
@@ -46,19 +44,19 @@ public class MainFrame extends JFrame {
     TrackPlan plan = new TrackPlan(planner.getTiles());
     this.panel = new PlanPanel(plan, planner.getLocos());
     this.scheduler = new Scheduler(plan, planner.getTrips(), planner.getLocos());
+    this.timeModel.setBase(this.scheduler.getMinTime());
 
-    this.logPanel = new LogPanel(this.incrModel);
-
-    this.locoPanel = new ListFrame<>(new LocoPanel.LocoPanelFactory());
-    this.locoScrollPane = new JScrollPane(this.locoPanel);
+    this.logPanel = new LogPanel(this.timeModel);
+    this.container = new EditorContainer(planner);
 
     this.tabbedPane.addTab("Track", this.panel);
-    this.tabbedPane.addTab("Locos", this.locoScrollPane);
+    this.tabbedPane.addTab("Locos", this.container.getLocoFrame());
+    this.tabbedPane.addTab("Trips", this.container.getTripFrame());
     this.tabbedPane.addTab("Logs", this.logPanel);
 
     getContentPane().add(this.tabbedPane, BorderLayout.CENTER);
 
-    this.controlPanel = new ControlPanel(this.incrModel);
+    this.controlPanel = new ControlPanel(this.timeModel);
 
     this.controlPanel.addAdjustmentListener(new AdjustmentListener() {
 
@@ -67,12 +65,11 @@ public class MainFrame extends JFrame {
         MainFrame.this.currentWishTime = MainFrame.this.controlPanel.getCurrentTime();
       }
     });
-    this.currentTime = this.scheduler.getMinTime();
+    this.currentTime = this.timeModel.getCurrentTime();
     this.currentWishTime = this.currentTime;
     this.controlPanel.setMinTime(this.scheduler.getMinTime());
     this.controlPanel.setMaxTime(this.scheduler.getMaxTime());
-    this.controlPanel.setCurrentTime(this.scheduler.getMinTime());
-
+    this.controlPanel.applyCurrentTime();
     getContentPane().add(this.controlPanel, BorderLayout.SOUTH);
     pack();
 
@@ -90,12 +87,13 @@ public class MainFrame extends JFrame {
         } else if (!this.controlPanel.isPaused()) {
           for (int i = 0; i < this.controlPanel.getIncrement(); i++) {
             this.currentTime++;
+            this.timeModel.setCurrentTime(this.currentTime);
             if (this.scheduler.schedule(this.currentTime)) {
               repaint = true;
             }
           }
         }
-        this.controlPanel.setCurrentTime(this.currentTime);
+        this.controlPanel.applyCurrentTime();
         this.currentWishTime = this.currentTime;
         if (repaint) {
           java.awt.EventQueue.invokeLater(() -> {

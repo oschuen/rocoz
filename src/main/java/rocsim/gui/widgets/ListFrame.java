@@ -6,16 +6,16 @@ import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.JPanel;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 
 import rocsim.gui.widgets.ListItemFrame.ListItemListener;
 
-public class ListFrame<T extends JPanel> extends JPanel {
+public class ListFrame<T extends DataPanel> extends DataPanel {
 
   private static final long serialVersionUID = 1L;
   private List<ListItemFrame<T>> items = new ArrayList<>();
   private ListItemFactory<T> factory;
-  private ListItemFrame<?> topPanel;
-  // private JPanel contentPanel;
   private Box contentPanel;
 
   public interface ListItemFactory<Z extends JPanel> {
@@ -30,6 +30,7 @@ public class ListFrame<T extends JPanel> extends JPanel {
       ListItemFrame<T> newFrame = new ListItemFrame<>();
       newFrame.setEmbedded(newItem);
       newFrame.addListener(ListFrame.this.itemListener);
+      newFrame.addDataListener(ListFrame.this.dataListener);
       int index = ListFrame.this.items.indexOf(frame);
       if (index > 0) {
         ListFrame.this.items.add(index + 1, newFrame);
@@ -47,6 +48,25 @@ public class ListFrame<T extends JPanel> extends JPanel {
     }
   };
 
+  private ListDataListener dataListener = new ListDataListener() {
+
+    @Override
+    public void intervalRemoved(ListDataEvent arg0) {
+      contentsChanged(arg0);
+    }
+
+    @Override
+    public void intervalAdded(ListDataEvent arg0) {
+      contentsChanged(arg0);
+
+    }
+
+    @Override
+    public void contentsChanged(ListDataEvent arg0) {
+      fireDataChanged();
+    }
+  };
+
   private ListFrame() {
     super();
     this.setLayout(new BorderLayout());
@@ -57,46 +77,46 @@ public class ListFrame<T extends JPanel> extends JPanel {
   public ListFrame(ListItemFactory<T> factory) {
     this();
     this.factory = factory;
-    this.topPanel = null;
     T newItem = factory.createNewItem();
     ListItemFrame<T> newFrame = new ListItemFrame<>();
     newFrame.addListener(ListFrame.this.itemListener);
+    newFrame.addDataListener(this.dataListener);
     newFrame.setEmbedded(newItem);
     ListFrame.this.items.add(newFrame);
     rebuildChilds();
   }
 
-  public <Z extends JPanel> ListFrame(ListItemFrame<Z> topPanel, ListItemFactory<T> factory) {
-    this();
-    this.factory = factory;
-    this.topPanel = topPanel;
-    rebuildChilds();
-    topPanel.addListener(new ListItemListener<Z>() {
-
-      @Override
-      public void addItem(ListItemFrame<Z> frame) {
-        T newItem = factory.createNewItem();
+  public void setContent(List<T> newItems) {
+    this.items.clear();
+    if (newItems.isEmpty()) {
+      T newItem = this.factory.createNewItem();
+      ListItemFrame<T> newFrame = new ListItemFrame<>();
+      newFrame.addListener(ListFrame.this.itemListener);
+      newFrame.addDataListener(this.dataListener);
+      newFrame.setEmbedded(newItem);
+      this.items.add(newFrame);
+    } else {
+      for (T newItem : newItems) {
         ListItemFrame<T> newFrame = new ListItemFrame<>();
         newFrame.addListener(ListFrame.this.itemListener);
+        newFrame.addDataListener(this.dataListener);
         newFrame.setEmbedded(newItem);
-        ListFrame.this.items.add(newFrame);
-        rebuildChilds();
+        this.items.add(newFrame);
       }
+    }
+    rebuildChilds();
+  }
 
-      @Override
-      public void removeItem(ListItemFrame<Z> frame) {
-        if (ListFrame.this.items.remove(frame)) {
-          rebuildChilds();
-        }
-      }
-    });
+  public List<T> getContent() {
+    List<T> result = new ArrayList<>();
+    for (ListItemFrame<T> listItemFrame : this.items) {
+      result.add(listItemFrame.getEmbedded());
+    }
+    return result;
   }
 
   private void rebuildChilds() {
     this.contentPanel.removeAll();
-    if (this.topPanel != null) {
-      this.contentPanel.add(this.topPanel);
-    }
     for (ListItemFrame<T> listItemFrame : ListFrame.this.items) {
       this.contentPanel.add(listItemFrame);
     }

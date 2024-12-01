@@ -15,8 +15,8 @@ public class PlusButton extends PaintedImageButton {
     gr.setColor(Color.GRAY);
     gr.fillRect(0, 0, 20, 20);
     gr.setColor(Color.GREEN);
-    gr.fillRect(2, 6, 16, 8);
-    gr.fillRect(6, 2, 8, 16);
+    gr.fillRect(2, 7, 16, 6);
+    gr.fillRect(7, 2, 6, 16);
     return image;
   }
 

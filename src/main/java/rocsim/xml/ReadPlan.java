@@ -1,16 +1,11 @@
 package rocsim.xml;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.imageio.ImageIO;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -31,12 +26,16 @@ import rocsim.gui.Track;
 import rocsim.schedule.Loco;
 import rocsim.schedule.Schedule;
 import rocsim.schedule.Trip;
+import rocsim.schedule.model.LocoModel;
+import rocsim.schedule.model.TripModel;
 
 public class ReadPlan {
 
   private List<Tile> tiles = new ArrayList<>();
   private List<Trip> trips = new ArrayList<>();
   private List<Loco> locos = new ArrayList<>();
+  private List<LocoModel> locoModels = new ArrayList<>();
+  private List<TripModel> tripModels = new ArrayList<>();
 
   private class ScEntry {
     public int arrivalTime = 0;
@@ -92,18 +91,15 @@ public class ReadPlan {
         NamedNodeMap attributes = child.getAttributes();
         String id = "";
         String trainId = "";
-        String followUpTripId = "";
         for (int j = 0; j < attributes.getLength(); j++) {
           Node attr = attributes.item(j);
           if (attr.getNodeName().equals("id")) {
             id = attr.getNodeValue();
           } else if (attr.getNodeName().equals("trainid")) {
             trainId = attr.getNodeValue();
-          } else if (attr.getNodeName().equals("scaction")) {
-            followUpTripId = attr.getNodeValue();
           }
         }
-        Trip trip = new Trip(trainId, id, followUpTripId);
+        Trip trip = new Trip(trainId, id);
 
         NodeList segmentChilds = child.getChildNodes();
         ScEntry entryK1 = null;
@@ -120,6 +116,11 @@ public class ReadPlan {
           }
         }
         this.trips.add(trip);
+        TripModel tripModel = new TripModel();
+        tripModel.setId(trip.getId());
+        tripModel.setStartTime(trip.getStartTime());
+        tripModel.setLocoId(trip.getTrainId());
+        this.tripModels.add(tripModel);
       }
     }
   }
@@ -127,6 +128,7 @@ public class ReadPlan {
   private void readOperator(Node tk) {
     NamedNodeMap attributes = tk.getAttributes();
     String id = "";
+    String comment = "";
     int vMax = 0;
     for (int i = 0; i < attributes.getLength(); i++) {
       Node attr = attributes.item(i);
@@ -134,9 +136,16 @@ public class ReadPlan {
         id = attr.getNodeValue();
       } else if (attr.getNodeName().equals("V_max")) {
         vMax = Integer.valueOf(attr.getNodeValue());
+      } else if (attr.getNodeName().equals("desc")) {
+        comment = attr.getNodeValue();
       }
     }
-    this.locos.add(new Loco(id, vMax));
+    LocoModel model = new LocoModel();
+    model.setId(id);
+    model.setvMax(vMax);
+    model.setComment(comment);
+    this.locos.add(new Loco(model));
+    this.locoModels.add(model);
   }
 
   private void readLocos(Node tkList) {
@@ -407,22 +416,17 @@ public class ReadPlan {
     return this.locos;
   }
 
-  public static void main(String[] args) {
-    ReadPlan planner = new ReadPlan();
-    planner.readPlan(new File("/home/oliver/bin/Rocrail/fremo/plan.xml"));
-    BufferedImage br = new BufferedImage(800, 800, BufferedImage.TYPE_INT_RGB);
-    Graphics2D gr = br.createGraphics();
-    gr.setColor(Color.WHITE);
-    gr.fillRect(1, 1, 798, 798);
+  /**
+   * @return the loco Models
+   */
+  public List<LocoModel> getLocoModels() {
+    return this.locoModels;
+  }
 
-    for (Tile tile : planner.tiles) {
-      tile.draw(30, gr);
-    }
-    try {
-      ImageIO.write(br, "PNG", new File("track.png"));
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
+  /**
+   * @return the tripModels
+   */
+  public List<TripModel> getTripModels() {
+    return this.tripModels;
   }
 }

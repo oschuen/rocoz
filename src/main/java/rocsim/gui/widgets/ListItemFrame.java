@@ -11,8 +11,10 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 
-public class ListItemFrame<T extends JPanel> extends JPanel {
+public class ListItemFrame<T extends DataPanel> extends DataPanel {
   private static final long serialVersionUID = 1L;
   private PlusButton plusButton;
   private MinusButton minusButton;
@@ -21,11 +23,30 @@ public class ListItemFrame<T extends JPanel> extends JPanel {
   private JPanel panel;
   private JPanel buttonPanel;
 
-  public interface ListItemListener<Z extends JPanel> {
+  public interface ListItemListener<Z extends DataPanel> {
     void addItem(ListItemFrame<Z> frame);
 
     void removeItem(ListItemFrame<Z> frame);
   }
+
+  private ListDataListener dataListener = new ListDataListener() {
+
+    @Override
+    public void intervalRemoved(ListDataEvent arg0) {
+      contentsChanged(arg0);
+    }
+
+    @Override
+    public void intervalAdded(ListDataEvent arg0) {
+      contentsChanged(arg0);
+
+    }
+
+    @Override
+    public void contentsChanged(ListDataEvent arg0) {
+      fireDataChanged();
+    }
+  };
 
   public ListItemFrame() {
     GridBagLayout gridBagLayout = new GridBagLayout();
@@ -131,9 +152,11 @@ public class ListItemFrame<T extends JPanel> extends JPanel {
    */
   public void setEmbedded(T embedded) {
     if (this.embedded != null) {
-      remove(embedded);
+      remove(this.embedded);
+      this.embedded.removeDataListener(this.dataListener);
     }
     this.embedded = embedded;
+    embedded.addDataListener(this.dataListener);
     GridBagConstraints gbc = new GridBagConstraints();
     gbc.fill = GridBagConstraints.HORIZONTAL;
     gbc.anchor = GridBagConstraints.WEST;
