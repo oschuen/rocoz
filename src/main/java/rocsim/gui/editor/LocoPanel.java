@@ -3,11 +3,13 @@ package rocsim.gui.editor;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.text.NumberFormat;
 
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 import rocsim.gui.widgets.DataPanel;
 import rocsim.schedule.model.LocoModel;
@@ -16,7 +18,7 @@ public class LocoPanel extends DataPanel {
 
   private static final long serialVersionUID = 1L;
   private JTextField idTextField;
-  private JTextField vMaxTextField;
+  private JFormattedTextField vMaxTextField;
   private JTextField commentTextField;
 
   public static class LocoPanelFactory implements rocsim.gui.widgets.ListFrame.ListItemFactory<LocoPanel> {
@@ -46,24 +48,19 @@ public class LocoPanel extends DataPanel {
     gbc_textField.gridy = 0;
     add(this.idTextField, gbc_textField);
     this.idTextField.setColumns(20);
-    this.idTextField.getDocument().addDocumentListener(new DocumentListener() {
+    this.idTextField.addFocusListener(new FocusListener() {
 
       @Override
-      public void removeUpdate(DocumentEvent arg0) {
+      public void focusLost(FocusEvent arg0) {
         fireChanged();
       }
 
       @Override
-      public void insertUpdate(DocumentEvent arg0) {
-        fireChanged();
-      }
+      public void focusGained(FocusEvent arg0) {
+        // TODO Auto-generated method stub
 
-      @Override
-      public void changedUpdate(DocumentEvent arg0) {
-        fireChanged();
       }
     });
-
     JLabel vMaxPanel = new JLabel("V Max");
     GridBagConstraints gbc_Comment = new GridBagConstraints();
     gbc_Comment.anchor = GridBagConstraints.WEST;
@@ -73,7 +70,7 @@ public class LocoPanel extends DataPanel {
 
     add(vMaxPanel, gbc_Comment);
 
-    this.vMaxTextField = new JTextField();
+    this.vMaxTextField = new JFormattedTextField(NumberFormat.getIntegerInstance());
     GridBagConstraints gbc_textField_1 = new GridBagConstraints();
     gbc_textField_1.insets = new Insets(0, 0, 0, 0);
     gbc_textField_1.anchor = GridBagConstraints.WEST;
@@ -104,7 +101,7 @@ public class LocoPanel extends DataPanel {
   public void setModel(LocoModel model) {
     this.idTextField.setText(model.getId());
     this.commentTextField.setText(model.getComment());
-    this.vMaxTextField.setText(Integer.toString(model.getvMax()));
+    this.vMaxTextField.setValue(model.getvMax());
   }
 
   public LocoModel getModel() {

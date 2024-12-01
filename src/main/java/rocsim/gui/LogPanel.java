@@ -23,6 +23,7 @@ public class LogPanel extends JPanel implements LogEventListener, TimeModelChang
   private JTable logTable;
   private TableModel model = new TableModel();
   private TimeModel incrModel;
+  private int maxTime = 0;
 
   public LogPanel(TimeModel incrModel) {
     this.incrModel = incrModel;
@@ -68,15 +69,23 @@ public class LogPanel extends JPanel implements LogEventListener, TimeModelChang
     }
 
     public void addEvent(LogEvent event) {
-      int row = 0;
       this.lock.lock();
       try {
+        if (LogPanel.this.maxTime >= event.time) {
+          List<LogEvent> removes = new ArrayList<>();
+          for (LogEvent logEvent : this.events) {
+            if (logEvent.time >= event.time) {
+              removes.add(logEvent);
+            }
+          }
+          this.events.removeAll(removes);
+        }
         this.events.add(event);
-        row = this.events.size();
+        LogPanel.this.maxTime = event.time;
       } finally {
         this.lock.unlock();
       }
-      fireTableRowsInserted(row - 1, row - 1);
+      fireTableDataChanged();
     }
 
     @Override

@@ -1,6 +1,11 @@
 package rocsim.schedule.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
@@ -9,6 +14,7 @@ public class TripModel {
   private String locoId = "";
   private int startTime = 0;
   private String comment = "";
+  private List<ScheduleModel> schedules = new ArrayList<>();
 
   public JsonObject toJson() {
     JsonObjectBuilder builder = Json.createObjectBuilder();
@@ -16,14 +22,36 @@ public class TripModel {
     builder.add("loco-id", this.locoId);
     builder.add("start-time", this.startTime);
     builder.add("comment", this.comment);
+    JsonArrayBuilder jSched = Json.createArrayBuilder();
+    for (ScheduleModel scheduleModel : this.schedules) {
+      jSched.add(scheduleModel.toJson());
+    }
+    builder.add("schedules", jSched);
     return builder.build();
   }
 
   public void fromJson(JsonObject obj) {
+    this.schedules.clear();
     this.id = obj.getString("id", "");
     this.locoId = obj.getString("loco-id", "");
     this.startTime = obj.getInt("start-time", 0);
     this.comment = obj.getString("comment", "");
+    JsonArray jSched = obj.getJsonArray("schedules");
+    if (jSched != null) {
+      for (int i = 0; i < jSched.size(); i++) {
+        ScheduleModel schedModel = new ScheduleModel();
+        schedModel.fromJson(jSched.getJsonObject(i));
+        addSchedule(schedModel);
+      }
+    }
+  }
+
+  public void addSchedule(ScheduleModel model) {
+    this.schedules.add(model);
+  }
+
+  public List<ScheduleModel> getSchedules() {
+    return new ArrayList<>(this.schedules);
   }
 
   /**

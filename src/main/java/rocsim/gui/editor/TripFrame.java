@@ -9,11 +9,10 @@ import rocsim.schedule.time.TimeModel;
 import rocsim.schedule.time.TimeModel.TimeModelChangeListener;
 
 public class TripFrame extends ListFrame<TripPanel> {
-
   private static final long serialVersionUID = 1L;
-
+  private StringListDataModel blockIdDataModel;
+  private StringListDataModel locoIdDataModel;
   private TimeModel timeModel;
-
   private TimeModelChangeListener timeChangeListener = new TimeModelChangeListener() {
 
     @Override
@@ -26,37 +25,33 @@ public class TripFrame extends ListFrame<TripPanel> {
 
   private static class TripPanelFactory implements rocsim.gui.widgets.ListFrame.ListItemFactory<TripPanel> {
     private TimeModel timeModel;
+    private StringListDataModel blockIdDataModel;
+    private StringListDataModel locoIdDataModel;
 
-    TripPanelFactory(TimeModel timeModel) {
+    TripPanelFactory(TimeModel timeModel, StringListDataModel locoIdDataModel, StringListDataModel blockIdDataModel) {
       this.timeModel = timeModel;
+      this.locoIdDataModel = locoIdDataModel;
+      this.blockIdDataModel = blockIdDataModel;
     }
 
     @Override
     public TripPanel createNewItem() {
-      return new TripPanel(this.timeModel);
+      return new TripPanel(this.timeModel, this.locoIdDataModel, this.blockIdDataModel);
     }
   };
 
-  public TripFrame(TimeModel timeModel) {
-    super(new TripPanelFactory(timeModel));
+  public TripFrame(TimeModel timeModel, StringListDataModel locoIdDataModel, StringListDataModel blockIdDataModel) {
+    super(new TripPanelFactory(timeModel, locoIdDataModel, blockIdDataModel));
+    this.blockIdDataModel = blockIdDataModel;
+    this.locoIdDataModel = locoIdDataModel;
     this.timeModel = timeModel;
     this.timeModel.addListener(TripFrame.this.timeChangeListener);
-  }
-
-  LocoIdListDataModel locoIdDataModel = new LocoIdListDataModel();
-
-  public void setLocoIds(List<String> locoIds) {
-    this.locoIdDataModel.setLocoIds(locoIds);
-    for (TripPanel panel : getContent()) {
-      panel.setLocoIdComboBoxModel(new LocoIdComboBoxModel(this.locoIdDataModel));
-    }
   }
 
   public void setTripModels(List<TripModel> tripModels) {
     List<TripPanel> panels = new ArrayList<>();
     for (TripModel tripModel : tripModels) {
-      TripPanel panel = new TripPanel(this.timeModel);
-      panel.setLocoIdComboBoxModel(new LocoIdComboBoxModel(this.locoIdDataModel));
+      TripPanel panel = new TripPanel(this.timeModel, this.locoIdDataModel, this.blockIdDataModel);
       panel.setModel(tripModel);
       panels.add(panel);
     }

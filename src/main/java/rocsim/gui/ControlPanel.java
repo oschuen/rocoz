@@ -247,13 +247,6 @@ public class ControlPanel extends JPanel {
     return this.model.getIncrement();
   }
 
-//  /**
-//   * @return the fremoTimeIncrement
-//   */
-//  public int getFremoTimeIncrement() {
-//    return this.model.getFremoTimeIncrement();
-//  }
-
   public void addAdjustmentListener(AdjustmentListener listener) {
     this.scrollBar.addAdjustmentListener(listener);
   }

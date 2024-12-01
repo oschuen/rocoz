@@ -13,11 +13,16 @@ public class EditorContainer {
 
   private LocoFrame locoFrame;
   private TripFrame tripFrame;
+  private StringListDataModel blockIdDataModel = new StringListDataModel();
+  private StringListDataModel locoIdDataModel = new StringListDataModel();
 
   public EditorContainer(ReadPlan planner, TimeModel timeModel) {
 
+    this.blockIdDataModel.setValueList(planner.getBlockIds());
+    //
     this.locoFrame = new LocoFrame();
     this.locoFrame.setLocoModels(planner.getLocoModels());
+    this.locoIdDataModel.setValueList(this.locoFrame.getLocoIds());
     this.locoFrame.addDataListener(new ListDataListener() {
 
       @Override
@@ -33,12 +38,11 @@ public class EditorContainer {
       @Override
       public void contentsChanged(ListDataEvent arg0) {
         List<String> ids = EditorContainer.this.locoFrame.getLocoIds();
-        EditorContainer.this.tripFrame.setLocoIds(ids);
+        EditorContainer.this.locoIdDataModel.setValueList(ids);
       }
     });
 
-    this.tripFrame = new TripFrame(timeModel);
-    this.tripFrame.setLocoIds(this.locoFrame.getLocoIds());
+    this.tripFrame = new TripFrame(timeModel, this.locoIdDataModel, this.blockIdDataModel);
     this.tripFrame.setTripModels(planner.getTripModels());
   }
 

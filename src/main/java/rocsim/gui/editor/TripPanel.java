@@ -3,10 +3,15 @@ package rocsim.gui.editor;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.text.ParseException;
 
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.text.MaskFormatter;
 
 import rocsim.gui.widgets.DataPanel;
 import rocsim.schedule.model.TripModel;
@@ -16,16 +21,22 @@ public class TripPanel extends DataPanel {
   private static final long serialVersionUID = 1L;
   private JTextField idTextField;
   private JTextField commentTextField;
-  private JTextField realTimeTextField;
-  private JTextField fremoTimeTextField;
+  private JFormattedTextField realTimeTextField;
+  private JFormattedTextField fremoTimeTextField;
   private JComboBox<String> comboBox;
   private TimeModel timeModel;
-  private ScheduleFrame panel;
+  private ScheduleFrame scheduleFrame;
 
-  public TripPanel(TimeModel timeModel) {
+  public TripPanel(TimeModel timeModel, StringListDataModel locoIdDataModel, StringListDataModel blockIdDataModel) {
     this.timeModel = timeModel;
     GridBagLayout gridBagLayout = new GridBagLayout();
     setLayout(gridBagLayout);
+    MaskFormatter mask = null;
+    try {
+      mask = new MaskFormatter("##:##:##");
+      mask.setPlaceholderCharacter('#');
+    } catch (ParseException e) {
+    }
 
     JLabel idLabel = new JLabel("ID");
     GridBagConstraints gbc_idLabel = new GridBagConstraints();
@@ -51,6 +62,7 @@ public class TripPanel extends DataPanel {
     add(locoLabel, gbc_locoLabel);
 
     this.comboBox = new JComboBox<>();
+    this.comboBox.setModel(new StringComboBoxModel(locoIdDataModel));
     GridBagConstraints gbc_comboBox = new GridBagConstraints();
     gbc_comboBox.insets = new Insets(0, 0, 5, 5);
     gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;
@@ -66,7 +78,7 @@ public class TripPanel extends DataPanel {
     gbc_lblStart.gridy = 0;
     add(lblStart, gbc_lblStart);
 
-    this.realTimeTextField = new JTextField();
+    this.realTimeTextField = new JFormattedTextField(mask);
     GridBagConstraints gbc_realTimeTextField = new GridBagConstraints();
     gbc_realTimeTextField.insets = new Insets(0, 0, 5, 5);
     gbc_realTimeTextField.fill = GridBagConstraints.HORIZONTAL;
@@ -74,6 +86,18 @@ public class TripPanel extends DataPanel {
     gbc_realTimeTextField.gridy = 0;
     add(this.realTimeTextField, gbc_realTimeTextField);
     this.realTimeTextField.setColumns(10);
+    this.realTimeTextField.addFocusListener(new FocusListener() {
+
+      @Override
+      public void focusLost(FocusEvent arg0) {
+        int time = timeModel.convertTimeString(TripPanel.this.realTimeTextField.getText());
+        TripPanel.this.fremoTimeTextField.setValue(timeModel.getFremoTimeSecString(time));
+      }
+
+      @Override
+      public void focusGained(FocusEvent arg0) {
+      }
+    });
 
     JLabel lblModelTime = new JLabel("Model Time");
     GridBagConstraints gbc_lblModelTime = new GridBagConstraints();
@@ -83,7 +107,7 @@ public class TripPanel extends DataPanel {
     gbc_lblModelTime.gridy = 0;
     add(lblModelTime, gbc_lblModelTime);
 
-    this.fremoTimeTextField = new JTextField();
+    this.fremoTimeTextField = new JFormattedTextField(mask);
     GridBagConstraints gbc_fremoTimeTextField = new GridBagConstraints();
     gbc_fremoTimeTextField.insets = new Insets(0, 0, 5, 5);
     gbc_fremoTimeTextField.fill = GridBagConstraints.HORIZONTAL;
@@ -91,6 +115,19 @@ public class TripPanel extends DataPanel {
     gbc_fremoTimeTextField.gridy = 0;
     add(this.fremoTimeTextField, gbc_fremoTimeTextField);
     this.fremoTimeTextField.setColumns(10);
+    this.fremoTimeTextField.addFocusListener(new FocusListener() {
+
+      @Override
+      public void focusLost(FocusEvent arg0) {
+        int time = timeModel.convertTimeString(TripPanel.this.fremoTimeTextField.getText());
+        time = timeModel.toRealTime(time);
+        TripPanel.this.realTimeTextField.setValue(timeModel.getTimeSecString(time));
+      }
+
+      @Override
+      public void focusGained(FocusEvent arg0) {
+      }
+    });
 
     JLabel commentLabel = new JLabel("Comment");
     GridBagConstraints gbc_commentLabel = new GridBagConstraints();
@@ -109,7 +146,7 @@ public class TripPanel extends DataPanel {
     add(this.commentTextField, gbc_commentTextField);
     this.commentTextField.setColumns(20);
 
-    this.panel = new ScheduleFrame();
+    this.scheduleFrame = new ScheduleFrame(blockIdDataModel);
     GridBagConstraints gbc_panel = new GridBagConstraints();
     gbc_panel.weightx = 10.0;
     gbc_panel.gridwidth = 9;
@@ -117,18 +154,15 @@ public class TripPanel extends DataPanel {
     gbc_panel.fill = GridBagConstraints.HORIZONTAL;
     gbc_panel.gridx = 1;
     gbc_panel.gridy = 1;
-    add(this.panel, gbc_panel);
-  }
-
-  public void setLocoIdComboBoxModel(LocoIdComboBoxModel model) {
-    this.comboBox.setModel(model);
+    add(this.scheduleFrame, gbc_panel);
   }
 
   public void setModel(TripModel tripModel) {
     this.idTextField.setText(tripModel.getId());
     this.comboBox.setSelectedItem(tripModel.getLocoId());
-    this.realTimeTextField.setText(this.timeModel.getTimeSecString(tripModel.getStartTime()));
-    this.fremoTimeTextField.setText(this.timeModel.getFremoTimeSecString(tripModel.getStartTime()));
+    this.realTimeTextField.setValue(this.timeModel.getTimeSecString(tripModel.getStartTime()));
+    this.fremoTimeTextField.setValue(this.timeModel.getFremoTimeSecString(tripModel.getStartTime()));
+    this.scheduleFrame.setScheduleModels(tripModel.getSchedules());
   }
 
   public TripModel getModel() {

@@ -27,6 +27,7 @@ import rocsim.schedule.Loco;
 import rocsim.schedule.Schedule;
 import rocsim.schedule.Trip;
 import rocsim.schedule.model.LocoModel;
+import rocsim.schedule.model.ScheduleModel;
 import rocsim.schedule.model.TripModel;
 
 public class ReadPlan {
@@ -36,6 +37,7 @@ public class ReadPlan {
   private List<Loco> locos = new ArrayList<>();
   private List<LocoModel> locoModels = new ArrayList<>();
   private List<TripModel> tripModels = new ArrayList<>();
+  private List<String> blockIds = new ArrayList<>();
 
   private class ScEntry {
     public int arrivalTime = 0;
@@ -120,6 +122,14 @@ public class ReadPlan {
         tripModel.setId(trip.getId());
         tripModel.setStartTime(trip.getStartTime());
         tripModel.setLocoId(trip.getTrainId());
+        for (Schedule schedule : trip.getSchedules()) {
+          ScheduleModel schedModel = new ScheduleModel();
+          schedModel.setStartBlock(schedule.getStartBlock());
+          schedModel.setEndBlock(schedule.getEndBlock());
+          schedModel.setDuration((schedule.getEndTime() - schedule.getStartTime()) / 60);
+          schedModel.setPause(schedule.getMinWaitTime());
+          tripModel.addSchedule(schedModel);
+        }
         this.tripModels.add(tripModel);
       }
     }
@@ -334,6 +344,7 @@ public class ReadPlan {
       }
     }
     addBlock(id, x, y, orientation, stellBlock);
+    this.blockIds.add(id);
   }
 
   private void readBKList(Node swList) {
@@ -428,5 +439,9 @@ public class ReadPlan {
    */
   public List<TripModel> getTripModels() {
     return this.tripModels;
+  }
+
+  public List<String> getBlockIds() {
+    return this.blockIds;
   }
 }

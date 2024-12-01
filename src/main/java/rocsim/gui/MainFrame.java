@@ -83,6 +83,7 @@ public class MainFrame extends JFrame {
             this.scheduler.resetTo(this.currentWishTime);
           }
           this.currentTime = this.currentWishTime;
+          this.timeModel.setCurrentTime(this.currentTime);
           repaint = true;
         } else if (!this.controlPanel.isPaused()) {
           for (int i = 0; i < this.controlPanel.getIncrement(); i++) {

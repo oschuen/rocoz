@@ -7,16 +7,16 @@ import javax.swing.ListModel;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
-public class LocoIdListDataModel implements ListModel<String> {
+public class StringListDataModel implements ListModel<String> {
 
   private List<ListDataListener> dataListeners = new ArrayList<>();
-  private List<String> locoIds = new ArrayList<>();
+  private List<String> values = new ArrayList<>();
 
   /**
-   * @param locoIds the locoIds to set
+   * @param values the locoIds to set
    */
-  public void setLocoIds(List<String> locoIds) {
-    this.locoIds = locoIds;
+  public void setValueList(List<String> values) {
+    this.values = values;
     fireDataChanged();
   }
 
@@ -32,19 +32,19 @@ public class LocoIdListDataModel implements ListModel<String> {
 
   @Override
   public String getElementAt(int index) {
-    if (index >= 0 & index < this.locoIds.size()) {
-      return this.locoIds.get(index);
+    if (index >= 0 & index < this.values.size()) {
+      return this.values.get(index);
     }
     return "";
   }
 
   @Override
   public int getSize() {
-    return this.locoIds.size();
+    return this.values.size();
   }
 
   public void fireDataChanged() {
-    ListDataEvent event = new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, this.locoIds.size());
+    ListDataEvent event = new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, this.values.size());
     for (ListDataListener listDataListener : this.dataListeners) {
       listDataListener.contentsChanged(event);
     }

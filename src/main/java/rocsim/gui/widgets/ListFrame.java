@@ -44,6 +44,7 @@ public class ListFrame<T extends DataPanel> extends DataPanel {
     public void removeItem(ListItemFrame<T> frame) {
       if (ListFrame.this.items.size() > 1 && ListFrame.this.items.remove(frame)) {
         rebuildChilds();
+        fireDataChanged();
       }
     }
   };

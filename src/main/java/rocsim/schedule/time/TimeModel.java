@@ -41,6 +41,10 @@ public class TimeModel {
 
   }
 
+  public int toRealTime(int fremoTime) {
+    return this.base + (fremoTime - this.base) / this.radix;
+  }
+
   public int getFremoTime() {
     return this.base + (this.currentTime - this.base) * this.radix;
   }

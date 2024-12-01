@@ -3,12 +3,12 @@ package rocsim.gui.editor;
 import javax.swing.ComboBoxModel;
 import javax.swing.event.ListDataListener;
 
-class LocoIdComboBoxModel implements ComboBoxModel<String> {
+class StringComboBoxModel implements ComboBoxModel<String> {
 
-  private LocoIdListDataModel selectionModel;
+  private StringListDataModel selectionModel;
   private String selectedLocoId = "";
 
-  LocoIdComboBoxModel(LocoIdListDataModel selectionModel) {
+  StringComboBoxModel(StringListDataModel selectionModel) {
     this.selectionModel = selectionModel;
   }
 

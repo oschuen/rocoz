@@ -63,7 +63,7 @@ public class ListItemFrame<T extends DataPanel> extends DataPanel {
     add(this.panel, gbc);
 
     this.buttonPanel = new JPanel();
-    this.buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+    this.buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
     JButton okButton = new JButton("OK");
     this.buttonPanel.add(okButton);
     okButton.addActionListener(new ActionListener() {

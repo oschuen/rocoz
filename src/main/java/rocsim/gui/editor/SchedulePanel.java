@@ -3,15 +3,25 @@ package rocsim.gui.editor;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.text.NumberFormat;
 
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import rocsim.gui.widgets.DataPanel;
+import rocsim.schedule.model.ScheduleModel;
 
 public class SchedulePanel extends DataPanel {
-  public SchedulePanel() {
+  private static final long serialVersionUID = 1L;
+  private JFormattedTextField timeTextField;
+  private JTextField commentTextField;
+  private JFormattedTextField pauseTextField;
+  private JComboBox<String> startBlockComboBox;
+  private JComboBox<String> endBlockComboBox;
+
+  public SchedulePanel(StringListDataModel blockIdDataModel) {
     GridBagLayout gridBagLayout = new GridBagLayout();
     setLayout(gridBagLayout);
 
@@ -23,12 +33,13 @@ public class SchedulePanel extends DataPanel {
     gbc_lblStart.gridy = 0;
     add(lblStart, gbc_lblStart);
 
-    JComboBox<String> startBlockComboBox = new JComboBox<>();
+    this.startBlockComboBox = new JComboBox<>();
+    this.startBlockComboBox.setModel(new StringComboBoxModel(blockIdDataModel));
     GridBagConstraints gbc_startBlockComboBox = new GridBagConstraints();
     gbc_startBlockComboBox.insets = new Insets(0, 0, 5, 5);
     gbc_startBlockComboBox.gridx = 1;
     gbc_startBlockComboBox.gridy = 0;
-    add(startBlockComboBox, gbc_startBlockComboBox);
+    add(this.startBlockComboBox, gbc_startBlockComboBox);
 
     JLabel lblNewLabel = new JLabel("Destination");
     GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
@@ -38,12 +49,13 @@ public class SchedulePanel extends DataPanel {
     gbc_lblNewLabel.gridy = 0;
     add(lblNewLabel, gbc_lblNewLabel);
 
-    JComboBox<String> endBlockComboBox = new JComboBox<>();
+    this.endBlockComboBox = new JComboBox<>();
+    this.endBlockComboBox.setModel(new StringComboBoxModel(blockIdDataModel));
     GridBagConstraints gbc_endBlockComboBox = new GridBagConstraints();
     gbc_endBlockComboBox.insets = new Insets(0, 0, 5, 5);
     gbc_endBlockComboBox.gridx = 3;
     gbc_endBlockComboBox.gridy = 0;
-    add(endBlockComboBox, gbc_endBlockComboBox);
+    add(this.endBlockComboBox, gbc_endBlockComboBox);
 
     JLabel lblNewLabel_1 = new JLabel("Time (min)");
     GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
@@ -53,7 +65,7 @@ public class SchedulePanel extends DataPanel {
     gbc_lblNewLabel_1.gridy = 0;
     add(lblNewLabel_1, gbc_lblNewLabel_1);
 
-    this.timeTextField = new JTextField();
+    this.timeTextField = new JFormattedTextField(NumberFormat.getIntegerInstance());
     GridBagConstraints gbc_timeTextField = new GridBagConstraints();
     gbc_timeTextField.insets = new Insets(0, 0, 5, 5);
     gbc_timeTextField.gridx = 5;
@@ -69,7 +81,7 @@ public class SchedulePanel extends DataPanel {
     gbc_lblNewLabel_3.gridy = 0;
     add(lblNewLabel_3, gbc_lblNewLabel_3);
 
-    this.pauseTextField = new JTextField();
+    this.pauseTextField = new JFormattedTextField(NumberFormat.getIntegerInstance());
     GridBagConstraints gbc_pauseTextField = new GridBagConstraints();
     gbc_pauseTextField.insets = new Insets(0, 0, 0, 5);
     gbc_pauseTextField.fill = GridBagConstraints.HORIZONTAL;
@@ -94,13 +106,14 @@ public class SchedulePanel extends DataPanel {
     gbc_commentTextField.gridx = 9;
     gbc_commentTextField.gridy = 0;
     add(this.commentTextField, gbc_commentTextField);
-    this.commentTextField.setColumns(40);
-
+    this.commentTextField.setColumns(20);
   }
 
-  private static final long serialVersionUID = 1L;
-  private JTextField timeTextField;
-  private JTextField commentTextField;
-  private JTextField pauseTextField;
-
+  public void setModel(ScheduleModel scheduleModel) {
+    this.startBlockComboBox.setSelectedItem(scheduleModel.getStartBlock());
+    this.endBlockComboBox.setSelectedItem(scheduleModel.getEndBlock());
+    this.pauseTextField.setValue(scheduleModel.getPause());
+    this.timeTextField.setValue(scheduleModel.getDuration());
+    this.commentTextField.setText(scheduleModel.getComment());
+  }
 }
