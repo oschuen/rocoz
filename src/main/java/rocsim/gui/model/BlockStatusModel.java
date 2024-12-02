@@ -1,9 +1,8 @@
 package rocsim.gui.model;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 
 import rocsim.gui.tiles.Block;
 import rocsim.gui.tiles.Block.BlockStatusListener;
@@ -13,9 +12,9 @@ import rocsim.schedule.model.TimeModel;
 public class BlockStatusModel implements BlockStatusListener {
 
   private TimeModel timeModel;
-  private Map<String, List<BlockEvent>> blockEvents = new HashMap<>();
+  private Map<String, PriorityQueue<BlockEvent>> blockEvents = new HashMap<>();
   private int lastEventTime;
-  private final List<BlockEvent> emptyList = new ArrayList<>();
+  private final PriorityQueue<BlockEvent> emptyList = new PriorityQueue<>();
 
   public static class BlockEvent {
     public int realTime = 0;
@@ -26,7 +25,8 @@ public class BlockStatusModel implements BlockStatusListener {
   public BlockStatusModel(StringListDataModel blockIdDataModel, TimeModel timeModel) {
     this.timeModel = timeModel;
     for (int i = 0; i < blockIdDataModel.getSize(); i++) {
-      this.blockEvents.put(blockIdDataModel.getElementAt(i), new ArrayList<>());
+      this.blockEvents.put(blockIdDataModel.getElementAt(i),
+          new PriorityQueue<>((a, b) -> Integer.compare(a.realTime, b.realTime)));
     }
   }
 
@@ -39,7 +39,7 @@ public class BlockStatusModel implements BlockStatusListener {
       });
     }
     if (block != null) {
-      List<BlockEvent> eventList = this.blockEvents.get(block.getId());
+      PriorityQueue<BlockEvent> eventList = this.blockEvents.get(block.getId());
       if (eventList != null) {
         BlockEvent event = new BlockEvent();
         event.realTime = this.timeModel.getCurrentTime();
@@ -50,7 +50,7 @@ public class BlockStatusModel implements BlockStatusListener {
     this.lastEventTime = currentTime;
   }
 
-  public List<BlockEvent> getEventsForId(String id) {
+  public PriorityQueue<BlockEvent> getEventsForId(String id) {
     return this.blockEvents.getOrDefault(id, this.emptyList);
   }
 }
