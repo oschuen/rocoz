@@ -1,4 +1,4 @@
-package rocsim.gui;
+package rocsim.gui.widgets;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -17,7 +17,7 @@ public class ClockPanel extends JPanel {
   private int time;
   private boolean secShow;
 
-  ClockPanel(int time, boolean secShow) {
+  public ClockPanel(int time, boolean secShow) {
     super();
     this.time = time;
     this.secShow = secShow;

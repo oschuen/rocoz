@@ -1,14 +1,14 @@
-package rocsim.gui.editor;
+package rocsim.gui.model;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.event.ListDataListener;
 
-class StringComboBoxModel implements ComboBoxModel<String> {
+public class StringComboBoxModel implements ComboBoxModel<String> {
 
   private StringListDataModel selectionModel;
   private String selectedLocoId = "";
 
-  StringComboBoxModel(StringListDataModel selectionModel) {
+  public StringComboBoxModel(StringListDataModel selectionModel) {
     this.selectionModel = selectionModel;
   }
 

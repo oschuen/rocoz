@@ -16,13 +16,14 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import rocsim.gui.Block;
-import rocsim.gui.Curve;
-import rocsim.gui.LeftSwitch;
-import rocsim.gui.RightSwitch;
-import rocsim.gui.Tile;
-import rocsim.gui.Tile.Direction;
-import rocsim.gui.Track;
+import rocsim.gui.tiles.Block;
+import rocsim.gui.tiles.Curve;
+import rocsim.gui.tiles.LeftSwitch;
+import rocsim.gui.tiles.RightSwitch;
+import rocsim.gui.tiles.Tile;
+import rocsim.gui.tiles.Track;
+import rocsim.gui.tiles.Block.BlockStatusListener;
+import rocsim.gui.tiles.Tile.Direction;
 import rocsim.schedule.Loco;
 import rocsim.schedule.Schedule;
 import rocsim.schedule.Trip;
@@ -38,6 +39,17 @@ public class ReadPlan {
   private List<LocoModel> locoModels = new ArrayList<>();
   private List<TripModel> tripModels = new ArrayList<>();
   private List<String> blockIds = new ArrayList<>();
+  private List<BlockStatusListener> listeners = new ArrayList<>();
+
+  private BlockStatusListener blockListener = new BlockStatusListener() {
+
+    @Override
+    public void statusChanged(Block block) {
+      for (BlockStatusListener blockStatusListener : ReadPlan.this.listeners) {
+        blockStatusListener.statusChanged(block);
+      }
+    }
+  };
 
   private class ScEntry {
     public int arrivalTime = 0;
@@ -212,7 +224,9 @@ public class ReadPlan {
       dir = Direction.EAST;
     }
 
-    this.tiles.add(new Block(id, x, y, dir, stellBlock));
+    Block block = new Block(id, x, y, dir, stellBlock);
+    block.addStatusListener(this.blockListener);
+    this.tiles.add(block);
   }
 
   private void readTk(Node tk) {
@@ -444,4 +458,13 @@ public class ReadPlan {
   public List<String> getBlockIds() {
     return this.blockIds;
   }
+
+  public void addStatusListener(BlockStatusListener listener) {
+    this.listeners.add(listener);
+  }
+
+  public void removeStatusListener(BlockStatusListener listener) {
+    this.listeners.remove(listener);
+  }
+
 }

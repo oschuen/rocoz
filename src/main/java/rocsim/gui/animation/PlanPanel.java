@@ -1,4 +1,4 @@
-package rocsim.gui;
+package rocsim.gui.animation;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -15,6 +15,7 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
+import rocsim.gui.tiles.Tile;
 import rocsim.schedule.Loco;
 import rocsim.track.TrackPlan;
 
@@ -139,5 +140,4 @@ public class PlanPanel extends JPanel {
       });
     }
   }
-
 }

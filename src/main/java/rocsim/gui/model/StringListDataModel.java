@@ -1,4 +1,4 @@
-package rocsim.gui.editor;
+package rocsim.gui.model;
 
 import java.util.ArrayList;
 import java.util.List;

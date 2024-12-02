@@ -1,9 +1,11 @@
-package rocsim.gui;
+package rocsim;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
 
 import javax.swing.UIManager;
+
+import rocsim.gui.MainFrame;
 
 public class SimApp {
   boolean packFrame = true;

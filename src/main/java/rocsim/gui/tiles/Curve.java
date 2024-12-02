@@ -1,4 +1,4 @@
-package rocsim.gui;
+package rocsim.gui.tiles;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

@@ -13,9 +13,11 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.text.MaskFormatter;
 
+import rocsim.gui.model.StringComboBoxModel;
+import rocsim.gui.model.StringListDataModel;
 import rocsim.gui.widgets.DataPanel;
+import rocsim.schedule.model.TimeModel;
 import rocsim.schedule.model.TripModel;
-import rocsim.schedule.time.TimeModel;
 
 public class TripPanel extends DataPanel {
   private static final long serialVersionUID = 1L;

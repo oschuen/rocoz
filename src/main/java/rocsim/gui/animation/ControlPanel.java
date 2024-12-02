@@ -1,4 +1,4 @@
-package rocsim.gui;
+package rocsim.gui.animation;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -13,9 +13,10 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollBar;
 
+import rocsim.gui.widgets.ClockPanel;
 import rocsim.gui.widgets.PauseButton;
 import rocsim.gui.widgets.PlayButton;
-import rocsim.schedule.time.TimeModel;
+import rocsim.schedule.model.TimeModel;
 
 public class ControlPanel extends JPanel {
   private static final long serialVersionUID = 1L;

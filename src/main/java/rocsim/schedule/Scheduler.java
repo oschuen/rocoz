@@ -8,8 +8,8 @@ import java.util.Queue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rocsim.gui.Tile;
-import rocsim.gui.Tile.UseState;
+import rocsim.gui.tiles.Tile;
+import rocsim.gui.tiles.Tile.UseState;
 import rocsim.track.Block;
 import rocsim.track.TrackPlan;
 
@@ -59,8 +59,8 @@ public class Scheduler {
         tile.setState(UseState.TRAIN);
         Scheduler.this.jobList.add(this);
       }, () -> {
-        if (this.currentLocation instanceof rocsim.gui.Block) {
-          if (((rocsim.gui.Block) this.currentLocation).isStellBlock()) {
+        if (this.currentLocation instanceof rocsim.gui.tiles.Block) {
+          if (((rocsim.gui.tiles.Block) this.currentLocation).isStellBlock()) {
             this.currentLocation.setState(UseState.BLOCK);
             this.loco.setInBw(true);
           }

@@ -3,6 +3,7 @@ package rocsim.gui.editor;
 import java.util.ArrayList;
 import java.util.List;
 
+import rocsim.gui.model.StringListDataModel;
 import rocsim.gui.widgets.ListFrame;
 import rocsim.schedule.model.ScheduleModel;
 

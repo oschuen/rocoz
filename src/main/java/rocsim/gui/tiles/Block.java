@@ -1,4 +1,4 @@
-package rocsim.gui;
+package rocsim.gui.tiles;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -9,6 +9,11 @@ import java.util.Optional;
 public class Block extends Tile {
 
   private boolean stellBlock = false;
+  private List<BlockStatusListener> listeners = new ArrayList<>();
+
+  public interface BlockStatusListener {
+    void statusChanged(Block block);
+  }
 
   public Block(String id, int x, int y, Direction orientation, boolean stellBlock) {
     super(id, x, y, orientation);
@@ -67,5 +72,24 @@ public class Block extends Tile {
    */
   public boolean isStellBlock() {
     return this.stellBlock;
+  }
+
+  @Override
+  public void setState(UseState state) {
+    if (state != getState()) {
+      super.setState(state);
+      for (BlockStatusListener blockStatusListener : this.listeners) {
+        blockStatusListener.statusChanged(this);
+      }
+    }
+
+  }
+
+  public void addStatusListener(BlockStatusListener listener) {
+    this.listeners.add(listener);
+  }
+
+  public void removeStatusListener(BlockStatusListener listener) {
+    this.listeners.remove(listener);
   }
 }

@@ -3,10 +3,11 @@ package rocsim.gui.editor;
 import java.util.ArrayList;
 import java.util.List;
 
+import rocsim.gui.model.StringListDataModel;
 import rocsim.gui.widgets.ListFrame;
+import rocsim.schedule.model.TimeModel;
 import rocsim.schedule.model.TripModel;
-import rocsim.schedule.time.TimeModel;
-import rocsim.schedule.time.TimeModel.TimeModelChangeListener;
+import rocsim.schedule.model.TimeModel.TimeModelChangeListener;
 
 public class TripFrame extends ListFrame<TripPanel> {
   private static final long serialVersionUID = 1L;

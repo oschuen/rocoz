@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import rocsim.gui.Tile;
-import rocsim.gui.Tile.Direction;
-import rocsim.gui.Tile.UseState;
+import rocsim.gui.tiles.Tile;
+import rocsim.gui.tiles.Tile.Direction;
+import rocsim.gui.tiles.Tile.UseState;
 
 public class Block {
   private List<Tile> tilesList = new ArrayList<>();

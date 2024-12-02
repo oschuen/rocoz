@@ -10,6 +10,8 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+import rocsim.gui.model.StringComboBoxModel;
+import rocsim.gui.model.StringListDataModel;
 import rocsim.gui.widgets.DataPanel;
 import rocsim.schedule.model.ScheduleModel;
 

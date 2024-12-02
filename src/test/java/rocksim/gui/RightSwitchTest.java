@@ -6,8 +6,8 @@ import java.util.Optional;
 
 import org.junit.Test;
 
-import rocsim.gui.RightSwitch;
-import rocsim.gui.Tile.Direction;
+import rocsim.gui.tiles.RightSwitch;
+import rocsim.gui.tiles.Tile.Direction;
 
 public class RightSwitchTest {
 

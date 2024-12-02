@@ -1,4 +1,4 @@
-package rocsim.schedule.time;
+package rocsim.schedule.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,6 +103,10 @@ public class TimeModel {
    */
   public void setCurrentTime(int currentTime) {
     this.currentTime = currentTime;
+  }
+
+  public int incrementCurrentTime() {
+    return ++this.currentTime;
   }
 
   /**
