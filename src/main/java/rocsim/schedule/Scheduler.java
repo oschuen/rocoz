@@ -10,11 +10,13 @@ import org.slf4j.LoggerFactory;
 
 import rocsim.gui.tiles.Tile;
 import rocsim.gui.tiles.Tile.UseState;
+import rocsim.schedule.model.TimeModel;
 import rocsim.track.Block;
 import rocsim.track.TrackPlan;
 
 public class Scheduler {
   private TrackPlan plan;
+  private TimeModel timeModel;
   private List<Loco> locos;
   private List<Trip> trips;
   private int minTime = 0;
@@ -163,8 +165,9 @@ public class Scheduler {
     return Integer.compare(a.getSchedule(), b.getSchedule());
   });
 
-  public Scheduler(TrackPlan plan, List<Trip> trips, List<Loco> locos) {
+  public Scheduler(TrackPlan plan, List<Trip> trips, List<Loco> locos, TimeModel timeModel) {
     super();
+    this.timeModel = timeModel;
     this.plan = plan;
     this.locos = locos;
     this.trips = trips;
@@ -227,6 +230,7 @@ public class Scheduler {
         if (jobTime > time) {
           end = true;
         } else {
+          this.timeModel.setCurrentTime(jobTime);
           nextJob = this.jobList.poll();
           nextJob.run(jobTime);
           nextJob = this.jobList.peek();

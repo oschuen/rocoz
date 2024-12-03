@@ -6,6 +6,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import rocsim.gui.model.BlockStatusModel;
 import rocsim.gui.model.StringListDataModel;
 import rocsim.schedule.Scheduler;
 import rocsim.schedule.model.TimeModel;
@@ -19,6 +20,9 @@ public class AnimationContainer {
   private PlanPanel planPannel;
   private LogPanel logPanel;
   private ControlPanel controlPanel;
+  private BlockUsePanel blockUsePanel;
+  private BlockStatusModel blockStatusModel;
+
   private TimeModel timeModel;
   private ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
 
@@ -30,7 +34,7 @@ public class AnimationContainer {
     this.blockIdDataModel.setValueList(planner.getBlockIds());
     TrackPlan plan = new TrackPlan(planner.getTiles());
     this.planPannel = new PlanPanel(plan, planner.getLocos());
-    this.scheduler = new Scheduler(plan, planner.getTrips(), planner.getLocos());
+    this.scheduler = new Scheduler(plan, planner.getTrips(), planner.getLocos(), timeModel);
     this.timeModel.setBase(this.scheduler.getMinTime());
 
     this.logPanel = new LogPanel(this.timeModel);
@@ -47,6 +51,9 @@ public class AnimationContainer {
     this.controlPanel.setMaxTime(this.scheduler.getMaxTime());
     this.controlPanel.applyCurrentTime();
 
+    this.blockStatusModel = new BlockStatusModel(this.blockIdDataModel, timeModel);
+    planner.addStatusListener(this.blockStatusModel);
+    this.blockUsePanel = new BlockUsePanel(this.blockStatusModel, this.blockIdDataModel, timeModel);
     this.service.scheduleAtFixedRate(() -> {
       try {
         boolean repaint = false;
@@ -68,8 +75,13 @@ public class AnimationContainer {
         }
         this.controlPanel.applyCurrentTime();
         this.currentWishTime = this.timeModel.getCurrentTime();
+        if (this.currentWishTime % 4 == 0) {
+          javax.swing.SwingUtilities.invokeLater(() -> {
+            this.blockUsePanel.triggerRebuild();
+          });
+        }
         if (repaint) {
-          java.awt.EventQueue.invokeLater(() -> {
+          javax.swing.SwingUtilities.invokeLater(() -> {
             this.planPannel.repaint();
           });
         }
@@ -99,5 +111,12 @@ public class AnimationContainer {
    */
   public ControlPanel getControlPanel() {
     return this.controlPanel;
+  }
+
+  /**
+   * @return the blockUsePanel
+   */
+  public BlockUsePanel getBlockUsePanel() {
+    return this.blockUsePanel;
   }
 }

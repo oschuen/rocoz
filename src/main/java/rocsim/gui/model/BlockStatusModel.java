@@ -33,9 +33,9 @@ public class BlockStatusModel implements BlockStatusListener {
   @Override
   public void statusChanged(Block block) {
     int currentTime = this.timeModel.getCurrentTime();
-    if (this.lastEventTime < currentTime) {
+    if (this.lastEventTime > currentTime) {
       this.blockEvents.forEach((id, list) -> {
-        list.removeIf((event) -> event.realTime < currentTime);
+        list.removeIf((event) -> event.realTime > currentTime);
       });
     }
     if (block != null) {
@@ -45,6 +45,7 @@ public class BlockStatusModel implements BlockStatusListener {
         event.realTime = this.timeModel.getCurrentTime();
         event.blockId = block.getId();
         event.useState = block.getState();
+        eventList.add(event);
       }
     }
     this.lastEventTime = currentTime;
