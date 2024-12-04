@@ -32,9 +32,10 @@ public class MainFrame extends JFrame {
     this.editorContainer = new EditorContainer(planner, this.timeModel);
     this.animationContainer = new AnimationContainer(planner, this.timeModel);
 
-    this.tabbedPane.addTab("Track", this.animationContainer.getPlanPannel());
+    this.tabbedPane.addTab("Animation", this.animationContainer.getPlanPannel());
     this.tabbedPane.addTab("Blocks", this.animationContainer.getBlockUsePanel());
     this.tabbedPane.addTab("Logs", this.animationContainer.getLogPanel());
+    this.tabbedPane.addTab("Track", this.editorContainer.getEditorPanel());
     this.tabbedPane.addTab("Locos", this.editorContainer.getLocoFrame());
     this.tabbedPane.addTab("Trips", this.editorContainer.getTripFrame());
 

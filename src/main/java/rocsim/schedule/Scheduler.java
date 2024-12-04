@@ -10,7 +10,9 @@ import org.slf4j.LoggerFactory;
 
 import rocsim.gui.tiles.Tile;
 import rocsim.gui.tiles.Tile.UseState;
+import rocsim.schedule.model.ScheduleModel;
 import rocsim.schedule.model.TimeModel;
+import rocsim.schedule.model.TripModel;
 import rocsim.track.Block;
 import rocsim.track.TrackPlan;
 
@@ -18,7 +20,7 @@ public class Scheduler {
   private TrackPlan plan;
   private TimeModel timeModel;
   private List<Loco> locos;
-  private List<Trip> trips;
+  private List<TripModel> trips;
   private int minTime = 0;
   private int maxTime = 0;
   private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -36,7 +38,7 @@ public class Scheduler {
     Tile currentLocation;
     int scheduleTime;
 
-    public RunScheduleJob(Block block, Loco loco, Tile currentLocation, int scheduleTime) {
+    public RunScheduleJob(Block block, Loco loco, Tile currentLocation, int scheduleTime, int dontMoveTime) {
       super();
       this.block = block;
       this.loco = loco;
@@ -77,18 +79,20 @@ public class Scheduler {
 
   private class StartScheduleJob implements Job {
 
-    Loco loco;
-    Schedule schedule;
+    private Loco loco;
+    private ScheduleModel schedule;
+    private int startTime;
 
-    public StartScheduleJob(Schedule schedule, Loco loco) {
+    public StartScheduleJob(ScheduleModel schedule, Loco loco, int startTime) {
       super();
       this.schedule = schedule;
       this.loco = loco;
+      this.startTime = startTime;
     }
 
     @Override
     public int getSchedule() {
-      return this.schedule.getStartTime();
+      return this.startTime;
     }
 
     @Override
@@ -127,7 +131,8 @@ public class Scheduler {
         int drivingTime = startTile.getDrivingTime(this.loco.getvMax());
         Scheduler.this.logger.info("[{}] Start Trip. Loco: {} from: {} to {}", time, this.loco.getId(),
             startTile.getId(), endTile.getId());
-        Scheduler.this.jobList.add(new RunScheduleJob(block, this.loco, startTile, time + drivingTime));
+        Scheduler.this.jobList.add(new RunScheduleJob(block, this.loco, startTile, time + drivingTime,
+            time + this.schedule.getDuration() + this.schedule.getPause()));
       }
     }
 
@@ -135,9 +140,9 @@ public class Scheduler {
 
   private class StartTripJob implements Job {
 
-    private Trip trip;
+    private TripModel trip;
 
-    public StartTripJob(Trip trip) {
+    public StartTripJob(TripModel trip) {
       super();
       this.trip = trip;
     }
@@ -149,14 +154,16 @@ public class Scheduler {
 
     @Override
     public void run(int time) {
-      Optional<Loco> loco = getLoco(this.trip.getTrainId());
+      Optional<Loco> loco = getLoco(this.trip.getLocoId());
       loco.ifPresentOrElse((theLoco) -> {
-        for (Schedule schedule : this.trip.getSchedules()) {
-          Scheduler.this.jobList.add(new StartScheduleJob(schedule, theLoco));
+        int tempTime = time;
+        for (ScheduleModel schedule : this.trip.getSchedules()) {
+          Scheduler.this.jobList.add(new StartScheduleJob(schedule, theLoco, tempTime));
+          tempTime += schedule.getDuration() + schedule.getPause();
         }
       }, () -> {
         Scheduler.this.logger.error("Can't perform Trip {}. Lok Id {} not available", this.trip.getId(),
-            this.trip.getTrainId());
+            this.trip.getLocoId());
       });
     }
   }
@@ -165,7 +172,7 @@ public class Scheduler {
     return Integer.compare(a.getSchedule(), b.getSchedule());
   });
 
-  public Scheduler(TrackPlan plan, List<Trip> trips, List<Loco> locos, TimeModel timeModel) {
+  public Scheduler(TrackPlan plan, List<TripModel> trips, List<Loco> locos, TimeModel timeModel) {
     super();
     this.timeModel = timeModel;
     this.plan = plan;
@@ -204,7 +211,7 @@ public class Scheduler {
     for (Loco loco : this.locos) {
       loco.setInBw(true);
     }
-    for (Trip trip : this.trips) {
+    for (TripModel trip : this.trips) {
       this.jobList.add(new StartTripJob(trip));
       if (first) {
         this.minTime = trip.getStartTime();

@@ -6,7 +6,8 @@ import java.util.List;
 public class TimeModel {
   private int radix = 1;
   private int currentTime = 0;
-  private int base = 0;
+  private int minTime = 0;
+  private int maxTime = 0;
   private int increment = 1;
 
   private List<TimeModelChangeListener> listeners = new ArrayList<>();
@@ -42,11 +43,11 @@ public class TimeModel {
   }
 
   public int toRealTime(int fremoTime) {
-    return this.base + (fremoTime - this.base) / this.radix;
+    return this.minTime + (fremoTime - this.minTime) / this.radix;
   }
 
   public int getFremoTime() {
-    return this.base + (this.currentTime - this.base) * this.radix;
+    return this.minTime + (this.currentTime - this.minTime) * this.radix;
   }
 
   public String getTimeSecString(int time) {
@@ -58,7 +59,7 @@ public class TimeModel {
   }
 
   public String getFremoTimeSecString(int realTime) {
-    int time = this.base + (realTime - this.base) * this.radix;
+    int time = this.minTime + (realTime - this.minTime) * this.radix;
     return getTimeSecString(time);
   }
 
@@ -70,7 +71,7 @@ public class TimeModel {
   }
 
   public String getFremoTimeMinString(int realTime) {
-    int time = this.base + (realTime - this.base) * this.radix;
+    int time = this.minTime + (realTime - this.minTime) * this.radix;
     return getTimeMinString(time);
   }
 
@@ -112,18 +113,32 @@ public class TimeModel {
   /**
    * @return the base
    */
-  public int getBase() {
-    return this.base;
+  public int getMinTime() {
+    return this.minTime;
   }
 
   /**
    * @param base the base to set
    */
-  public void setBase(int base) {
-    if (this.base != base) {
-      this.base = base;
+  public void setMinTime(int base) {
+    if (this.minTime != base) {
+      this.minTime = base;
       notifyListeners();
     }
+  }
+
+  /**
+   * @return the maxTime
+   */
+  public int getMaxTime() {
+    return this.maxTime;
+  }
+
+  /**
+   * @param maxTime the maxTime to set
+   */
+  public void setMaxTime(int maxTime) {
+    this.maxTime = maxTime;
   }
 
   /**

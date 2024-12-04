@@ -1,10 +1,8 @@
 package rocsim.gui.animation;
 
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -34,11 +32,6 @@ public class PlanPanel extends JPanel {
     this.plan = plan;
     this.locos = locos;
 
-    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    int prefWidth = Math.max(6 * screenSize.width / 8, (this.plan.getDimension().width + 1) * this.raster);
-    int prefHeight = Math.max(6 * screenSize.height / 8, (this.plan.getDimension().height + 1) * this.raster);
-
-    setPreferredSize(new Dimension(prefWidth, prefHeight));
     this.addMouseMotionListener(this.listener);
     this.addMouseListener(this.listener);
     this.addMouseWheelListener(this.listener);

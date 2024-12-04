@@ -3,17 +3,19 @@ package rocsim.gui.editor;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.text.NumberFormat;
+import java.text.ParseException;
 
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.text.MaskFormatter;
 
 import rocsim.gui.model.StringComboBoxModel;
 import rocsim.gui.model.StringListDataModel;
 import rocsim.gui.widgets.DataPanel;
 import rocsim.schedule.model.ScheduleModel;
+import rocsim.schedule.model.TimeModel;
 
 public class SchedulePanel extends DataPanel {
   private static final long serialVersionUID = 1L;
@@ -22,10 +24,19 @@ public class SchedulePanel extends DataPanel {
   private JFormattedTextField pauseTextField;
   private JComboBox<String> startBlockComboBox;
   private JComboBox<String> endBlockComboBox;
+  private TimeModel timeModel;
 
-  public SchedulePanel(StringListDataModel blockIdDataModel) {
+  public SchedulePanel(TimeModel timeModel, StringListDataModel blockIdDataModel) {
+    this.timeModel = timeModel;
     GridBagLayout gridBagLayout = new GridBagLayout();
     setLayout(gridBagLayout);
+
+    MaskFormatter mask = null;
+    try {
+      mask = new MaskFormatter("##:##:##");
+      mask.setPlaceholderCharacter('#');
+    } catch (ParseException e) {
+    }
 
     JLabel lblStart = new JLabel("Start");
     GridBagConstraints gbc_lblStart = new GridBagConstraints();
@@ -59,7 +70,7 @@ public class SchedulePanel extends DataPanel {
     gbc_endBlockComboBox.gridy = 0;
     add(this.endBlockComboBox, gbc_endBlockComboBox);
 
-    JLabel lblNewLabel_1 = new JLabel("Time (min)");
+    JLabel lblNewLabel_1 = new JLabel("Time (hh:mm:ss)");
     GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
     gbc_lblNewLabel_1.anchor = GridBagConstraints.EAST;
     gbc_lblNewLabel_1.insets = new Insets(0, 0, 5, 5);
@@ -67,15 +78,15 @@ public class SchedulePanel extends DataPanel {
     gbc_lblNewLabel_1.gridy = 0;
     add(lblNewLabel_1, gbc_lblNewLabel_1);
 
-    this.timeTextField = new JFormattedTextField(NumberFormat.getIntegerInstance());
+    this.timeTextField = new JFormattedTextField(mask);
     GridBagConstraints gbc_timeTextField = new GridBagConstraints();
     gbc_timeTextField.insets = new Insets(0, 0, 5, 5);
     gbc_timeTextField.gridx = 5;
     gbc_timeTextField.gridy = 0;
     add(this.timeTextField, gbc_timeTextField);
-    this.timeTextField.setColumns(10);
+    this.timeTextField.setColumns(8);
 
-    JLabel lblNewLabel_3 = new JLabel("Pause (min)");
+    JLabel lblNewLabel_3 = new JLabel("Pause (hh:mm:ss)");
     GridBagConstraints gbc_lblNewLabel_3 = new GridBagConstraints();
     gbc_lblNewLabel_3.anchor = GridBagConstraints.EAST;
     gbc_lblNewLabel_3.insets = new Insets(0, 0, 5, 5);
@@ -83,14 +94,14 @@ public class SchedulePanel extends DataPanel {
     gbc_lblNewLabel_3.gridy = 0;
     add(lblNewLabel_3, gbc_lblNewLabel_3);
 
-    this.pauseTextField = new JFormattedTextField(NumberFormat.getIntegerInstance());
+    this.pauseTextField = new JFormattedTextField(mask);
     GridBagConstraints gbc_pauseTextField = new GridBagConstraints();
     gbc_pauseTextField.insets = new Insets(0, 0, 0, 5);
     gbc_pauseTextField.fill = GridBagConstraints.HORIZONTAL;
     gbc_pauseTextField.gridx = 7;
     gbc_pauseTextField.gridy = 0;
     add(this.pauseTextField, gbc_pauseTextField);
-    this.pauseTextField.setColumns(10);
+    this.pauseTextField.setColumns(8);
 
     JLabel lblNewLabel_2 = new JLabel("Comment");
     GridBagConstraints gbc_lblNewLabel_2 = new GridBagConstraints();
@@ -114,8 +125,8 @@ public class SchedulePanel extends DataPanel {
   public void setModel(ScheduleModel scheduleModel) {
     this.startBlockComboBox.setSelectedItem(scheduleModel.getStartBlock());
     this.endBlockComboBox.setSelectedItem(scheduleModel.getEndBlock());
-    this.pauseTextField.setValue(scheduleModel.getPause());
-    this.timeTextField.setValue(scheduleModel.getDuration());
+    this.pauseTextField.setValue(this.timeModel.getTimeSecString(scheduleModel.getPause()));
+    this.timeTextField.setValue(this.timeModel.getTimeSecString(scheduleModel.getDuration()));
     this.commentTextField.setText(scheduleModel.getComment());
   }
 }

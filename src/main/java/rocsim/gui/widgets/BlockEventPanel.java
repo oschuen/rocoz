@@ -76,7 +76,6 @@ public class BlockEventPanel extends JPanel {
   public void triggerRebuild() {
     javax.swing.SwingUtilities.invokeLater(() -> {
       BlockEventPanel.this.innerpanel.repaint();
-      BlockEventPanel.this.innerpanel.revalidate();
     });
   }
 
@@ -85,16 +84,9 @@ public class BlockEventPanel extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
-      int maxTime = 0;
-      PriorityQueue<BlockEvent> queue = BlockEventPanel.this.blockStatusModel
-          .getEventsForId(BlockEventPanel.this.blockId);
-      for (BlockEvent blockEvent : queue) {
-        maxTime = Math.max(maxTime, blockEvent.realTime);
-      }
-
-      maxTime = (Math.max(maxTime, BlockEventPanel.this.timeModel.getCurrentTime())
-          - BlockEventPanel.this.timeModel.getBase()) / BlockEventPanel.this.resolution;
-      return new Dimension(50, maxTime);
+      return new Dimension(50,
+          (BlockEventPanel.this.timeModel.getMaxTime() - BlockEventPanel.this.timeModel.getMinTime())
+              / BlockEventPanel.this.resolution);
     }
 
     @Override
@@ -105,7 +97,7 @@ public class BlockEventPanel extends JPanel {
       PriorityQueue<BlockEvent> queue = BlockEventPanel.this.blockStatusModel
           .getEventsForId(BlockEventPanel.this.blockId);
       for (BlockEvent blockEvent : queue) {
-        int y = (blockEvent.realTime - BlockEventPanel.this.timeModel.getBase()) / BlockEventPanel.this.resolution;
+        int y = (blockEvent.realTime - BlockEventPanel.this.timeModel.getMinTime()) / BlockEventPanel.this.resolution;
         switch (lastState) {
         case BLOCK:
           gr.setColor(Color.YELLOW);
@@ -122,7 +114,7 @@ public class BlockEventPanel extends JPanel {
         lastY = y;
         lastState = blockEvent.useState;
       }
-      int y = (BlockEventPanel.this.timeModel.getCurrentTime() - BlockEventPanel.this.timeModel.getBase())
+      int y = (BlockEventPanel.this.timeModel.getCurrentTime() - BlockEventPanel.this.timeModel.getMinTime())
           / BlockEventPanel.this.resolution;
       if (y > lastY) {
         switch (lastState) {

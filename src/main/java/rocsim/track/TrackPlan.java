@@ -1,6 +1,5 @@
 package rocsim.track;
 
-import java.awt.Dimension;
 import java.awt.Point;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -14,8 +13,6 @@ import rocsim.gui.tiles.Tile.UseState;
 public class TrackPlan {
   private List<Tile> tilesList;
   private Map<Point, Tile> tiles = new HashMap<>();
-  private int maxX = 0;
-  private int maxY = 0;
 
   public TrackPlan(List<Tile> tilesList) {
     super();
@@ -23,13 +20,7 @@ public class TrackPlan {
     for (Tile tile : tilesList) {
       Point p = new Point(tile.getX(), tile.getY());
       this.tiles.put(p, tile);
-      this.maxX = Math.max(this.maxX, tile.getX());
-      this.maxY = Math.max(this.maxY, tile.getY());
     }
-  }
-
-  public Dimension getDimension() {
-    return new Dimension(this.maxX, this.maxY);
   }
 
   public Tile getTile(Point p) {

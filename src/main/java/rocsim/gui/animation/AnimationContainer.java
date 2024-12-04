@@ -34,8 +34,9 @@ public class AnimationContainer {
     this.blockIdDataModel.setValueList(planner.getBlockIds());
     TrackPlan plan = new TrackPlan(planner.getTiles());
     this.planPannel = new PlanPanel(plan, planner.getLocos());
-    this.scheduler = new Scheduler(plan, planner.getTrips(), planner.getLocos(), timeModel);
-    this.timeModel.setBase(this.scheduler.getMinTime());
+    this.scheduler = new Scheduler(plan, planner.getTripModels(), planner.getLocos(), timeModel);
+    this.timeModel.setMinTime(this.scheduler.getMinTime());
+    this.timeModel.setMaxTime(this.scheduler.getMaxTime());
 
     this.logPanel = new LogPanel(this.timeModel);
     this.controlPanel = new ControlPanel(this.timeModel);
@@ -75,7 +76,7 @@ public class AnimationContainer {
         }
         this.controlPanel.applyCurrentTime();
         this.currentWishTime = this.timeModel.getCurrentTime();
-        if (this.currentWishTime % 4 == 0) {
+        if (this.currentWishTime % 4 == 0 || repaint) {
           javax.swing.SwingUtilities.invokeLater(() -> {
             this.blockUsePanel.triggerRebuild();
           });

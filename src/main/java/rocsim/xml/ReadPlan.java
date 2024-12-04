@@ -17,16 +17,14 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import rocsim.gui.tiles.Block;
+import rocsim.gui.tiles.Block.BlockStatusListener;
 import rocsim.gui.tiles.Curve;
 import rocsim.gui.tiles.LeftSwitch;
 import rocsim.gui.tiles.RightSwitch;
 import rocsim.gui.tiles.Tile;
-import rocsim.gui.tiles.Track;
-import rocsim.gui.tiles.Block.BlockStatusListener;
 import rocsim.gui.tiles.Tile.Direction;
+import rocsim.gui.tiles.Track;
 import rocsim.schedule.Loco;
-import rocsim.schedule.Schedule;
-import rocsim.schedule.Trip;
 import rocsim.schedule.model.LocoModel;
 import rocsim.schedule.model.ScheduleModel;
 import rocsim.schedule.model.TripModel;
@@ -34,7 +32,6 @@ import rocsim.schedule.model.TripModel;
 public class ReadPlan {
 
   private List<Tile> tiles = new ArrayList<>();
-  private List<Trip> trips = new ArrayList<>();
   private List<Loco> locos = new ArrayList<>();
   private List<LocoModel> locoModels = new ArrayList<>();
   private List<TripModel> tripModels = new ArrayList<>();
@@ -113,8 +110,11 @@ public class ReadPlan {
             trainId = attr.getNodeValue();
           }
         }
-        Trip trip = new Trip(trainId, id);
 
+        TripModel tripModel = new TripModel();
+        tripModel.setId(id);
+        tripModel.setLocoId(trainId);
+        boolean firstStart = true;
         NodeList segmentChilds = child.getChildNodes();
         ScEntry entryK1 = null;
         for (int j = 0; j < segmentChilds.getLength(); j++) {
@@ -122,25 +122,18 @@ public class ReadPlan {
           if ((segmentChild.getNodeType() == Node.ELEMENT_NODE) && segmentChild.getNodeName().equals("scentry")) {
             ScEntry entry = readScEntry(segmentChild);
             if (entryK1 != null) {
-              Schedule schedule = new Schedule(entryK1.block, entry.block, entryK1.departTime, entry.arrivalTime,
-                  entry.minWaitTime);
-              trip.addSchedule(schedule);
+              if (firstStart) {
+                tripModel.setStartTime(entryK1.departTime);
+              }
+              ScheduleModel schedModel = new ScheduleModel();
+              schedModel.setStartBlock(entryK1.block);
+              schedModel.setEndBlock(entry.block);
+              schedModel.setDuration(entry.arrivalTime - entryK1.departTime);
+              schedModel.setPause(entry.minWaitTime);
+              tripModel.addSchedule(schedModel);
             }
             entryK1 = entry;
           }
-        }
-        this.trips.add(trip);
-        TripModel tripModel = new TripModel();
-        tripModel.setId(trip.getId());
-        tripModel.setStartTime(trip.getStartTime());
-        tripModel.setLocoId(trip.getTrainId());
-        for (Schedule schedule : trip.getSchedules()) {
-          ScheduleModel schedModel = new ScheduleModel();
-          schedModel.setStartBlock(schedule.getStartBlock());
-          schedModel.setEndBlock(schedule.getEndBlock());
-          schedModel.setDuration((schedule.getEndTime() - schedule.getStartTime()) / 60);
-          schedModel.setPause(schedule.getMinWaitTime());
-          tripModel.addSchedule(schedModel);
         }
         this.tripModels.add(tripModel);
       }
@@ -425,13 +418,6 @@ public class ReadPlan {
    */
   public List<Tile> getTiles() {
     return this.tiles;
-  }
-
-  /**
-   * @return the trips
-   */
-  public List<Trip> getTrips() {
-    return this.trips;
   }
 
   /**

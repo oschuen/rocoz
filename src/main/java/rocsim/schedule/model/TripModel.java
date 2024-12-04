@@ -103,6 +103,14 @@ public class TripModel {
     return this.startTime;
   }
 
+  public int getEndTime() {
+    int time = this.startTime;
+    for (ScheduleModel scheduleModel : this.schedules) {
+      time += scheduleModel.getDuration() + scheduleModel.getPause();
+    }
+    return time;
+  }
+
   /**
    * @param startTime the startTime to set
    */

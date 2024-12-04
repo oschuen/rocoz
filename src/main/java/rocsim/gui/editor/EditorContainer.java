@@ -14,6 +14,7 @@ public class EditorContainer {
 
   private LocoFrame locoFrame;
   private TripFrame tripFrame;
+  private TrackEditorPanel editorPanel;
   private StringListDataModel blockIdDataModel = new StringListDataModel();
   private StringListDataModel locoIdDataModel = new StringListDataModel();
 
@@ -45,6 +46,9 @@ public class EditorContainer {
 
     this.tripFrame = new TripFrame(timeModel, this.locoIdDataModel, this.blockIdDataModel);
     this.tripFrame.setTripModels(planner.getTripModels());
+
+    this.editorPanel = new TrackEditorPanel();
+
   }
 
   /**
@@ -59,5 +63,12 @@ public class EditorContainer {
    */
   public JScrollPane getTripFrame() {
     return new JScrollPane(this.tripFrame);
+  }
+
+  /**
+   * @return the editorPanel
+   */
+  public TrackEditorPanel getEditorPanel() {
+    return this.editorPanel;
   }
 }

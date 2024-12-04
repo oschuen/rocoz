@@ -148,7 +148,7 @@ public class TripPanel extends DataPanel {
     add(this.commentTextField, gbc_commentTextField);
     this.commentTextField.setColumns(20);
 
-    this.scheduleFrame = new ScheduleFrame(blockIdDataModel);
+    this.scheduleFrame = new ScheduleFrame(timeModel, blockIdDataModel);
     GridBagConstraints gbc_panel = new GridBagConstraints();
     gbc_panel.weightx = 10.0;
     gbc_panel.gridwidth = 9;
