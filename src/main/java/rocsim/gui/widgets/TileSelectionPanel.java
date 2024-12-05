@@ -5,11 +5,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 
+import rocsim.gui.model.TileEditModel;
 import rocsim.gui.tiles.Block;
 import rocsim.gui.tiles.Curve;
 import rocsim.gui.tiles.LeftSwitch;
@@ -19,10 +21,14 @@ import rocsim.gui.tiles.Tile.Direction;
 import rocsim.gui.tiles.Track;
 import rocsim.gui.widgets.TileButton.TileFactory;
 
-public class TileSelectionPanel extends JScrollPane {
+public class TileSelectionPanel extends JScrollPane implements TileEditModel {
   private static final long serialVersionUID = 1L;
   private List<TileButton> buttons = new ArrayList<>();
   private JPanel panel;
+  private TileDeleteButton tileDeleteButton;
+  private UndoButton undoButton;
+  private List<UndoListener> undoListeners = new ArrayList<>();
+
   private TileButton westTrackButton = new TileButton(new TileFactory() {
 
     @Override
@@ -132,6 +138,30 @@ public class TileSelectionPanel extends JScrollPane {
     flowLayout.setAlignment(FlowLayout.LEFT);
     this.panel.setLayout(flowLayout);
     setViewportView(this.panel);
+    this.tileDeleteButton = new TileDeleteButton();
+    this.tileDeleteButton.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        TileSelectionPanel.this.tileDeleteButton.setChecked(!TileSelectionPanel.this.tileDeleteButton.isChecked());
+        if (TileSelectionPanel.this.tileDeleteButton.isChecked()) {
+          for (TileButton tileButton : TileSelectionPanel.this.buttons) {
+            tileButton.setSelected(false);
+          }
+        }
+      }
+    });
+
+    this.panel.add(this.tileDeleteButton);
+    this.undoButton = new UndoButton();
+    this.undoButton.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        fireUndoEvent();
+      }
+    });
+    this.panel.add(this.undoButton);
     addButton(this.westStellBlockButton, "Stellblock");
     addButton(this.northStellBlockButton, "Stellblock");
     addButton(this.westBlockButton, "Block");
@@ -168,8 +198,50 @@ public class TileSelectionPanel extends JScrollPane {
 
       @Override
       public void actionPerformed(ActionEvent arg0) {
+        TileSelectionPanel.this.tileDeleteButton.setChecked(false);
         selectButton(button);
       }
     });
+  }
+
+  @Override
+  public boolean isAddTileMode() {
+    for (TileButton tileButton : this.buttons) {
+      if (tileButton.isSelected()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public boolean isDeleteTileMode() {
+    return this.tileDeleteButton.isChecked();
+  }
+
+  @Override
+  public Optional<Tile> produceSelectedTile() {
+    for (TileButton tileButton : this.buttons) {
+      if (tileButton.isSelected()) {
+        return Optional.of(tileButton.createTile());
+      }
+    }
+    return Optional.empty();
+  }
+
+  private void fireUndoEvent() {
+    for (UndoListener undoListener : this.undoListeners) {
+      undoListener.undo();
+    }
+  }
+
+  @Override
+  public void addUndoListener(UndoListener listener) {
+    this.undoListeners.add(listener);
+  }
+
+  @Override
+  public void removeUndoListener(UndoListener listener) {
+    this.undoListeners.remove(listener);
   }
 }

@@ -14,7 +14,7 @@ public class EditorContainer {
 
   private LocoFrame locoFrame;
   private TripFrame tripFrame;
-  private TrackEditorPanel editorPanel;
+  private TrackEditorFrame editorPanel;
   private StringListDataModel blockIdDataModel = new StringListDataModel();
   private StringListDataModel locoIdDataModel = new StringListDataModel();
 
@@ -47,7 +47,7 @@ public class EditorContainer {
     this.tripFrame = new TripFrame(timeModel, this.locoIdDataModel, this.blockIdDataModel);
     this.tripFrame.setTripModels(planner.getTripModels());
 
-    this.editorPanel = new TrackEditorPanel();
+    this.editorPanel = new TrackEditorFrame();
 
   }
 
@@ -68,7 +68,7 @@ public class EditorContainer {
   /**
    * @return the editorPanel
    */
-  public TrackEditorPanel getEditorPanel() {
+  public TrackEditorFrame getEditorPanel() {
     return this.editorPanel;
   }
 }

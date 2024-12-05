@@ -42,6 +42,10 @@ public class TileButton extends JButton {
     return this.selected;
   }
 
+  public Tile createTile() {
+    return this.factory.createTile();
+  }
+
   /**
    * @param selected the selected to set
    */
