@@ -5,17 +5,21 @@ import java.util.Optional;
 import rocsim.gui.tiles.Tile;
 
 public interface TileEditModel {
-  interface UndoListener {
+  interface TileModelListener {
     void undo();
+
+    void unselect();
   }
 
   boolean isAddTileMode();
 
   boolean isDeleteTileMode();
 
+  boolean isSelectionMoveMode();
+
   Optional<Tile> produceSelectedTile();
 
-  public void addUndoListener(UndoListener listener);
+  public void addModelListener(TileModelListener listener);
 
-  public void removeUndoListener(UndoListener listener);
+  public void removeModelListener(TileModelListener listener);
 }

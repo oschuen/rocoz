@@ -27,7 +27,8 @@ public class TileSelectionPanel extends JScrollPane implements TileEditModel {
   private JPanel panel;
   private TileDeleteButton tileDeleteButton;
   private UndoButton undoButton;
-  private List<UndoListener> undoListeners = new ArrayList<>();
+  private TileSelectionMoveButton tileSelectionMoveButton;
+  private List<TileModelListener> undoListeners = new ArrayList<>();
 
   private TileButton westTrackButton = new TileButton(new TileFactory() {
 
@@ -133,6 +134,7 @@ public class TileSelectionPanel extends JScrollPane implements TileEditModel {
 
   public TileSelectionPanel() {
     setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+    setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
     this.panel = new JPanel();
     FlowLayout flowLayout = new FlowLayout();
     flowLayout.setAlignment(FlowLayout.LEFT);
@@ -144,6 +146,7 @@ public class TileSelectionPanel extends JScrollPane implements TileEditModel {
       @Override
       public void actionPerformed(ActionEvent arg0) {
         TileSelectionPanel.this.tileDeleteButton.setChecked(!TileSelectionPanel.this.tileDeleteButton.isChecked());
+        TileSelectionPanel.this.tileSelectionMoveButton.setChecked(false);
         if (TileSelectionPanel.this.tileDeleteButton.isChecked()) {
           for (TileButton tileButton : TileSelectionPanel.this.buttons) {
             tileButton.setSelected(false);
@@ -162,6 +165,25 @@ public class TileSelectionPanel extends JScrollPane implements TileEditModel {
       }
     });
     this.panel.add(this.undoButton);
+    this.tileSelectionMoveButton = new TileSelectionMoveButton();
+    this.tileSelectionMoveButton.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        TileSelectionPanel.this.tileSelectionMoveButton
+            .setChecked(!TileSelectionPanel.this.tileSelectionMoveButton.isChecked());
+        TileSelectionPanel.this.tileDeleteButton.setChecked(false);
+        if (TileSelectionPanel.this.tileSelectionMoveButton.isChecked()) {
+          for (TileButton tileButton : TileSelectionPanel.this.buttons) {
+            tileButton.setSelected(false);
+          }
+        } else {
+          fireUnselectionEvent();
+        }
+      }
+    });
+
+    this.panel.add(this.tileSelectionMoveButton);
     addButton(this.westStellBlockButton, "Stellblock");
     addButton(this.northStellBlockButton, "Stellblock");
     addButton(this.westBlockButton, "Block");
@@ -199,6 +221,7 @@ public class TileSelectionPanel extends JScrollPane implements TileEditModel {
       @Override
       public void actionPerformed(ActionEvent arg0) {
         TileSelectionPanel.this.tileDeleteButton.setChecked(false);
+        TileSelectionPanel.this.tileSelectionMoveButton.setChecked(false);
         selectButton(button);
       }
     });
@@ -220,6 +243,11 @@ public class TileSelectionPanel extends JScrollPane implements TileEditModel {
   }
 
   @Override
+  public boolean isSelectionMoveMode() {
+    return this.tileSelectionMoveButton.isChecked();
+  }
+
+  @Override
   public Optional<Tile> produceSelectedTile() {
     for (TileButton tileButton : this.buttons) {
       if (tileButton.isSelected()) {
@@ -230,18 +258,24 @@ public class TileSelectionPanel extends JScrollPane implements TileEditModel {
   }
 
   private void fireUndoEvent() {
-    for (UndoListener undoListener : this.undoListeners) {
+    for (TileModelListener undoListener : this.undoListeners) {
       undoListener.undo();
     }
   }
 
+  private void fireUnselectionEvent() {
+    for (TileModelListener undoListener : this.undoListeners) {
+      undoListener.unselect();
+    }
+  }
+
   @Override
-  public void addUndoListener(UndoListener listener) {
+  public void addModelListener(TileModelListener listener) {
     this.undoListeners.add(listener);
   }
 
   @Override
-  public void removeUndoListener(UndoListener listener) {
+  public void removeModelListener(TileModelListener listener) {
     this.undoListeners.remove(listener);
   }
 }

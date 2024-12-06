@@ -1,8 +1,10 @@
 package rocsim.gui.editor;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -16,8 +18,9 @@ import java.util.Optional;
 
 import javax.swing.JPanel;
 
+import rocsim.gui.model.SelectionModel;
 import rocsim.gui.model.TileEditModel;
-import rocsim.gui.model.TileEditModel.UndoListener;
+import rocsim.gui.model.TileEditModel.TileModelListener;
 import rocsim.gui.tiles.Tile;
 
 public class TrackEditorPanel extends JPanel {
@@ -29,6 +32,7 @@ public class TrackEditorPanel extends JPanel {
   private Map<Point, Tile> tiles = new HashMap<>();
   private TileEditModel tileEditModel;
   private Deque<UndoAction> undos = new LinkedList<>();
+  private SelectionModel selectionModel = new SelectionModel();
 
   public TrackEditorPanel(TileEditModel model) {
     super();
@@ -36,13 +40,20 @@ public class TrackEditorPanel extends JPanel {
     this.addMouseMotionListener(this.listener);
     this.addMouseListener(this.listener);
     this.addMouseWheelListener(this.listener);
-    model.addUndoListener(new UndoListener() {
+    model.addModelListener(new TileModelListener() {
       @Override
       public void undo() {
         UndoAction action = TrackEditorPanel.this.undos.pollFirst();
         if (action != null) {
           action.undo();
         }
+      }
+
+      @Override
+      public void unselect() {
+        TrackEditorPanel.this.selectionModel.setSelected(false);
+        TrackEditorPanel.this.selectionModel.setDragging(false);
+        triggerRepaint();
       }
     });
   }
@@ -56,6 +67,14 @@ public class TrackEditorPanel extends JPanel {
     super.paint(arg0);
     Graphics2D gr = (Graphics2D) arg0;
     gr.translate(-this.raster * this.origin.x, -this.raster * this.origin.y);
+    if (this.selectionModel.isSelected() || this.selectionModel.isDragging()) {
+      gr.setColor(Color.GREEN);
+      Rectangle source = this.selectionModel.getSource();
+      Point dest = this.selectionModel.getDest();
+      gr.drawRect(source.x * this.raster, source.y * this.raster, source.width * this.raster,
+          source.height * this.raster);
+      gr.fillRect(dest.x * this.raster, dest.y * this.raster, source.width * this.raster, source.height * this.raster);
+    }
     int xw = getWidth() / this.raster + 1;
     int yw = getHeight() / this.raster + 1;
     for (int x = 0; x < xw; x++) {
@@ -89,12 +108,29 @@ public class TrackEditorPanel extends JPanel {
       });
     } else {
       this.undos.offerFirst(new UndoAction() {
+
         @Override
         public void undo() {
           TrackEditorPanel.this.tiles.put(removeTile.getLocation(), removeTile);
           triggerRepaint();
         }
+
       });
+    }
+    triggerRepaint();
+  }
+
+  private void removeTile(int x, int y) {
+    Tile removed = this.tiles.remove(new Point(x, y));
+    if (removed != null) {
+      this.undos.offerFirst(new UndoAction() {
+        @Override
+        public void undo() {
+          TrackEditorPanel.this.tiles.put(removed.getLocation(), removed);
+          triggerRepaint();
+        }
+      });
+      triggerRepaint();
     }
   }
 
@@ -103,17 +139,51 @@ public class TrackEditorPanel extends JPanel {
     private int x;
     private int y;
     private boolean move;
+    private boolean select;
+    private boolean selectionMove;
+
+    private void drag(Point mp) {
+      int stepX = (this.x - mp.x) / TrackEditorPanel.this.raster;
+      int stepY = (this.y - mp.y) / TrackEditorPanel.this.raster;
+      if (this.selectionMove) {
+        Point currentDest = TrackEditorPanel.this.selectionModel.getDest();
+        currentDest.x -= stepX;
+        currentDest.y -= stepY;
+        TrackEditorPanel.this.selectionModel.setDest(currentDest);
+        triggerRepaint();
+      } else if (this.move) {
+        TrackEditorPanel.this.origin.x += stepX;
+        TrackEditorPanel.this.origin.y += stepY;
+        triggerRepaint();
+      }
+      this.x -= stepX * TrackEditorPanel.this.raster;
+      this.y -= stepY * TrackEditorPanel.this.raster;
+    }
 
     @Override
     public void mouseDragged(MouseEvent e) {
-      if (this.move) {
-        int stepX = (this.x - e.getX()) / TrackEditorPanel.this.raster;
-        int stepY = (this.y - e.getY()) / TrackEditorPanel.this.raster;
-        TrackEditorPanel.this.origin.x += stepX;
-        TrackEditorPanel.this.origin.y += stepY;
-        this.x -= stepX * TrackEditorPanel.this.raster;
-        this.y -= stepY * TrackEditorPanel.this.raster;
-        triggerRepaint();
+      if (this.select) {
+        if (TrackEditorPanel.this.selectionModel.isDragging()) {
+          Rectangle source = TrackEditorPanel.this.selectionModel.getSource();
+          int xx = 1 + TrackEditorPanel.this.origin.x + e.getX() / TrackEditorPanel.this.raster;
+          int yy = 1 + TrackEditorPanel.this.origin.y + e.getY() / TrackEditorPanel.this.raster;
+          source.width = xx - source.x;
+          source.height = yy - source.y;
+          if (source.width >= 1 && source.height >= 1) {
+            TrackEditorPanel.this.selectionModel.setSource(source);
+          }
+          triggerRepaint();
+        } else {
+          int xx = TrackEditorPanel.this.origin.x + this.x / TrackEditorPanel.this.raster;
+          int yy = TrackEditorPanel.this.origin.y + this.y / TrackEditorPanel.this.raster;
+          Rectangle source = new Rectangle(xx, yy, 1, 1);
+          TrackEditorPanel.this.selectionModel.setSource(source);
+          TrackEditorPanel.this.selectionModel.setDest(new Point(xx, yy));
+          TrackEditorPanel.this.selectionModel.setDragging(true);
+          triggerRepaint();
+        }
+      } else {
+        drag(e.getPoint());
       }
     }
 
@@ -123,7 +193,6 @@ public class TrackEditorPanel extends JPanel {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-      boolean repaint = false;
       if (e.getButton() == MouseEvent.BUTTON1) {
         if (TrackEditorPanel.this.tileEditModel.isAddTileMode()) {
           Optional<Tile> t = TrackEditorPanel.this.tileEditModel.produceSelectedTile();
@@ -132,29 +201,46 @@ public class TrackEditorPanel extends JPanel {
                 TrackEditorPanel.this.origin.x + e.getX() / TrackEditorPanel.this.raster,
                 TrackEditorPanel.this.origin.y + e.getY() / TrackEditorPanel.this.raster);
           });
-          repaint = true;
         } else if (TrackEditorPanel.this.tileEditModel.isDeleteTileMode()) {
           int px = (TrackEditorPanel.this.origin.x + e.getX() / TrackEditorPanel.this.raster);
           int py = (TrackEditorPanel.this.origin.y + e.getY() / TrackEditorPanel.this.raster);
-          TrackEditorPanel.this.tiles.remove(new Point(px, py));
-          repaint = true;
+          removeTile(px, py);
         }
       }
-      if (repaint) {
-        triggerRepaint();
-      }
+
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-      this.move = e.getButton() == MouseEvent.BUTTON1;
-      this.x = e.getX();
-      this.y = e.getY();
+      if (e.getButton() == MouseEvent.BUTTON1) {
+        int xx = TrackEditorPanel.this.origin.x + e.getX() / TrackEditorPanel.this.raster;
+        int yy = TrackEditorPanel.this.origin.y + e.getY() / TrackEditorPanel.this.raster;
+
+        if (TrackEditorPanel.this.tileEditModel.isSelectionMoveMode()
+            && !TrackEditorPanel.this.selectionModel.isSelected()) {
+          this.select = true;
+        } else if (TrackEditorPanel.this.tileEditModel.isSelectionMoveMode()
+            && TrackEditorPanel.this.selectionModel.isSelected()
+            && TrackEditorPanel.this.selectionModel.isInSelection(new Point(xx, yy))) {
+          this.selectionMove = true;
+        } else {
+          this.move = true;
+        }
+
+        this.x = e.getX();
+        this.y = e.getY();
+      }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
+      if (this.select && TrackEditorPanel.this.selectionModel.isDragging()) {
+        TrackEditorPanel.this.selectionModel.setSelected(true);
+        TrackEditorPanel.this.selectionModel.setDragging(false);
+      }
       this.move = false;
+      this.select = false;
+      this.selectionMove = false;
     }
 
     @Override
