@@ -21,12 +21,16 @@ import java.util.List;
 import java.util.Optional;
 
 public abstract class Tile {
+  public enum BlockKind {
+    NONE, BLOCK, STELLBLOCK
+  };
 
   private String id = "";
   private Direction orientation = Direction.NORTH;
   private UseState state = UseState.FREE;
   private Point location = new Point(0, 0);
   private float length = 1.0F;
+  private BlockKind block = BlockKind.NONE;
 
   public static enum Direction {
     SOUTH, WEST, NORTH, EAST
@@ -37,11 +41,17 @@ public abstract class Tile {
   }
 
   public Tile(String id, int x, int y, Direction orientation) {
+    this(id, x, y, orientation, BlockKind.NONE);
+  }
+
+  public Tile(String id, int x, int y, Direction orientation, BlockKind block) {
+
     super();
     this.id = id;
     this.location.x = x;
     this.location.y = y;
     this.orientation = orientation;
+    this.block = block;
   }
 
   protected abstract void innerDraw(int raster, Graphics2D g);
@@ -188,5 +198,12 @@ public abstract class Tile {
    */
   public void setLength(float length) {
     this.length = length;
+  }
+
+  /**
+   * @return the block
+   */
+  public BlockKind getBlockKind() {
+    return this.block;
   }
 }

@@ -37,6 +37,7 @@ import rocsim.gui.tiles.Curve;
 import rocsim.gui.tiles.LeftSwitch;
 import rocsim.gui.tiles.RightSwitch;
 import rocsim.gui.tiles.Tile;
+import rocsim.gui.tiles.Tile.BlockKind;
 import rocsim.gui.tiles.Tile.Direction;
 import rocsim.gui.tiles.Track;
 import rocsim.schedule.Loco;
@@ -231,8 +232,9 @@ public class ReadPlan {
     } else if (orientation.equals("east")) {
       dir = Direction.EAST;
     }
+    BlockKind kind = stellBlock ? BlockKind.STELLBLOCK : BlockKind.BLOCK;
 
-    Block block = new Block(id, x, y, dir, stellBlock);
+    Block block = new Block(id, x, y, dir, kind);
     block.addStatusListener(this.blockListener);
     this.tiles.add(block);
   }

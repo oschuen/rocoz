@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rocsim.gui.tiles.Tile;
+import rocsim.gui.tiles.Tile.BlockKind;
 import rocsim.gui.tiles.Tile.UseState;
 import rocsim.schedule.model.ScheduleModel;
 import rocsim.schedule.model.TimeModel;
@@ -78,8 +79,8 @@ public class Scheduler {
         tile.setState(UseState.TRAIN);
         Scheduler.this.jobList.add(this);
       }, () -> {
-        if (this.currentLocation instanceof rocsim.gui.tiles.Block) {
-          if (((rocsim.gui.tiles.Block) this.currentLocation).isStellBlock()) {
+        if (this.currentLocation.getBlockKind() != BlockKind.NONE) {
+          if (this.currentLocation.getBlockKind() != BlockKind.STELLBLOCK) {
             this.currentLocation.setState(UseState.BLOCK);
             this.loco.setInBw(true);
           }

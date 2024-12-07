@@ -62,7 +62,7 @@ public class EditorContainer {
     this.tripFrame = new TripFrame(timeModel, this.locoIdDataModel, this.blockIdDataModel);
     this.tripFrame.setTripModels(planner.getTripModels());
 
-    this.editorPanel = new TrackEditorFrame();
+    this.editorPanel = new TrackEditorFrame(this.blockIdDataModel);
 
   }
 

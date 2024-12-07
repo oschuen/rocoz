@@ -22,23 +22,20 @@ import java.util.List;
 import java.util.Optional;
 
 public class Block extends Tile {
-
-  private boolean stellBlock = false;
   private List<BlockStatusListener> listeners = new ArrayList<>();
 
   public interface BlockStatusListener {
     void statusChanged(Block block);
   }
 
-  public Block(String id, int x, int y, Direction orientation, boolean stellBlock) {
-    super(id, x, y, orientation);
-    this.stellBlock = stellBlock;
+  public Block(String id, int x, int y, Direction orientation, BlockKind kind) {
+    super(id, x, y, orientation, kind);
   }
 
   @Override
   public void innerDraw(int raster, Graphics2D g) {
 
-    if (this.stellBlock) {
+    if (this.getBlockKind() == BlockKind.STELLBLOCK) {
       g.setColor(Color.PINK);
       g.fillRect(raster / 8, 0, 3 * raster / 4, raster);
     }
@@ -80,13 +77,6 @@ public class Block extends Tile {
       return Optional.of(dir);
     }
     return Optional.empty();
-  }
-
-  /**
-   * @return the stellBlock
-   */
-  public boolean isStellBlock() {
-    return this.stellBlock;
   }
 
   @Override

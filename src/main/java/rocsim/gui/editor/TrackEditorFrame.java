@@ -19,6 +19,7 @@ import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
 
+import rocsim.gui.model.StringListDataModel;
 import rocsim.gui.widgets.TileSelectionPanel;
 
 public class TrackEditorFrame extends JPanel {
@@ -26,11 +27,11 @@ public class TrackEditorFrame extends JPanel {
   private TrackEditorPanel planPannel;
   private TileSelectionPanel panel;
 
-  public TrackEditorFrame() {
+  public TrackEditorFrame(StringListDataModel blockIdDataModel) {
     setLayout(new BorderLayout(0, 0));
 
     this.panel = new TileSelectionPanel();
-    this.planPannel = new TrackEditorPanel(this.panel);
+    this.planPannel = new TrackEditorPanel(this.panel, blockIdDataModel);
     add(this.panel, BorderLayout.NORTH);
     add(this.planPannel, BorderLayout.CENTER);
   }

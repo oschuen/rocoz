@@ -32,6 +32,7 @@ import rocsim.gui.tiles.Curve;
 import rocsim.gui.tiles.LeftSwitch;
 import rocsim.gui.tiles.RightSwitch;
 import rocsim.gui.tiles.Tile;
+import rocsim.gui.tiles.Tile.BlockKind;
 import rocsim.gui.tiles.Tile.Direction;
 import rocsim.gui.tiles.Track;
 import rocsim.gui.widgets.TileButton.TileFactory;
@@ -62,11 +63,16 @@ public class TileSelectionPanel extends JScrollPane implements TileEditModel {
     }
   });
 
+  private int blockCounter = -1;
+  private int stellBlockCounter = -1;
   private TileButton westBlockButton = new TileButton(new TileFactory() {
 
     @Override
     public Tile createTile() {
-      return new Block("", 0, 0, Direction.WEST, false);
+      Block block = new Block("", 0, 0, Direction.WEST, BlockKind.BLOCK);
+      block.setId("bl" + TileSelectionPanel.this.blockCounter);
+      TileSelectionPanel.this.blockCounter++;
+      return block;
     }
   });
 
@@ -74,7 +80,10 @@ public class TileSelectionPanel extends JScrollPane implements TileEditModel {
 
     @Override
     public Tile createTile() {
-      return new Block("", 0, 0, Direction.NORTH, false);
+      Block block = new Block("", 0, 0, Direction.NORTH, BlockKind.BLOCK);
+      block.setId("bl" + TileSelectionPanel.this.blockCounter);
+      TileSelectionPanel.this.blockCounter++;
+      return block;
     }
   });
 
@@ -82,7 +91,10 @@ public class TileSelectionPanel extends JScrollPane implements TileEditModel {
 
     @Override
     public Tile createTile() {
-      return new Block("", 0, 0, Direction.WEST, true);
+      Block block = new Block("", 0, 0, Direction.WEST, BlockKind.STELLBLOCK);
+      block.setId("sb" + TileSelectionPanel.this.stellBlockCounter);
+      TileSelectionPanel.this.stellBlockCounter++;
+      return block;
     }
   });
 
@@ -90,7 +102,10 @@ public class TileSelectionPanel extends JScrollPane implements TileEditModel {
 
     @Override
     public Tile createTile() {
-      return new Block("", 0, 0, Direction.NORTH, true);
+      Block block = new Block("", 0, 0, Direction.NORTH, BlockKind.STELLBLOCK);
+      block.setId("sb" + TileSelectionPanel.this.stellBlockCounter);
+      TileSelectionPanel.this.stellBlockCounter++;
+      return block;
     }
   });
 

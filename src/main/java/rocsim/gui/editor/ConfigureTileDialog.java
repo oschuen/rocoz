@@ -7,6 +7,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.NumberFormat;
+import java.util.Locale;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -26,6 +27,7 @@ public class ConfigureTileDialog extends JDialog {
   private JButton btnCancel;
 
   public ConfigureTileDialog(Tile tile) {
+    setModal(true);
     setTitle(tile.getId());
     GridBagLayout gridBagLayout = new GridBagLayout();
     gridBagLayout.columnWidths = new int[] { 0, 0, 0, 0, 10 };
@@ -51,14 +53,14 @@ public class ConfigureTileDialog extends JDialog {
     this.nameTextField.setText(tile.getId());
     this.nameTextField.setColumns(20);
 
-    JLabel lblLength = new JLabel("Length (Model in m)");
+    JLabel lblLength = new JLabel("Length (1.00 m model-length)");
     GridBagConstraints gbc_lblLength = new GridBagConstraints();
     gbc_lblLength.insets = new Insets(0, 0, 5, 5);
     gbc_lblLength.gridx = 1;
     gbc_lblLength.gridy = 3;
     getContentPane().add(lblLength, gbc_lblLength);
 
-    NumberFormat floatFormatter = NumberFormat.getNumberInstance();
+    NumberFormat floatFormatter = NumberFormat.getNumberInstance(Locale.US);
     floatFormatter.setMaximumFractionDigits(2);
     floatFormatter.setGroupingUsed(false);
     this.lengthTextField = new JFormattedTextField(floatFormatter);

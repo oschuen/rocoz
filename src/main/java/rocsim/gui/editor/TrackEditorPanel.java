@@ -26,19 +26,23 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 import javax.swing.JPanel;
 
 import rocsim.gui.model.SelectionModel;
+import rocsim.gui.model.StringListDataModel;
 import rocsim.gui.model.TileEditModel;
 import rocsim.gui.model.TileEditModel.TileModelListener;
 import rocsim.gui.tiles.Tile;
+import rocsim.gui.tiles.Tile.BlockKind;
 
 public class TrackEditorPanel extends JPanel {
 
@@ -50,9 +54,11 @@ public class TrackEditorPanel extends JPanel {
   private TileEditModel tileEditModel;
   private Deque<UndoAction> undos = new LinkedList<>();
   private SelectionModel selectionModel = new SelectionModel();
+  private StringListDataModel blockIdDataModel;
 
-  public TrackEditorPanel(TileEditModel model) {
+  public TrackEditorPanel(TileEditModel model, StringListDataModel blockIdDataModel) {
     super();
+    this.blockIdDataModel = blockIdDataModel;
     this.tileEditModel = model;
     this.addMouseMotionListener(this.listener);
     this.addMouseListener(this.listener);
@@ -75,7 +81,9 @@ public class TrackEditorPanel extends JPanel {
 
       @Override
       public void dropSelection() {
-        moveSelection();
+        if (TrackEditorPanel.this.selectionModel.isSelected()) {
+          moveSelection();
+        }
       }
     });
   }
@@ -180,6 +188,7 @@ public class TrackEditorPanel extends JPanel {
   }
 
   private void triggerRepaint() {
+    updateBlockIds();
     javax.swing.SwingUtilities.invokeLater(() -> {
       repaint();
     });
@@ -243,6 +252,18 @@ public class TrackEditorPanel extends JPanel {
     composite.addAction(moveBack);
     composite.addAction(restoreAction);
     pushUndoAction(composite);
+  }
+
+  private void updateBlockIds() {
+    List<String> ids = new ArrayList<>();
+    for (Entry<Point, Tile> pair : this.tiles.entrySet()) {
+      Tile tile = pair.getValue();
+      if (!(tile.getBlockKind() == BlockKind.NONE || tile.getId().isBlank())) {
+        ids.add(tile.getId());
+      }
+    }
+    Collections.sort(ids);
+    this.blockIdDataModel.setValueList(ids);
   }
 
   private class MyMouseListener implements MouseMotionListener, MouseListener, MouseWheelListener {
@@ -325,6 +346,7 @@ public class TrackEditorPanel extends JPanel {
           ConfigureTileDialog configureDialog = new ConfigureTileDialog(tile);
           configureDialog.setLocation(e.getLocationOnScreen());
           configureDialog.setVisible(true);
+          updateBlockIds();
         }
       }
 
@@ -382,4 +404,5 @@ public class TrackEditorPanel extends JPanel {
       triggerRepaint();
     }
   }
+
 }
