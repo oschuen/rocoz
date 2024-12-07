@@ -22,6 +22,12 @@ import java.util.Optional;
 
 public abstract class Tile {
 
+  private String id = "";
+  private Direction orientation = Direction.NORTH;
+  private UseState state = UseState.FREE;
+  private Point location = new Point(0, 0);
+  private float length = 1.0F;
+
   public static enum Direction {
     SOUTH, WEST, NORTH, EAST
   }
@@ -154,7 +160,7 @@ public abstract class Tile {
 
   public int getDrivingTime(int speed) {
     if (speed > 0) {
-      return (int) (0.087F / speed * 3600.0F) + 1;
+      return (int) (this.length * 0.087F / speed * 3600.0F) + 1;
     }
     return 3600;
   }
@@ -170,8 +176,17 @@ public abstract class Tile {
     return Direction.EAST;
   }
 
-  private String id = "";
-  private Direction orientation = Direction.NORTH;
-  private UseState state = UseState.FREE;
-  private Point location = new Point(0, 0);
+  /**
+   * @return the length
+   */
+  public float getLength() {
+    return this.length;
+  }
+
+  /**
+   * @param length the length to set
+   */
+  public void setLength(float length) {
+    this.length = length;
+  }
 }

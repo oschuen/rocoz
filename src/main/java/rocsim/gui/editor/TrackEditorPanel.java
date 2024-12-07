@@ -25,9 +25,11 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -70,11 +72,86 @@ public class TrackEditorPanel extends JPanel {
         TrackEditorPanel.this.selectionModel.setDragging(false);
         triggerRepaint();
       }
+
+      @Override
+      public void dropSelection() {
+        moveSelection();
+      }
     });
   }
 
   private interface UndoAction {
     void undo();
+  }
+
+  private class MoveBackTileAction implements UndoAction {
+    private List<Tile> movable;
+    private int deltaX;
+    private int deltaY;
+
+    public MoveBackTileAction(List<Tile> movable, int deltaX, int deltaY) {
+      super();
+      this.movable = movable;
+      this.deltaX = deltaX;
+      this.deltaY = deltaY;
+    }
+
+    @Override
+    public void undo() {
+      for (Tile tile : this.movable) {
+        TrackEditorPanel.this.tiles.remove(tile.getLocation());
+        Point newLocation = new Point(tile.getLocation().x - this.deltaX, tile.getLocation().y - this.deltaY);
+        tile.setLocation(newLocation);
+        TrackEditorPanel.this.tiles.put(newLocation, tile);
+      }
+      triggerRepaint();
+    }
+  }
+
+  private class RestoreTileAction implements UndoAction {
+    private List<Tile> restorable = new ArrayList<>();
+
+    public RestoreTileAction() {
+
+    }
+
+    public RestoreTileAction(Tile tile) {
+      addTile(tile);
+    }
+
+    public void addTile(Tile tile) {
+      this.restorable.add(tile);
+    }
+
+    @Override
+    public void undo() {
+      for (Tile tile : this.restorable) {
+        TrackEditorPanel.this.tiles.put(tile.getLocation(), tile);
+      }
+      triggerRepaint();
+    }
+  }
+
+  private class CompositeAction implements UndoAction {
+    private List<UndoAction> actions = new ArrayList<>();
+
+    @Override
+    public void undo() {
+      for (UndoAction undoAction : this.actions) {
+        undoAction.undo();
+      }
+    }
+
+    public void addAction(UndoAction action) {
+      this.actions.add(action);
+    }
+  }
+
+  private void pushUndoAction(UndoAction undo) {
+    this.undos.offerFirst(undo);
+    while (this.undos.size() > 20) {
+      this.undos.pollLast();
+    }
   }
 
   @Override
@@ -114,7 +191,7 @@ public class TrackEditorPanel extends JPanel {
     Tile removeTile = this.tiles.remove(tile.getLocation());
     this.tiles.put(tile.getLocation(), tile);
     if (removeTile == null) {
-      this.undos.offerFirst(new UndoAction() {
+      pushUndoAction(new UndoAction() {
         @Override
         public void undo() {
           TrackEditorPanel.this.tiles.remove(tile.getLocation());
@@ -122,15 +199,7 @@ public class TrackEditorPanel extends JPanel {
         }
       });
     } else {
-      this.undos.offerFirst(new UndoAction() {
-
-        @Override
-        public void undo() {
-          TrackEditorPanel.this.tiles.put(removeTile.getLocation(), removeTile);
-          triggerRepaint();
-        }
-
-      });
+      pushUndoAction(new RestoreTileAction(removeTile));
     }
     triggerRepaint();
   }
@@ -138,15 +207,42 @@ public class TrackEditorPanel extends JPanel {
   private void removeTile(int x, int y) {
     Tile removed = this.tiles.remove(new Point(x, y));
     if (removed != null) {
-      this.undos.offerFirst(new UndoAction() {
-        @Override
-        public void undo() {
-          TrackEditorPanel.this.tiles.put(removed.getLocation(), removed);
-          triggerRepaint();
-        }
-      });
-      triggerRepaint();
+      pushUndoAction(new RestoreTileAction(removed));
     }
+    triggerRepaint();
+  }
+
+  private void moveSelection() {
+    RestoreTileAction restoreAction = new RestoreTileAction();
+    List<Tile> moveTiles = new ArrayList<>();
+    for (int x = 0; x < this.selectionModel.getSource().width; x++) {
+      for (int y = 0; y < this.selectionModel.getSource().height; y++) {
+        Point destP = new Point(this.selectionModel.getDest().x + x, this.selectionModel.getDest().y + y);
+        Point sourceP = new Point(this.selectionModel.getSource().x + x, this.selectionModel.getSource().y + y);
+        if (!this.selectionModel.isInSourceSelection(destP) && this.tiles.containsKey(destP)) {
+          Tile remove = this.tiles.remove(destP);
+          restoreAction.addTile(remove);
+        }
+        if (this.tiles.containsKey(sourceP)) {
+
+          moveTiles.add(this.tiles.get(sourceP));
+        }
+      }
+    }
+    int deltaX = this.selectionModel.getDest().x - this.selectionModel.getSource().x;
+    int deltaY = this.selectionModel.getDest().y - this.selectionModel.getSource().y;
+    for (Tile tile : moveTiles) {
+      this.tiles.remove(tile.getLocation());
+      Point newLocation = new Point(tile.getLocation().x + deltaX, tile.getLocation().y + deltaY);
+      tile.setLocation(newLocation);
+      this.tiles.put(newLocation, tile);
+    }
+    triggerRepaint();
+    MoveBackTileAction moveBack = new MoveBackTileAction(moveTiles, deltaX, deltaY);
+    CompositeAction composite = new CompositeAction();
+    composite.addAction(moveBack);
+    composite.addAction(restoreAction);
+    pushUndoAction(composite);
   }
 
   private class MyMouseListener implements MouseMotionListener, MouseListener, MouseWheelListener {
@@ -221,6 +317,15 @@ public class TrackEditorPanel extends JPanel {
           int py = (TrackEditorPanel.this.origin.y + e.getY() / TrackEditorPanel.this.raster);
           removeTile(px, py);
         }
+      } else if (e.getButton() == MouseEvent.BUTTON3) {
+        int px = (TrackEditorPanel.this.origin.x + e.getX() / TrackEditorPanel.this.raster);
+        int py = (TrackEditorPanel.this.origin.y + e.getY() / TrackEditorPanel.this.raster);
+        Tile tile = TrackEditorPanel.this.tiles.get(new Point(px, py));
+        if (tile != null) {
+          ConfigureTileDialog configureDialog = new ConfigureTileDialog(tile);
+          configureDialog.setLocation(e.getLocationOnScreen());
+          configureDialog.setVisible(true);
+        }
       }
 
     }
@@ -236,7 +341,7 @@ public class TrackEditorPanel extends JPanel {
           this.select = true;
         } else if (TrackEditorPanel.this.tileEditModel.isSelectionMoveMode()
             && TrackEditorPanel.this.selectionModel.isSelected()
-            && TrackEditorPanel.this.selectionModel.isInSelection(new Point(xx, yy))) {
+            && TrackEditorPanel.this.selectionModel.isInDestSelection(new Point(xx, yy))) {
           this.selectionMove = true;
         } else {
           this.move = true;

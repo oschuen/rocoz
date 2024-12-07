@@ -84,9 +84,14 @@ public class SelectionModel {
     this.dragging = dragging;
   }
 
-  public boolean isInSelection(Point p) {
+  public boolean isInDestSelection(Point p) {
     return p.x >= this.dest.x && p.x < this.dest.x + this.source.width && p.y >= this.dest.y
         && p.y < this.dest.y + this.source.height;
+  }
+
+  public boolean isInSourceSelection(Point p) {
+    return p.x >= this.source.x && p.x < this.source.x + this.source.width && p.y >= this.source.y
+        && p.y < this.source.y + this.source.height;
   }
 
 }

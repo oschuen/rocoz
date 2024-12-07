@@ -43,6 +43,7 @@ public class TileSelectionPanel extends JScrollPane implements TileEditModel {
   private TileDeleteButton tileDeleteButton;
   private UndoButton undoButton;
   private TileSelectionMoveButton tileSelectionMoveButton;
+  private TileSelectionDropButton tileSelectionDropButton;
   private List<TileModelListener> undoListeners = new ArrayList<>();
 
   private TileButton westTrackButton = new TileButton(new TileFactory() {
@@ -199,6 +200,17 @@ public class TileSelectionPanel extends JScrollPane implements TileEditModel {
     });
 
     this.panel.add(this.tileSelectionMoveButton);
+    this.tileSelectionDropButton = new TileSelectionDropButton();
+    this.tileSelectionDropButton.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        fireDropEvent();
+        fireUnselectionEvent();
+        TileSelectionPanel.this.tileSelectionMoveButton.setChecked(false);
+      }
+    });
+    this.panel.add(this.tileSelectionDropButton);
     addButton(this.westStellBlockButton, "Stellblock");
     addButton(this.northStellBlockButton, "Stellblock");
     addButton(this.westBlockButton, "Block");
@@ -281,6 +293,12 @@ public class TileSelectionPanel extends JScrollPane implements TileEditModel {
   private void fireUnselectionEvent() {
     for (TileModelListener undoListener : this.undoListeners) {
       undoListener.unselect();
+    }
+  }
+
+  private void fireDropEvent() {
+    for (TileModelListener undoListener : this.undoListeners) {
+      undoListener.dropSelection();
     }
   }
 

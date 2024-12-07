@@ -25,6 +25,10 @@ public class UndoButton extends PaintedImageButton {
 
   private static final long serialVersionUID = 1L;
 
+  public UndoButton() {
+    setBackground(Color.WHITE);
+  }
+
   @Override
   protected Image createImage() {
     BufferedImage image = new BufferedImage(60, 60, BufferedImage.TYPE_INT_ARGB);

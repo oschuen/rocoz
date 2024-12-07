@@ -24,6 +24,8 @@ public interface TileEditModel {
     void undo();
 
     void unselect();
+
+    void dropSelection();
   }
 
   boolean isAddTileMode();
