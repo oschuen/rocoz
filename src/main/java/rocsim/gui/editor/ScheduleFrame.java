@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 Oliver Schünemann (oschuen@users.noreply.github.com)
+ * Copyright © 2024 Oliver Schünemann (oschuen@users.noreply.github.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,7 +57,13 @@ public class ScheduleFrame extends ListFrame<SchedulePanel> {
       panels.add(panel);
     }
     setContent(panels);
-
   }
 
+  public List<ScheduleModel> getScheduleModels() {
+    List<ScheduleModel> models = new ArrayList<>();
+    for (SchedulePanel schedule : getContent()) {
+      models.add(schedule.getModel());
+    }
+    return models;
+  }
 }

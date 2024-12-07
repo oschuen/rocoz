@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 Oliver Schünemann (oschuen@users.noreply.github.com)
+ * Copyright © 2024 Oliver Schünemann (oschuen@users.noreply.github.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +21,32 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import rocsim.schedule.model.TrackPlanModel.BlockKind;
+import rocsim.schedule.model.TrackPlanModel.Direction;
+import rocsim.schedule.model.TrackPlanModel.Track;
+import rocsim.schedule.model.TrackPlanModel.TrackKind;
+
 public class Block extends Tile {
   private List<BlockStatusListener> listeners = new ArrayList<>();
 
   public interface BlockStatusListener {
     void statusChanged(Block block);
+  }
+
+  @Override
+  public Track getTrack() {
+    Track track = new Track();
+    if (this.getBlockKind() == BlockKind.STELLBLOCK) {
+      track.kind = TrackKind.STELLBLOCK;
+    } else {
+      track.kind = TrackKind.BLOCK;
+    }
+    track.id = getId();
+    track.location.x = getX();
+    track.location.y = getY();
+    track.length = getLength();
+    track.orientation = getOrientation();
+    return track;
   }
 
   public Block(String id, int x, int y, Direction orientation, BlockKind kind) {

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 Oliver Schünemann (oschuen@users.noreply.github.com)
+ * Copyright © 2024 Oliver Schünemann (oschuen@users.noreply.github.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import rocsim.schedule.model.TrackPlanModel.Direction;
+import rocsim.schedule.model.TrackPlanModel.TrackKind;
+
 public class Track extends Tile {
 
   public Track(String id, int x, int y, Direction orientation) {
     super(id, x, y, orientation);
+  }
+
+  @Override
+  public rocsim.schedule.model.TrackPlanModel.Track getTrack() {
+    rocsim.schedule.model.TrackPlanModel.Track track = new rocsim.schedule.model.TrackPlanModel.Track();
+    track.kind = TrackKind.TRACK;
+    track.id = getId();
+    track.location.x = getX();
+    track.location.y = getY();
+    track.length = getLength();
+    track.orientation = getOrientation();
+    return track;
   }
 
   @Override

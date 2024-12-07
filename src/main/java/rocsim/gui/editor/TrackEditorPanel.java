@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 Oliver Schünemann (oschuen@users.noreply.github.com)
+ * Copyright © 2024 Oliver Schünemann (oschuen@users.noreply.github.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,8 @@ import rocsim.gui.model.StringListDataModel;
 import rocsim.gui.model.TileEditModel;
 import rocsim.gui.model.TileEditModel.TileModelListener;
 import rocsim.gui.tiles.Tile;
-import rocsim.gui.tiles.Tile.BlockKind;
+import rocsim.schedule.model.TrackPlanModel;
+import rocsim.schedule.model.TrackPlanModel.BlockKind;
 
 public class TrackEditorPanel extends JPanel {
 
@@ -64,6 +65,7 @@ public class TrackEditorPanel extends JPanel {
     this.addMouseListener(this.listener);
     this.addMouseWheelListener(this.listener);
     model.addModelListener(new TileModelListener() {
+
       @Override
       public void undo() {
         UndoAction action = TrackEditorPanel.this.undos.pollFirst();
@@ -86,6 +88,7 @@ public class TrackEditorPanel extends JPanel {
         }
       }
     });
+    setToolTipText("");
   }
 
   private interface UndoAction {
@@ -160,6 +163,16 @@ public class TrackEditorPanel extends JPanel {
     while (this.undos.size() > 20) {
       this.undos.pollLast();
     }
+  }
+
+  @Override
+  public String getToolTipText(MouseEvent e) {
+    Point mouseLoc = new Point(this.origin.x + e.getX() / this.raster, this.origin.y + e.getY() / this.raster);
+    Tile tile = this.tiles.get(mouseLoc);
+    if (tile != null) {
+      return tile.getId();
+    }
+    return null;
   }
 
   @Override
@@ -402,6 +415,13 @@ public class TrackEditorPanel extends JPanel {
       TrackEditorPanel.this.origin.x = x - e.getX() / TrackEditorPanel.this.raster;
       TrackEditorPanel.this.origin.y = y - e.getY() / TrackEditorPanel.this.raster;
       triggerRepaint();
+    }
+  }
+
+  public void setTrackModel(TrackPlanModel trackModel) {
+    this.tiles.clear();
+    for (Tile tile : trackModel.generateTiles()) {
+      this.tiles.put(tile.getLocation(), tile);
     }
   }
 

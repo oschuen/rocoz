@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 Oliver Schünemann (oschuen@users.noreply.github.com)
+ * Copyright © 2024 Oliver Schünemann (oschuen@users.noreply.github.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,38 +31,27 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import rocsim.gui.tiles.Block;
-import rocsim.gui.tiles.Block.BlockStatusListener;
-import rocsim.gui.tiles.Curve;
-import rocsim.gui.tiles.LeftSwitch;
-import rocsim.gui.tiles.RightSwitch;
-import rocsim.gui.tiles.Tile;
-import rocsim.gui.tiles.Tile.BlockKind;
-import rocsim.gui.tiles.Tile.Direction;
-import rocsim.gui.tiles.Track;
 import rocsim.schedule.Loco;
 import rocsim.schedule.model.LocoModel;
 import rocsim.schedule.model.ScheduleModel;
+import rocsim.schedule.model.TrackPlanModel;
+import rocsim.schedule.model.TrackPlanModel.Direction;
 import rocsim.schedule.model.TripModel;
 
 public class ReadPlan {
 
-  private List<Tile> tiles = new ArrayList<>();
   private List<Loco> locos = new ArrayList<>();
   private List<LocoModel> locoModels = new ArrayList<>();
   private List<TripModel> tripModels = new ArrayList<>();
-  private List<String> blockIds = new ArrayList<>();
-  private List<BlockStatusListener> listeners = new ArrayList<>();
 
-  private BlockStatusListener blockListener = new BlockStatusListener() {
+  /**
+   * @return the trackModel
+   */
+  public TrackPlanModel getTrackModel() {
+    return this.trackModel;
+  }
 
-    @Override
-    public void statusChanged(Block block) {
-      for (BlockStatusListener blockStatusListener : ReadPlan.this.listeners) {
-        blockStatusListener.statusChanged(block);
-      }
-    }
-  };
+  private TrackPlanModel trackModel = new TrackPlanModel();
 
   private class ScEntry {
     public int arrivalTime = 0;
@@ -202,8 +191,7 @@ public class ReadPlan {
     } else if (orientation.equals("east")) {
       dir = Direction.EAST;
     }
-
-    this.tiles.add(new Curve(id, x, y, dir));
+    this.trackModel.addCurve(id, x, y, dir);
   }
 
   private void addTrack(String id, int x, int y, String orientation) {
@@ -217,8 +205,7 @@ public class ReadPlan {
     } else if (orientation.equals("east")) {
       dir = Direction.EAST;
     }
-
-    this.tiles.add(new Track(id, x, y, dir));
+    this.trackModel.addTrack(id, x, y, dir);
   }
 
   private void addBlock(String id, int x, int y, String orientation, boolean stellBlock) {
@@ -232,11 +219,11 @@ public class ReadPlan {
     } else if (orientation.equals("east")) {
       dir = Direction.EAST;
     }
-    BlockKind kind = stellBlock ? BlockKind.STELLBLOCK : BlockKind.BLOCK;
-
-    Block block = new Block(id, x, y, dir, kind);
-    block.addStatusListener(this.blockListener);
-    this.tiles.add(block);
+    if (stellBlock) {
+      this.trackModel.addStellBlock(id, x, y, dir);
+    } else {
+      this.trackModel.addBlock(id, x, y, dir);
+    }
   }
 
   private void readTk(Node tk) {
@@ -290,8 +277,7 @@ public class ReadPlan {
     } else if (orientation.equals("east")) {
       dir = Direction.WEST;
     }
-
-    this.tiles.add(new RightSwitch(id, x, y, dir));
+    this.trackModel.addRightSwitch(id, x, y, dir);
   }
 
   private void addLeftSwitch(String id, int x, int y, String orientation) {
@@ -305,8 +291,7 @@ public class ReadPlan {
     } else if (orientation.equals("east")) {
       dir = Direction.EAST;
     }
-
-    this.tiles.add(new LeftSwitch(id, x, y, dir));
+    this.trackModel.addLeftSwitch(id, x, y, dir);
   }
 
   private void readSw(Node sw) {
@@ -368,7 +353,6 @@ public class ReadPlan {
       }
     }
     addBlock(id, x, y, orientation, stellBlock);
-    this.blockIds.add(id);
   }
 
   private void readBKList(Node swList) {
@@ -431,13 +415,6 @@ public class ReadPlan {
   }
 
   /**
-   * @return the tiles
-   */
-  public List<Tile> getTiles() {
-    return this.tiles;
-  }
-
-  /**
    * @return the locos
    */
   public List<Loco> getLocos() {
@@ -457,17 +434,4 @@ public class ReadPlan {
   public List<TripModel> getTripModels() {
     return this.tripModels;
   }
-
-  public List<String> getBlockIds() {
-    return this.blockIds;
-  }
-
-  public void addStatusListener(BlockStatusListener listener) {
-    this.listeners.add(listener);
-  }
-
-  public void removeStatusListener(BlockStatusListener listener) {
-    this.listeners.remove(listener);
-  }
-
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 Oliver Schünemann (oschuen@users.noreply.github.com)
+ * Copyright © 2024 Oliver Schünemann (oschuen@users.noreply.github.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ public class EditorContainer {
 
   public EditorContainer(ReadPlan planner, TimeModel timeModel) {
 
-    this.blockIdDataModel.setValueList(planner.getBlockIds());
+    this.blockIdDataModel.setValueList(planner.getTrackModel().getBlockIds());
     //
     this.locoFrame = new LocoFrame();
     this.locoFrame.setLocoModels(planner.getLocoModels());
@@ -63,6 +63,7 @@ public class EditorContainer {
     this.tripFrame.setTripModels(planner.getTripModels());
 
     this.editorPanel = new TrackEditorFrame(this.blockIdDataModel);
+    this.editorPanel.setTrackModel(planner.getTrackModel());
 
   }
 

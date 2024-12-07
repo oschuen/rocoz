@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 Oliver Schünemann (oschuen@users.noreply.github.com)
+ * Copyright © 2024 Oliver Schünemann (oschuen@users.noreply.github.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,14 @@ public class LocoFrame extends ListFrame<LocoPanel> {
       panels.add(panel);
     }
     setContent(panels);
+  }
+
+  public List<LocoModel> getLocoModels() {
+    List<LocoModel> models = new ArrayList<>();
+    for (LocoPanel model : getContent()) {
+      models.add(model.getModel());
+    }
+    return models;
   }
 
   public List<String> getLocoIds() {

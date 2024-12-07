@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 Oliver Schünemann (oschuen@users.noreply.github.com)
+ * Copyright © 2024 Oliver Schünemann (oschuen@users.noreply.github.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,10 +24,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rocsim.gui.tiles.Tile;
-import rocsim.gui.tiles.Tile.BlockKind;
 import rocsim.gui.tiles.Tile.UseState;
 import rocsim.schedule.model.ScheduleModel;
 import rocsim.schedule.model.TimeModel;
+import rocsim.schedule.model.TrackPlanModel.BlockKind;
 import rocsim.schedule.model.TripModel;
 import rocsim.track.Block;
 import rocsim.track.TrackPlan;

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 Oliver Schünemann (oschuen@users.noreply.github.com)
+ * Copyright © 2024 Oliver Schünemann (oschuen@users.noreply.github.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,10 +32,10 @@ import rocsim.gui.tiles.Curve;
 import rocsim.gui.tiles.LeftSwitch;
 import rocsim.gui.tiles.RightSwitch;
 import rocsim.gui.tiles.Tile;
-import rocsim.gui.tiles.Tile.BlockKind;
-import rocsim.gui.tiles.Tile.Direction;
 import rocsim.gui.tiles.Track;
 import rocsim.gui.widgets.TileButton.TileFactory;
+import rocsim.schedule.model.TrackPlanModel.BlockKind;
+import rocsim.schedule.model.TrackPlanModel.Direction;
 
 public class TileSelectionPanel extends JScrollPane implements TileEditModel {
   private static final long serialVersionUID = 1L;

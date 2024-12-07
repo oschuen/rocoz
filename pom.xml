@@ -3,7 +3,7 @@
   <groupId>rocoz</groupId>
   <artifactId>rocoz</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <inceptionYear>2023</inceptionYear>
+  <inceptionYear>2024</inceptionYear>
   <dependencies>
     <dependency>
       <groupId>org.glassfish</groupId>

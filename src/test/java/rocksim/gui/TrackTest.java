@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 Oliver Schünemann (oschuen@users.noreply.github.com)
+ * Copyright © 2024 Oliver Schünemann (oschuen@users.noreply.github.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import java.util.Optional;
 import org.junit.Test;
 
 import rocsim.gui.tiles.Track;
-import rocsim.gui.tiles.Tile.Direction;
+import rocsim.schedule.model.TrackPlanModel.Direction;
 
 public class TrackTest {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 Oliver Schünemann (oschuen@users.noreply.github.com)
+ * Copyright © 2024 Oliver Schünemann (oschuen@users.noreply.github.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,11 @@ import java.awt.Point;
 import java.util.List;
 import java.util.Optional;
 
+import rocsim.schedule.model.TrackPlanModel.BlockKind;
+import rocsim.schedule.model.TrackPlanModel.Direction;
+import rocsim.schedule.model.TrackPlanModel.Track;
+
 public abstract class Tile {
-  public enum BlockKind {
-    NONE, BLOCK, STELLBLOCK
-  };
 
   private String id = "";
   private Direction orientation = Direction.NORTH;
@@ -31,10 +32,6 @@ public abstract class Tile {
   private Point location = new Point(0, 0);
   private float length = 1.0F;
   private BlockKind block = BlockKind.NONE;
-
-  public static enum Direction {
-    SOUTH, WEST, NORTH, EAST
-  }
 
   public static enum UseState {
     FREE, BLOCK, TRAIN
@@ -53,6 +50,8 @@ public abstract class Tile {
     this.orientation = orientation;
     this.block = block;
   }
+
+  public abstract Track getTrack();
 
   protected abstract void innerDraw(int raster, Graphics2D g);
 

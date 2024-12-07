@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 Oliver Schünemann (oschuen@users.noreply.github.com)
+ * Copyright © 2024 Oliver Schünemann (oschuen@users.noreply.github.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Map;
 
 import rocsim.gui.tiles.Tile;
-import rocsim.gui.tiles.Tile.Direction;
 import rocsim.gui.tiles.Tile.UseState;
+import rocsim.schedule.model.TrackPlanModel.Direction;
 
 public class TrackPlan {
   private List<Tile> tilesList;
@@ -60,7 +60,7 @@ public class TrackPlan {
     }
   }
 
-  private Tile getTileInDirection(Tile tile, Tile.Direction dir) {
+  private Tile getTileInDirection(Tile tile, Direction dir) {
     switch (dir) {
     case EAST:
       return getTile(new Point(tile.getX() + 1, tile.getY()));
@@ -75,8 +75,8 @@ public class TrackPlan {
     }
   }
 
-  private void buildBlock(Block block, Tile from, Tile to, Tile.Direction dir, boolean ignoreFirstState) {
-    List<Tile.Direction> dirs = from.getPossibleDirections(dir);
+  private void buildBlock(Block block, Tile from, Tile to, Direction dir, boolean ignoreFirstState) {
+    List<Direction> dirs = from.getPossibleDirections(dir);
     boolean fromAllowed = ignoreFirstState || from.getState() == UseState.FREE;
     for (Iterator<Direction> iterator = dirs.iterator(); fromAllowed && block.isEmpty() && iterator.hasNext();) {
       Direction direction = iterator.next();
@@ -98,7 +98,7 @@ public class TrackPlan {
   public Block getBlock(Tile from, Tile to) {
     Block result = new Block();
     for (int i = 0; result.isEmpty() && i < 4; i++) {
-      buildBlock(result, from, to, Tile.Direction.values()[i], true);
+      buildBlock(result, from, to, Direction.values()[i], true);
     }
 
     return result;

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 Oliver Schünemann (oschuen@users.noreply.github.com)
+ * Copyright © 2024 Oliver Schünemann (oschuen@users.noreply.github.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Optional;
 
 import rocsim.gui.tiles.Tile;
-import rocsim.gui.tiles.Tile.Direction;
 import rocsim.gui.tiles.Tile.UseState;
+import rocsim.schedule.model.TrackPlanModel.Direction;
 
 public class Block {
   private List<Tile> tilesList = new ArrayList<>();

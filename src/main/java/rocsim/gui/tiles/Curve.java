@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 Oliver Schünemann (oschuen@users.noreply.github.com)
+ * Copyright © 2024 Oliver Schünemann (oschuen@users.noreply.github.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,10 +26,26 @@ import java.util.Optional;
 
 import javax.imageio.ImageIO;
 
+import rocsim.schedule.model.TrackPlanModel.Direction;
+import rocsim.schedule.model.TrackPlanModel.Track;
+import rocsim.schedule.model.TrackPlanModel.TrackKind;
+
 public class Curve extends Tile {
 
   public Curve(String id, int x, int y, Direction orientation) {
     super(id, x, y, orientation);
+  }
+
+  @Override
+  public Track getTrack() {
+    Track track = new Track();
+    track.kind = TrackKind.CURVE;
+    track.id = getId();
+    track.location.x = getX();
+    track.location.y = getY();
+    track.length = getLength();
+    track.orientation = getOrientation();
+    return track;
   }
 
   @Override

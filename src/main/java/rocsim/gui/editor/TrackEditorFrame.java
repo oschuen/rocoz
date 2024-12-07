@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 Oliver Schünemann (oschuen@users.noreply.github.com)
+ * Copyright © 2024 Oliver Schünemann (oschuen@users.noreply.github.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 
 import rocsim.gui.model.StringListDataModel;
 import rocsim.gui.widgets.TileSelectionPanel;
+import rocsim.schedule.model.TrackPlanModel;
 
 public class TrackEditorFrame extends JPanel {
   private static final long serialVersionUID = 1L;
@@ -34,6 +35,12 @@ public class TrackEditorFrame extends JPanel {
     this.planPannel = new TrackEditorPanel(this.panel, blockIdDataModel);
     add(this.panel, BorderLayout.NORTH);
     add(this.planPannel, BorderLayout.CENTER);
+
+  }
+
+  public void setTrackModel(TrackPlanModel trackModel) {
+    this.planPannel.setTrackModel(trackModel);
+
   }
 
 }

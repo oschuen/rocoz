@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 Oliver Schünemann (oschuen@users.noreply.github.com)
+ * Copyright © 2024 Oliver Schünemann (oschuen@users.noreply.github.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import rocsim.schedule.model.TrackPlanModel.Direction;
+import rocsim.schedule.model.TrackPlanModel.Track;
+import rocsim.schedule.model.TrackPlanModel.TrackKind;
+
 public class LeftSwitch extends Tile {
 
   public LeftSwitch(String id, int x, int y, Direction orientation) {
     super(id, x, y, orientation);
+  }
+
+  @Override
+  public Track getTrack() {
+    Track track = new Track();
+    track.kind = TrackKind.LEFT_SWITCH;
+    track.id = getId();
+    track.location.x = getX();
+    track.location.y = getY();
+    track.length = getLength();
+    track.orientation = getOrientation();
+    return track;
   }
 
   protected void innerDrawSwitch(int raster, Graphics2D g) {

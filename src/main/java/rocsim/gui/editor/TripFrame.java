@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 Oliver Schünemann (oschuen@users.noreply.github.com)
+ * Copyright © 2024 Oliver Schünemann (oschuen@users.noreply.github.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ import java.util.List;
 import rocsim.gui.model.StringListDataModel;
 import rocsim.gui.widgets.ListFrame;
 import rocsim.schedule.model.TimeModel;
-import rocsim.schedule.model.TripModel;
 import rocsim.schedule.model.TimeModel.TimeModelChangeListener;
+import rocsim.schedule.model.TripModel;
 
 public class TripFrame extends ListFrame<TripPanel> {
   private static final long serialVersionUID = 1L;
@@ -72,5 +72,13 @@ public class TripFrame extends ListFrame<TripPanel> {
       panels.add(panel);
     }
     setContent(panels);
+  }
+
+  public List<TripModel> getTripModels() {
+    List<TripModel> models = new ArrayList<>();
+    for (TripPanel trip : getContent()) {
+      models.add(trip.getModel());
+    }
+    return models;
   }
 }

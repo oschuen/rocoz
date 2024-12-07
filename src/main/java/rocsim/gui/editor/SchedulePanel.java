@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 Oliver Schünemann (oschuen@users.noreply.github.com)
+ * Copyright © 2024 Oliver Schünemann (oschuen@users.noreply.github.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -143,5 +143,16 @@ public class SchedulePanel extends DataPanel {
     this.pauseTextField.setValue(this.timeModel.getTimeSecString(scheduleModel.getPause()));
     this.timeTextField.setValue(this.timeModel.getTimeSecString(scheduleModel.getDuration()));
     this.commentTextField.setText(scheduleModel.getComment());
+  }
+
+  public ScheduleModel getModel() {
+    ScheduleModel model = new ScheduleModel();
+    model.setStartBlock((String) this.startBlockComboBox.getSelectedItem());
+    model.setEndBlock((String) this.endBlockComboBox.getSelectedItem());
+    model.setPause(this.timeModel.convertTimeString(this.pauseTextField.getText()));
+    model.setDuration(this.timeModel.convertTimeString(this.timeTextField.getText()));
+    model.setComment(this.commentTextField.getText());
+
+    return model;
   }
 }

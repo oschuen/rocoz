@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 Oliver Schünemann (oschuen@users.noreply.github.com)
+ * Copyright © 2024 Oliver Schünemann (oschuen@users.noreply.github.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,8 +46,10 @@ public class AnimationContainer {
   public AnimationContainer(ReadPlan planner, TimeModel timeModel) {
 
     this.timeModel = timeModel;
-    this.blockIdDataModel.setValueList(planner.getBlockIds());
-    TrackPlan plan = new TrackPlan(planner.getTiles());
+    this.blockIdDataModel.setValueList(planner.getTrackModel().getBlockIds());
+    this.blockStatusModel = new BlockStatusModel(this.blockIdDataModel, timeModel);
+
+    TrackPlan plan = new TrackPlan(planner.getTrackModel().generateTiles(this.blockStatusModel));
     this.planPannel = new PlanPanel(plan, planner.getLocos());
     this.scheduler = new Scheduler(plan, planner.getTripModels(), planner.getLocos(), timeModel);
     this.timeModel.setMinTime(this.scheduler.getMinTime());
@@ -67,8 +69,6 @@ public class AnimationContainer {
     this.controlPanel.setMaxTime(this.scheduler.getMaxTime());
     this.controlPanel.applyCurrentTime();
 
-    this.blockStatusModel = new BlockStatusModel(this.blockIdDataModel, timeModel);
-    planner.addStatusListener(this.blockStatusModel);
     this.blockUsePanel = new BlockUsePanel(this.blockStatusModel, this.blockIdDataModel, timeModel);
     this.service.scheduleAtFixedRate(() -> {
       try {
