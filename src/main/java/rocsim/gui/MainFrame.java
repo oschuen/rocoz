@@ -21,6 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.io.File;
 
+import javax.json.JsonObject;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 
@@ -44,8 +45,12 @@ public class MainFrame extends JFrame {
 
     this.tabbedPane = new JTabbedPane();
 
-    this.editorContainer = new EditorContainer(planner, this.timeModel);
-    this.animationContainer = new AnimationContainer(planner, this.timeModel);
+    this.editorContainer = new EditorContainer(this.timeModel);
+    this.animationContainer = new AnimationContainer(this.timeModel);
+
+    JsonObject conf = planner.toJson();
+    this.editorContainer.fromJson(conf);
+    this.animationContainer.fromJson(conf);
 
     this.tabbedPane.addTab("Animation", this.animationContainer.getPlanPannel());
     this.tabbedPane.addTab("Blocks", this.animationContainer.getBlockUsePanel());

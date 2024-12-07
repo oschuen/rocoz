@@ -425,4 +425,12 @@ public class TrackEditorPanel extends JPanel {
     }
   }
 
+  public TrackPlanModel getTrackModel() {
+    TrackPlanModel trackModel = new TrackPlanModel();
+    for (Entry<Point, Tile> pair : this.tiles.entrySet()) {
+      trackModel.addTrack(pair.getValue().getTrack());
+    }
+    return trackModel;
+  }
+
 }

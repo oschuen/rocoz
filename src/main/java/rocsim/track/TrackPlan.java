@@ -16,6 +16,7 @@
 package rocsim.track;
 
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -29,8 +30,14 @@ public class TrackPlan {
   private List<Tile> tilesList;
   private Map<Point, Tile> tiles = new HashMap<>();
 
-  public TrackPlan(List<Tile> tilesList) {
+  public TrackPlan() {
     super();
+    this.tilesList = new ArrayList<>();
+  }
+
+  public void setTilesList(List<Tile> tilesList) {
+    this.tilesList.clear();
+    this.tiles.clear();
     this.tilesList = tilesList;
     for (Tile tile : tilesList) {
       Point p = new Point(tile.getX(), tile.getY());

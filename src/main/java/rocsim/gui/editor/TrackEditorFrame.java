@@ -43,4 +43,7 @@ public class TrackEditorFrame extends JPanel {
 
   }
 
+  public TrackPlanModel getTrackModel() {
+    return this.planPannel.getTrackModel();
+  }
 }

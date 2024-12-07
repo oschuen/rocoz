@@ -15,15 +15,23 @@
  */
 package rocsim.gui.editor;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.swing.JScrollPane;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 import rocsim.gui.model.StringListDataModel;
+import rocsim.schedule.model.LocoModel;
 import rocsim.schedule.model.TimeModel;
-import rocsim.xml.ReadPlan;
+import rocsim.schedule.model.TrackPlanModel;
+import rocsim.schedule.model.TripModel;
 
 public class EditorContainer {
 
@@ -33,13 +41,9 @@ public class EditorContainer {
   private StringListDataModel blockIdDataModel = new StringListDataModel();
   private StringListDataModel locoIdDataModel = new StringListDataModel();
 
-  public EditorContainer(ReadPlan planner, TimeModel timeModel) {
+  public EditorContainer(TimeModel timeModel) {
 
-    this.blockIdDataModel.setValueList(planner.getTrackModel().getBlockIds());
-    //
     this.locoFrame = new LocoFrame();
-    this.locoFrame.setLocoModels(planner.getLocoModels());
-    this.locoIdDataModel.setValueList(this.locoFrame.getLocoIds());
     this.locoFrame.addDataListener(new ListDataListener() {
 
       @Override
@@ -60,10 +64,52 @@ public class EditorContainer {
     });
 
     this.tripFrame = new TripFrame(timeModel, this.locoIdDataModel, this.blockIdDataModel);
-    this.tripFrame.setTripModels(planner.getTripModels());
 
     this.editorPanel = new TrackEditorFrame(this.blockIdDataModel);
-    this.editorPanel.setTrackModel(planner.getTrackModel());
+  }
+
+  public JsonObject toJson() {
+    JsonObjectBuilder builder = Json.createObjectBuilder();
+    JsonArrayBuilder locoArr = Json.createArrayBuilder();
+    List<LocoModel> locos = this.locoFrame.getLocoModels();
+    for (LocoModel locoModel : locos) {
+      locoArr.add(locoModel.toJson());
+    }
+    builder.add("locos", locoArr);
+    JsonArrayBuilder tripArr = Json.createArrayBuilder();
+    for (TripModel tripModel : this.tripFrame.getTripModels()) {
+      tripArr.add(tripModel.toJson());
+    }
+    builder.add("trips", tripArr);
+
+    builder.add("track", this.editorPanel.getTrackModel().toJson());
+    return builder.build();
+  }
+
+  public void fromJson(JsonObject obj) {
+    JsonArray locoArr = obj.getJsonArray("locos");
+    List<LocoModel> locos = new ArrayList<>();
+    for (int i = 0; i < locoArr.size(); i++) {
+      LocoModel model = new LocoModel();
+      model.fromJson(locoArr.getJsonObject(i));
+      locos.add(model);
+    }
+    this.locoFrame.setLocoModels(locos);
+    this.locoIdDataModel.setValueList(this.locoFrame.getLocoIds());
+
+    TrackPlanModel trackModel = new TrackPlanModel();
+    trackModel.fromJson(obj.getJsonArray("track"));
+    this.editorPanel.setTrackModel(trackModel);
+    this.blockIdDataModel.setValueList(trackModel.getBlockIds());
+
+    JsonArray tripsArr = obj.getJsonArray("trips");
+    List<TripModel> trips = new ArrayList<>();
+    for (int i = 0; i < tripsArr.size(); i++) {
+      TripModel model = new TripModel();
+      model.fromJson(tripsArr.getJsonObject(i));
+      trips.add(model);
+    }
+    this.tripFrame.setTripModels(trips);
 
   }
 

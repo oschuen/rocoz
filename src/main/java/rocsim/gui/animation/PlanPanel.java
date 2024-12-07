@@ -42,16 +42,23 @@ public class PlanPanel extends JPanel {
   private List<Loco> locos = new ArrayList<>();
   private MyMouseListener listener = new MyMouseListener();
 
-  public PlanPanel(TrackPlan plan, List<Loco> locos) {
+  public PlanPanel(TrackPlan plan) {
     super();
     this.plan = plan;
-    this.locos = locos;
 
     this.addMouseMotionListener(this.listener);
     this.addMouseListener(this.listener);
     this.addMouseWheelListener(this.listener);
 
     setToolTipText("");
+  }
+
+  /**
+   * @param locos the locos to set
+   */
+  public void setLocos(List<Loco> locos) {
+    this.locos.clear();
+    this.locos.addAll(locos);
   }
 
   @Override

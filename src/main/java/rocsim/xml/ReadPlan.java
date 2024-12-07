@@ -21,6 +21,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -31,7 +35,6 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import rocsim.schedule.Loco;
 import rocsim.schedule.model.LocoModel;
 import rocsim.schedule.model.ScheduleModel;
 import rocsim.schedule.model.TrackPlanModel;
@@ -40,9 +43,9 @@ import rocsim.schedule.model.TripModel;
 
 public class ReadPlan {
 
-  private List<Loco> locos = new ArrayList<>();
   private List<LocoModel> locoModels = new ArrayList<>();
   private List<TripModel> tripModels = new ArrayList<>();
+  private TrackPlanModel trackModel = new TrackPlanModel();
 
   /**
    * @return the trackModel
@@ -50,8 +53,6 @@ public class ReadPlan {
   public TrackPlanModel getTrackModel() {
     return this.trackModel;
   }
-
-  private TrackPlanModel trackModel = new TrackPlanModel();
 
   private class ScEntry {
     public int arrivalTime = 0;
@@ -164,7 +165,6 @@ public class ReadPlan {
     model.setId(id);
     model.setvMax(vMax);
     model.setComment(comment);
-    this.locos.add(new Loco(model));
     this.locoModels.add(model);
   }
 
@@ -414,11 +414,21 @@ public class ReadPlan {
     }
   }
 
-  /**
-   * @return the locos
-   */
-  public List<Loco> getLocos() {
-    return this.locos;
+  public JsonObject toJson() {
+    JsonObjectBuilder builder = Json.createObjectBuilder();
+    JsonArrayBuilder locoArr = Json.createArrayBuilder();
+    for (LocoModel locoModel : this.locoModels) {
+      locoArr.add(locoModel.toJson());
+    }
+    builder.add("locos", locoArr);
+    JsonArrayBuilder tripArr = Json.createArrayBuilder();
+    for (TripModel tripModel : this.tripModels) {
+      tripArr.add(tripModel.toJson());
+    }
+    builder.add("trips", tripArr);
+
+    builder.add("track", this.trackModel.toJson());
+    return builder.build();
   }
 
   /**
