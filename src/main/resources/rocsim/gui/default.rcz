@@ -1,0 +1,212 @@
+
+{
+    "locos": [
+        {
+            "id": "BR160-1",
+            "v-max": 80,
+            "comment": ""
+        }
+    ],
+    "trips": [
+        {
+            "id": "DG1234",
+            "loco-id": "BR160-1",
+            "start-time": 60,
+            "comment": "",
+            "schedules": [
+                {
+                    "start-block": "sb2",
+                    "end-block": "sb3",
+                    "duration": 540,
+                    "pause": 0,
+                    "comment": ""
+                }
+            ]
+        },
+        {
+            "id": "DG2345",
+            "loco-id": "BR160-1",
+            "start-time": 120,
+            "comment": "",
+            "schedules": [
+                {
+                    "start-block": "sb3",
+                    "end-block": "sb1",
+                    "duration": 120,
+                    "pause": 0,
+                    "comment": ""
+                }
+            ]
+        }
+    ],
+    "track": [
+        {
+            "id": "tk10",
+            "dir": "WEST",
+            "loc_x": 6,
+            "loc_y": 3,
+            "length": 1.0,
+            "kind": "TRACK"
+        },
+        {
+            "id": "tk14",
+            "dir": "WEST",
+            "loc_x": 8,
+            "loc_y": 2,
+            "length": 1.0,
+            "kind": "TRACK"
+        },
+        {
+            "id": "tk13",
+            "dir": "WEST",
+            "loc_x": 9,
+            "loc_y": 2,
+            "length": 1.0,
+            "kind": "TRACK"
+        },
+        {
+            "id": "tk9",
+            "dir": "WEST",
+            "loc_x": 7,
+            "loc_y": 3,
+            "length": 1.0,
+            "kind": "TRACK"
+        },
+        {
+            "id": "tk12",
+            "dir": "WEST",
+            "loc_x": 10,
+            "loc_y": 2,
+            "length": 1.0,
+            "kind": "TRACK"
+        },
+        {
+            "id": "sw1",
+            "dir": "WEST",
+            "loc_x": 11,
+            "loc_y": 2,
+            "length": 1.0,
+            "kind": "LEFT_SWITCH"
+        },
+        {
+            "id": "tk4",
+            "dir": "WEST",
+            "loc_x": 12,
+            "loc_y": 2,
+            "length": 1.0,
+            "kind": "TRACK"
+        },
+        {
+            "id": "sb1",
+            "dir": "WEST",
+            "loc_x": 4,
+            "loc_y": 3,
+            "length": 1.0,
+            "kind": "STELLBLOCK"
+        },
+        {
+            "id": "tk3",
+            "dir": "WEST",
+            "loc_x": 13,
+            "loc_y": 2,
+            "length": 1.0,
+            "kind": "TRACK"
+        },
+        {
+            "id": "tk2",
+            "dir": "WEST",
+            "loc_x": 14,
+            "loc_y": 2,
+            "length": 1.0,
+            "kind": "TRACK"
+        },
+        {
+            "id": "tk11",
+            "dir": "WEST",
+            "loc_x": 5,
+            "loc_y": 3,
+            "length": 1.0,
+            "kind": "TRACK"
+        },
+        {
+            "id": "tk1",
+            "dir": "WEST",
+            "loc_x": 15,
+            "loc_y": 2,
+            "length": 1.0,
+            "kind": "TRACK"
+        },
+        {
+            "id": "sb3",
+            "dir": "WEST",
+            "loc_x": 16,
+            "loc_y": 2,
+            "length": 1.0,
+            "kind": "BLOCK"
+        },
+        {
+            "id": "sb2",
+            "dir": "WEST",
+            "loc_x": 4,
+            "loc_y": 2,
+            "length": 1.0,
+            "kind": "STELLBLOCK"
+        },
+        {
+            "id": "tk17",
+            "dir": "WEST",
+            "loc_x": 5,
+            "loc_y": 2,
+            "length": 1.0,
+            "kind": "TRACK"
+        },
+        {
+            "id": "tk8",
+            "dir": "WEST",
+            "loc_x": 8,
+            "loc_y": 3,
+            "length": 1.0,
+            "kind": "TRACK"
+        },
+        {
+            "id": "tk16",
+            "dir": "WEST",
+            "loc_x": 6,
+            "loc_y": 2,
+            "length": 1.0,
+            "kind": "TRACK"
+        },
+        {
+            "id": "tk7",
+            "dir": "WEST",
+            "loc_x": 9,
+            "loc_y": 3,
+            "length": 1.0,
+            "kind": "TRACK"
+        },
+        {
+            "id": "tk6",
+            "dir": "WEST",
+            "loc_x": 10,
+            "loc_y": 3,
+            "length": 1.0,
+            "kind": "TRACK"
+        },
+        {
+            "id": "tk15",
+            "dir": "WEST",
+            "loc_x": 7,
+            "loc_y": 2,
+            "length": 1.0,
+            "kind": "TRACK"
+        },
+        {
+            "id": "tk5",
+            "dir": "NORTH",
+            "loc_x": 11,
+            "loc_y": 3,
+            "length": 1.0,
+            "kind": "CURVE"
+        }
+    ]
+}

@@ -18,17 +18,33 @@ package rocsim.gui;
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.prefs.Preferences;
 
+import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonWriter;
+import javax.json.JsonWriterFactory;
+import javax.json.stream.JsonGenerator;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JTabbedPane;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import rocsim.gui.animation.AnimationContainer;
 import rocsim.gui.editor.EditorContainer;
 import rocsim.schedule.model.TimeModel;
-import rocsim.xml.ReadPlan;
 
 public class MainFrame extends JFrame {
 
@@ -37,20 +53,32 @@ public class MainFrame extends JFrame {
   private EditorContainer editorContainer;
   private AnimationContainer animationContainer;
   private TimeModel timeModel = new TimeModel();
+  private File currentFile = new File(".");
+  private Preferences prefs = Preferences.userRoot().node(MainFrame.class.getName());
+  private static final String CURRENT_FILE = "Current File";
 
   public MainFrame() {
     enableEvents(AWTEvent.WINDOW_EVENT_MASK);
-    ReadPlan planner = new ReadPlan();
-    planner.readPlan(new File("/home/oliver/bin/Rocrail/fremo/plan.xml"));
+//    ReadPlan planner = new ReadPlan();
+//    planner.readPlan(new File("/home/oliver/bin/Rocrail/fremo/plan.xml"));
 
+    this.currentFile = new File(this.prefs.get(CURRENT_FILE, "."));
     this.tabbedPane = new JTabbedPane();
 
     this.editorContainer = new EditorContainer(this.timeModel);
     this.animationContainer = new AnimationContainer(this.timeModel);
 
-    JsonObject conf = planner.toJson();
-    this.editorContainer.fromJson(conf);
-    this.animationContainer.fromJson(conf);
+    try (JsonReader reader = Json.createReader(MainFrame.class.getResourceAsStream("default.rcz"))) {
+      JsonObject conf = reader.readObject();
+      this.editorContainer.fromJson(conf);
+      this.animationContainer.fromJson(conf);
+    } catch (Exception exp) {
+      exp.printStackTrace();
+    }
+//
+//    JsonObject conf = planner.toJson();
+//    this.editorContainer.fromJson(conf);
+//    this.animationContainer.fromJson(conf);
 
     this.tabbedPane.addTab("Animation", this.animationContainer.getPlanPannel());
     this.tabbedPane.addTab("Blocks", this.animationContainer.getBlockUsePanel());
@@ -62,8 +90,117 @@ public class MainFrame extends JFrame {
     getContentPane().add(this.tabbedPane, BorderLayout.CENTER);
 
     getContentPane().add(this.animationContainer.getControlPanel(), BorderLayout.SOUTH);
+
+    JMenuBar menuBar = new JMenuBar();
+    getContentPane().add(menuBar, BorderLayout.NORTH);
+
+    JMenu mnFile = new JMenu("File");
+    menuBar.add(mnFile);
+
+    JMenuItem mntmLoad = new JMenuItem("Load");
+    mnFile.add(mntmLoad);
+    mntmLoad.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        jMenuFileLoad_actionPerformed(arg0);
+      }
+    });
+
+    JMenuItem mntmSave = new JMenuItem("Save");
+    mnFile.add(mntmSave);
+    mntmSave.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        jMenuFileSave_actionPerformed(arg0);
+      }
+    });
+
+    JMenuItem mntmNewMenuItem_1 = new JMenuItem("Exit");
+    mnFile.add(mntmNewMenuItem_1);
+
+    JMenu mnEdit = new JMenu("Edit");
+    menuBar.add(mnEdit);
+
+    JMenuItem mntmApply = new JMenuItem("Apply");
+    mnEdit.add(mntmApply);
+    mntmApply.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        jMenuEditApply_actionPerformed(arg0);
+      }
+    });
     pack();
 
+  }
+
+  public void jMenuFileLoad_actionPerformed(ActionEvent e) {
+    JFileChooser choose = null;
+    FileFilter filter = new FileNameExtensionFilter("Sim File", "rcz");
+
+    if (null == this.currentFile) {
+      choose = new JFileChooser();
+      choose.addChoosableFileFilter(filter);
+    } else {
+      choose = new JFileChooser(this.currentFile);
+      choose.addChoosableFileFilter(filter);
+    }
+
+    int returnVal = choose.showOpenDialog(this);
+    File f = choose.getSelectedFile();
+    if ((f != null) && (returnVal == JFileChooser.APPROVE_OPTION)) {
+      this.currentFile = f;
+      try (JsonReader reader = Json.createReader(new FileReader(f))) {
+        JsonObject conf = reader.readObject();
+        this.editorContainer.fromJson(conf);
+        this.animationContainer.fromJson(conf);
+      } catch (Exception exp) {
+        exp.printStackTrace();
+      }
+    }
+  }
+
+  public void jMenuFileSave_actionPerformed(ActionEvent e) {
+    try {
+      JFileChooser choose;
+      FileFilter filter = new FileNameExtensionFilter("Sim File", "rcz");
+
+      if (null == this.currentFile) {
+        choose = new JFileChooser();
+        choose.addChoosableFileFilter(filter);
+      } else {
+        choose = new JFileChooser(this.currentFile);
+        choose.addChoosableFileFilter(filter);
+      }
+      int returnVal = choose.showSaveDialog(this);
+      File f = choose.getSelectedFile();
+      if ((f != null) && (returnVal == JFileChooser.APPROVE_OPTION)) {
+        this.currentFile = f;
+        Map<String, Object> config = new HashMap<>(1);
+        config.put(JsonGenerator.PRETTY_PRINTING, true);
+        JsonWriterFactory factory = Json.createWriterFactory(config);
+        try (JsonWriter jsonWriter = factory.createWriter(new FileWriter(f))) {
+
+          jsonWriter.write(this.editorContainer.toJson());
+        } catch (Exception exp) {
+          throw exp;
+        }
+      }
+    } catch (Exception exp) {
+      exp.printStackTrace();
+    }
+  }
+
+  public void jMenuFileExit_actionPerformed(ActionEvent e) {
+    if (this.currentFile != null) {
+      this.prefs.put(CURRENT_FILE, this.currentFile.getAbsolutePath());
+    }
+    System.exit(0);
+  }
+
+  public void jMenuEditApply_actionPerformed(ActionEvent e) {
+    this.animationContainer.fromJson(this.editorContainer.toJson());
   }
 
   @Override
@@ -73,10 +210,4 @@ public class MainFrame extends JFrame {
       jMenuFileExit_actionPerformed(null);
     }
   }
-
-  public void jMenuFileExit_actionPerformed(ActionEvent e) {
-
-    System.exit(0);
-  }
-
 }

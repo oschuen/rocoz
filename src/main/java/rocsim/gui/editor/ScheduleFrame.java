@@ -34,6 +34,7 @@ public class ScheduleFrame extends ListFrame<SchedulePanel> {
 
     public SchedulePanelFactory(TimeModel timeModel, StringListDataModel blockIdDataModel) {
       this.blockIdDataModel = blockIdDataModel;
+      this.timeModel = timeModel;
     }
 
     @Override

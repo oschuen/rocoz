@@ -67,7 +67,6 @@ public class BlockUsePanel extends JScrollPane {
 
       @Override
       public void contentsChanged(ListDataEvent arg0) {
-        System.out.println("Reorganize");
         reorganize();
       }
     });
@@ -94,7 +93,6 @@ public class BlockUsePanel extends JScrollPane {
       }
     }
     for (String newBlockId : blockIds) {
-      System.out.println("new Block panel" + newBlockId);
       newBlockPanel.add(new BlockEventPanel(newBlockId, this.blockStatusModel, modelBlockIds, this.timeModel));
     }
     this.panel.removeAll();

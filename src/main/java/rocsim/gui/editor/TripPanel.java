@@ -31,6 +31,7 @@ import javax.swing.text.MaskFormatter;
 import rocsim.gui.model.StringComboBoxModel;
 import rocsim.gui.model.StringListDataModel;
 import rocsim.gui.widgets.DataPanel;
+import rocsim.schedule.model.ScheduleModel;
 import rocsim.schedule.model.TimeModel;
 import rocsim.schedule.model.TripModel;
 
@@ -187,6 +188,9 @@ public class TripPanel extends DataPanel {
     model.setId(this.idTextField.getText());
     model.setLocoId((String) this.comboBox.getSelectedItem());
     model.setStartTime(this.timeModel.convertTimeString(this.realTimeTextField.getText()));
+    for (ScheduleModel scheduleModel : this.scheduleFrame.getScheduleModels()) {
+      model.addSchedule(scheduleModel);
+    }
     return model;
   }
 
