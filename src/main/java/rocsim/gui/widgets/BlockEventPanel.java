@@ -21,6 +21,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.List;
 import java.util.PriorityQueue;
 
 import javax.swing.JComboBox;
@@ -28,8 +29,6 @@ import javax.swing.JPanel;
 
 import rocsim.gui.model.BlockStatusModel;
 import rocsim.gui.model.BlockStatusModel.BlockEvent;
-import rocsim.gui.model.StringComboBoxModel;
-import rocsim.gui.model.StringListDataModel;
 import rocsim.gui.tiles.Tile.UseState;
 import rocsim.schedule.model.TimeModel;
 
@@ -43,7 +42,7 @@ public class BlockEventPanel extends JPanel {
   private InnerPanel innerpanel;
   private JComboBox<String> comboBox;
 
-  public BlockEventPanel(String blockId, BlockStatusModel blockStatusModel, StringListDataModel blockIdsModel,
+  public BlockEventPanel(String blockId, BlockStatusModel blockStatusModel, List<String> blockIds,
       TimeModel timeModel) {
     super();
     this.blockId = blockId;
@@ -55,9 +54,8 @@ public class BlockEventPanel extends JPanel {
     JPanel panel = new JPanel();
     add(panel, BorderLayout.NORTH);
 
-    this.comboBox = new JComboBox<>();
+    this.comboBox = new JComboBox<>(blockIds.toArray(new String[blockIds.size()]));
     panel.add(this.comboBox);
-    this.comboBox.setModel(new StringComboBoxModel(blockIdsModel));
     this.comboBox.setSelectedItem(blockId);
     this.comboBox.addItemListener(new ItemListener() {
 

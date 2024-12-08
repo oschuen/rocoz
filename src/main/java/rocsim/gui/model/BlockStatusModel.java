@@ -19,6 +19,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
 
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+
 import rocsim.gui.tiles.Block;
 import rocsim.gui.tiles.Block.BlockStatusListener;
 import rocsim.gui.tiles.Tile.UseState;
@@ -43,6 +46,35 @@ public class BlockStatusModel implements BlockStatusListener {
       this.blockEvents.put(blockIdDataModel.getElementAt(i),
           new PriorityQueue<>((a, b) -> Integer.compare(a.realTime, b.realTime)));
     }
+    blockIdDataModel.addListDataListener(new ListDataListener() {
+
+      @Override
+      public void intervalRemoved(ListDataEvent arg0) {
+        // TODO Auto-generated method stub
+        contentsChanged(arg0);
+      }
+
+      @Override
+      public void intervalAdded(ListDataEvent arg0) {
+        contentsChanged(arg0);
+      }
+
+      @Override
+      public void contentsChanged(ListDataEvent arg0) {
+        Map<String, PriorityQueue<BlockEvent>> oldEvents = BlockStatusModel.this.blockEvents;
+        BlockStatusModel.this.blockEvents = new HashMap<>();
+        for (int i = 0; i < blockIdDataModel.getSize(); i++) {
+          String blockId = blockIdDataModel.getElementAt(i);
+          PriorityQueue<BlockEvent> oldQueue = oldEvents.get(blockId);
+          if (oldQueue == null) {
+            BlockStatusModel.this.blockEvents.put(blockId,
+                new PriorityQueue<>((a, b) -> Integer.compare(a.realTime, b.realTime)));
+          } else {
+            BlockStatusModel.this.blockEvents.put(blockId, oldQueue);
+          }
+        }
+      }
+    });
   }
 
   @Override

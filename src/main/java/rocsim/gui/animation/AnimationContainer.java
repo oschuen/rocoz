@@ -139,6 +139,8 @@ public class AnimationContainer {
     this.scheduler = new Scheduler(this.plan, trips, locos, this.timeModel);
     this.timeModel.setMinTime(this.scheduler.getMinTime());
     this.timeModel.setMaxTime(this.scheduler.getMaxTime());
+    this.controlPanel.setMinTime(this.scheduler.getMinTime());
+    this.controlPanel.setMaxTime(this.scheduler.getMaxTime());
     this.currentWishTime = this.scheduler.getMinTime();
     this.timeModel.setCurrentTime(this.scheduler.getMinTime());
 

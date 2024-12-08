@@ -80,7 +80,7 @@ public class Scheduler {
         Scheduler.this.jobList.add(this);
       }, () -> {
         if (this.currentLocation.getBlockKind() != BlockKind.NONE) {
-          if (this.currentLocation.getBlockKind() != BlockKind.STELLBLOCK) {
+          if (this.currentLocation.getBlockKind() == BlockKind.STELLBLOCK) {
             this.currentLocation.setState(UseState.BLOCK);
             this.loco.setInBw(true);
           }
