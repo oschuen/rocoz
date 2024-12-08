@@ -38,6 +38,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -56,11 +57,10 @@ public class MainFrame extends JFrame {
   private File currentFile = new File(".");
   private Preferences prefs = Preferences.userRoot().node(MainFrame.class.getName());
   private static final String CURRENT_FILE = "Current File";
+  private JsonObject lastConfig;
 
   public MainFrame() {
     enableEvents(AWTEvent.WINDOW_EVENT_MASK);
-//    ReadPlan planner = new ReadPlan();
-//    planner.readPlan(new File("/home/oliver/bin/Rocrail/fremo/plan.xml"));
 
     this.currentFile = new File(this.prefs.get(CURRENT_FILE, "."));
     this.tabbedPane = new JTabbedPane();
@@ -69,16 +69,12 @@ public class MainFrame extends JFrame {
     this.animationContainer = new AnimationContainer(this.timeModel);
 
     try (JsonReader reader = Json.createReader(MainFrame.class.getResourceAsStream("default.rcz"))) {
-      JsonObject conf = reader.readObject();
-      this.editorContainer.fromJson(conf);
-      this.animationContainer.fromJson(conf);
+      this.lastConfig = reader.readObject();
+      this.editorContainer.fromJson(this.lastConfig);
+      this.animationContainer.fromJson(this.lastConfig);
     } catch (Exception exp) {
       exp.printStackTrace();
     }
-//
-//    JsonObject conf = planner.toJson();
-//    this.editorContainer.fromJson(conf);
-//    this.animationContainer.fromJson(conf);
 
     this.tabbedPane.addTab("Animation", this.animationContainer.getPlanPannel());
     this.tabbedPane.addTab("Blocks", this.animationContainer.getBlockUsePanel());
@@ -116,8 +112,15 @@ public class MainFrame extends JFrame {
       }
     });
 
-    JMenuItem mntmNewMenuItem_1 = new JMenuItem("Exit");
-    mnFile.add(mntmNewMenuItem_1);
+    JMenuItem mntmExit = new JMenuItem("Exit");
+    mnFile.add(mntmExit);
+    mntmExit.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        jMenuFileExit_actionPerformed(arg0);
+      }
+    });
 
     JMenu mnEdit = new JMenu("Edit");
     menuBar.add(mnEdit);
@@ -152,16 +155,17 @@ public class MainFrame extends JFrame {
     if ((f != null) && (returnVal == JFileChooser.APPROVE_OPTION)) {
       this.currentFile = f;
       try (JsonReader reader = Json.createReader(new FileReader(f))) {
-        JsonObject conf = reader.readObject();
-        this.editorContainer.fromJson(conf);
-        this.animationContainer.fromJson(conf);
+        this.lastConfig = reader.readObject();
+        this.editorContainer.fromJson(this.lastConfig);
+        this.animationContainer.fromJson(this.lastConfig);
       } catch (Exception exp) {
         exp.printStackTrace();
       }
     }
   }
 
-  public void jMenuFileSave_actionPerformed(ActionEvent e) {
+  public int jMenuFileSave_actionPerformed(ActionEvent e) {
+    int returnVal = JFileChooser.CANCEL_OPTION;
     try {
       JFileChooser choose;
       FileFilter filter = new FileNameExtensionFilter("Sim File", "rcz");
@@ -173,7 +177,7 @@ public class MainFrame extends JFrame {
         choose = new JFileChooser(this.currentFile);
         choose.addChoosableFileFilter(filter);
       }
-      int returnVal = choose.showSaveDialog(this);
+      returnVal = choose.showSaveDialog(this);
       File f = choose.getSelectedFile();
       if ((f != null) && (returnVal == JFileChooser.APPROVE_OPTION)) {
         this.currentFile = f;
@@ -181,8 +185,8 @@ public class MainFrame extends JFrame {
         config.put(JsonGenerator.PRETTY_PRINTING, true);
         JsonWriterFactory factory = Json.createWriterFactory(config);
         try (JsonWriter jsonWriter = factory.createWriter(new FileWriter(f))) {
-
-          jsonWriter.write(this.editorContainer.toJson());
+          this.lastConfig = this.editorContainer.toJson();
+          jsonWriter.write(this.lastConfig);
         } catch (Exception exp) {
           throw exp;
         }
@@ -190,11 +194,25 @@ public class MainFrame extends JFrame {
     } catch (Exception exp) {
       exp.printStackTrace();
     }
+    return returnVal;
   }
 
   public void jMenuFileExit_actionPerformed(ActionEvent e) {
     if (this.currentFile != null) {
       this.prefs.put(CURRENT_FILE, this.currentFile.getAbsolutePath());
+    }
+    if (!this.lastConfig.equals(this.editorContainer.toJson())) {
+      int option = JOptionPane.showConfirmDialog(null, "Store Changes", "Unsaved Changes",
+          JOptionPane.YES_NO_CANCEL_OPTION);
+      if (option == 0) {
+        if (jMenuFileSave_actionPerformed(null) == JFileChooser.CANCEL_OPTION) {
+          setVisible(true);
+          return;
+        }
+      } else if (option == 2) {
+        setVisible(true);
+        return;
+      }
     }
     System.exit(0);
   }

@@ -21,6 +21,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -94,6 +95,17 @@ public class BlockEventPanel extends JPanel {
 
   private class InnerPanel extends JPanel {
     private static final long serialVersionUID = 1L;
+
+    public InnerPanel() {
+      super();
+      setToolTipText("");
+    }
+
+    @Override
+    public String getToolTipText(MouseEvent event) {
+      int time = BlockEventPanel.this.timeModel.getMinTime() + event.getY() * BlockEventPanel.this.resolution;
+      return BlockEventPanel.this.timeModel.getTimeSecString(time);
+    }
 
     @Override
     public Dimension getPreferredSize() {

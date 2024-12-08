@@ -11,14 +11,14 @@
         {
             "id": "DG1234",
             "loco-id": "BR160-1",
-            "start-time": 60,
+            "start-time": 18000,
             "comment": "",
             "schedules": [
                 {
                     "start-block": "sb2",
                     "end-block": "sb3",
-                    "duration": 540,
-                    "pause": 0,
+                    "duration": 60,
+                    "pause": 60,
                     "comment": ""
                 }
             ]
@@ -26,13 +26,13 @@
         {
             "id": "DG2345",
             "loco-id": "BR160-1",
-            "start-time": 120,
+            "start-time": 18180,
             "comment": "",
             "schedules": [
                 {
                     "start-block": "sb3",
                     "end-block": "sb1",
-                    "duration": 120,
+                    "duration": 60,
                     "pause": 0,
                     "comment": ""
                 }

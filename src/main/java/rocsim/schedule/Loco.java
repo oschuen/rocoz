@@ -24,6 +24,7 @@ public class Loco {
   private String id = "";
   private int vMax = 80;
   private boolean inBw = true;
+  private int dontMoveTime = Integer.MIN_VALUE;
 
   public Loco(String id, int vMax) {
     super();
@@ -77,6 +78,20 @@ public class Loco {
    */
   public void setInBw(boolean inBw) {
     this.inBw = inBw;
+  }
+
+  /**
+   * @return the dontMoveTime
+   */
+  public int getDontMoveTime() {
+    return this.dontMoveTime;
+  }
+
+  /**
+   * @param dontMoveTime the dontMoveTime to set
+   */
+  public void setDontMoveTime(int dontMoveTime) {
+    this.dontMoveTime = dontMoveTime;
   }
 
 }

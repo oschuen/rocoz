@@ -190,7 +190,6 @@ public class ControlPanel extends JPanel {
     this.animationSpeedButtonGroup.add(this.animationSpeedButton_6);
 
     this.fremoTimeButton_1 = new JRadioButton("1");
-    this.fremoTimeButton_1.setSelected(true);
     this.fremoTimeButton_1.addActionListener(fremoTimeActionListener);
 
     fremoTimePanel.add(this.fremoTimeButton_1);
@@ -201,6 +200,8 @@ public class ControlPanel extends JPanel {
     fremoTimePanel.add(this.fremoTimeButton_2);
 
     this.fremoTimeButton_3 = new JRadioButton("3");
+    this.fremoTimeButton_3.setSelected(true);
+    model.setRadix(3);
     this.fremoTimeButton_3.addActionListener(fremoTimeActionListener);
 
     fremoTimePanel.add(this.fremoTimeButton_3);
