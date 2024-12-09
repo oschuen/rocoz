@@ -38,6 +38,8 @@ public class Block extends Tile {
     Track track = new Track();
     if (this.getBlockKind() == BlockKind.STELLBLOCK) {
       track.kind = TrackKind.STELLBLOCK;
+    } else if (this.getBlockKind() == BlockKind.WATCHBLOCK) {
+      track.kind = TrackKind.WATCHBLOCK;
     } else {
       track.kind = TrackKind.BLOCK;
     }
@@ -58,6 +60,9 @@ public class Block extends Tile {
 
     if (this.getBlockKind() == BlockKind.STELLBLOCK) {
       g.setColor(Color.PINK);
+      g.fillRect(raster / 8, 0, 3 * raster / 4, raster);
+    } else if (this.getBlockKind() == BlockKind.WATCHBLOCK) {
+      g.setColor(Color.ORANGE);
       g.fillRect(raster / 8, 0, 3 * raster / 4, raster);
     }
     g.setColor(Color.BLACK);

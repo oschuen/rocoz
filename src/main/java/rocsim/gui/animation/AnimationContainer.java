@@ -99,8 +99,9 @@ public class AnimationContainer {
     }
     TrackPlanModel trackModel = new TrackPlanModel();
     trackModel.fromJson(obj.getJsonArray("track"));
-    this.blockIdDataModel.setValueList(trackModel.getBlockIds());
+    this.blockIdDataModel.setValueList(trackModel.getWatchBlockIds());
     this.plan.setTilesList(trackModel.generateTiles(this.blockStatusModel));
+    this.planPannel.setLocos(locos);
     JsonArray tripsArr = obj.getJsonArray("trips");
     List<TripModel> trips = new ArrayList<>();
     for (int i = 0; i < tripsArr.size(); i++) {

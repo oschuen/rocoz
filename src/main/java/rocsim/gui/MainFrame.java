@@ -140,7 +140,7 @@ public class MainFrame extends JFrame {
 
   public void jMenuFileLoad_actionPerformed(ActionEvent e) {
     JFileChooser choose = null;
-    FileFilter filter = new FileNameExtensionFilter("Sim File", "rcz");
+    FileFilter filter = new FileNameExtensionFilter("Sim File (*.rcz)", "rcz");
 
     if (null == this.currentFile) {
       choose = new JFileChooser();
@@ -149,6 +149,7 @@ public class MainFrame extends JFrame {
       choose = new JFileChooser(this.currentFile);
       choose.addChoosableFileFilter(filter);
     }
+    choose.setAcceptAllFileFilterUsed(true);
 
     int returnVal = choose.showOpenDialog(this);
     File f = choose.getSelectedFile();
@@ -168,8 +169,7 @@ public class MainFrame extends JFrame {
     int returnVal = JFileChooser.CANCEL_OPTION;
     try {
       JFileChooser choose;
-      FileFilter filter = new FileNameExtensionFilter("Sim File", "rcz");
-
+      FileFilter filter = new FileNameExtensionFilter("Sim File (*.rcz)", "rcz");
       if (null == this.currentFile) {
         choose = new JFileChooser();
         choose.addChoosableFileFilter(filter);
@@ -177,6 +177,7 @@ public class MainFrame extends JFrame {
         choose = new JFileChooser(this.currentFile);
         choose.addChoosableFileFilter(filter);
       }
+      choose.setAcceptAllFileFilterUsed(true);
       returnVal = choose.showSaveDialog(this);
       File f = choose.getSelectedFile();
       if ((f != null) && (returnVal == JFileChooser.APPROVE_OPTION)) {

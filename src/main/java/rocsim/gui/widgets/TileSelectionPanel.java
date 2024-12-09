@@ -65,6 +65,7 @@ public class TileSelectionPanel extends JScrollPane implements TileEditModel {
 
   private int blockCounter = -1;
   private int stellBlockCounter = -1;
+  private int watchBlockCounter = -1;
   private TileButton westBlockButton = new TileButton(new TileFactory() {
 
     @Override
@@ -105,6 +106,28 @@ public class TileSelectionPanel extends JScrollPane implements TileEditModel {
       Block block = new Block("", 0, 0, Direction.NORTH, BlockKind.STELLBLOCK);
       block.setId("sb" + TileSelectionPanel.this.stellBlockCounter);
       TileSelectionPanel.this.stellBlockCounter++;
+      return block;
+    }
+  });
+
+  private TileButton westWatchBlockButton = new TileButton(new TileFactory() {
+
+    @Override
+    public Tile createTile() {
+      Block block = new Block("", 0, 0, Direction.WEST, BlockKind.WATCHBLOCK);
+      block.setId("wb" + TileSelectionPanel.this.watchBlockCounter);
+      TileSelectionPanel.this.watchBlockCounter++;
+      return block;
+    }
+  });
+
+  private TileButton northWatchBlockButton = new TileButton(new TileFactory() {
+
+    @Override
+    public Tile createTile() {
+      Block block = new Block("", 0, 0, Direction.NORTH, BlockKind.WATCHBLOCK);
+      block.setId("wb" + TileSelectionPanel.this.watchBlockCounter);
+      TileSelectionPanel.this.watchBlockCounter++;
       return block;
     }
   });
@@ -226,6 +249,8 @@ public class TileSelectionPanel extends JScrollPane implements TileEditModel {
       }
     });
     this.panel.add(this.tileSelectionDropButton);
+    addButton(this.westWatchBlockButton, "Watchblock");
+    addButton(this.northWatchBlockButton, "Watchblock");
     addButton(this.westStellBlockButton, "Stellblock");
     addButton(this.northStellBlockButton, "Stellblock");
     addButton(this.westBlockButton, "Block");

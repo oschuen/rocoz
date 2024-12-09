@@ -25,6 +25,7 @@ public class Loco {
   private int vMax = 80;
   private boolean inBw = true;
   private int dontMoveTime = Integer.MIN_VALUE;
+  private String currentTrain = "";
 
   public Loco(String id, int vMax) {
     super();
@@ -92,6 +93,20 @@ public class Loco {
    */
   public void setDontMoveTime(int dontMoveTime) {
     this.dontMoveTime = dontMoveTime;
+  }
+
+  /**
+   * @return the currentTrain
+   */
+  public String getCurrentTrain() {
+    return this.currentTrain;
+  }
+
+  /**
+   * @param currentTrain the currentTrain to set
+   */
+  public void setCurrentTrain(String currentTrain) {
+    this.currentTrain = currentTrain;
   }
 
 }

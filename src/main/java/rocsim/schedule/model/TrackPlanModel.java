@@ -17,6 +17,7 @@ package rocsim.schedule.model;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,7 +36,7 @@ import rocsim.gui.tiles.Tile;
 
 public class TrackPlanModel {
   public enum BlockKind {
-    NONE, BLOCK, STELLBLOCK
+    NONE, BLOCK, STELLBLOCK, WATCHBLOCK
   }
 
   public static enum Direction {
@@ -43,7 +44,7 @@ public class TrackPlanModel {
   }
 
   public enum TrackKind {
-    CURVE, TRACK, LEFT_SWITCH, RIGHT_SWICH, BLOCK, STELLBLOCK
+    CURVE, TRACK, LEFT_SWITCH, RIGHT_SWICH, BLOCK, STELLBLOCK, WATCHBLOCK
   }
 
   private List<Track> tracks = new ArrayList<>();
@@ -96,11 +97,19 @@ public class TrackPlanModel {
     return track;
   }
 
-  public List<String> getBlockIds() {
-    return this.tracks.stream().filter((track) -> track.kind == TrackKind.BLOCK || track.kind == TrackKind.STELLBLOCK)
-        .map((track) -> {
+  public List<String> getWatchBlockIds() {
+    return this.tracks.stream().filter((track) -> track.kind == TrackKind.WATCHBLOCK).map((track) -> {
+      return track.id;
+    }).filter(str -> !str.isBlank()).collect(Collectors.toList());
+  }
+
+  public List<String> getArrivableBlockIds() {
+    List<String> ids = this.tracks.stream()
+        .filter((track) -> track.kind == TrackKind.BLOCK || track.kind == TrackKind.STELLBLOCK).map((track) -> {
           return track.id;
         }).filter(str -> !str.isBlank()).collect(Collectors.toList());
+    Collections.sort(ids);
+    return ids;
   }
 
   public List<Tile> generateTiles() {
@@ -113,18 +122,20 @@ public class TrackPlanModel {
       switch (track.kind) {
       case BLOCK:
         Block block = new Block(track.id, track.location.x, track.location.y, track.orientation, BlockKind.BLOCK);
-        if (listener != null) {
-          block.addStatusListener(listener);
-        }
         tiles.add(block);
         break;
       case STELLBLOCK:
         Block stellBlock = new Block(track.id, track.location.x, track.location.y, track.orientation,
             BlockKind.STELLBLOCK);
-        if (listener != null) {
-          stellBlock.addStatusListener(listener);
-        }
         tiles.add(stellBlock);
+        break;
+      case WATCHBLOCK:
+        Block watchBlock = new Block(track.id, track.location.x, track.location.y, track.orientation,
+            BlockKind.WATCHBLOCK);
+        if (listener != null) {
+          watchBlock.addStatusListener(listener);
+        }
+        tiles.add(watchBlock);
         break;
       case CURVE:
         tiles.add(new Curve(track.id, track.location.x, track.location.y, track.orientation));
@@ -147,27 +158,27 @@ public class TrackPlanModel {
   }
 
   public void addCurve(String id, int x, int y, Direction orientation) {
-    this.tracks.add(baseCreateTrack(TrackKind.CURVE, id, x, y, orientation, 1.0F));
+    this.tracks.add(baseCreateTrack(TrackKind.CURVE, id, x, y, orientation, 0.5F));
   }
 
   public void addTrack(String id, int x, int y, Direction orientation) {
-    this.tracks.add(baseCreateTrack(TrackKind.TRACK, id, x, y, orientation, 1.0F));
+    this.tracks.add(baseCreateTrack(TrackKind.TRACK, id, x, y, orientation, 0.5F));
   }
 
   public void addLeftSwitch(String id, int x, int y, Direction orientation) {
-    this.tracks.add(baseCreateTrack(TrackKind.LEFT_SWITCH, id, x, y, orientation, 1.0F));
+    this.tracks.add(baseCreateTrack(TrackKind.LEFT_SWITCH, id, x, y, orientation, 0.5F));
   }
 
   public void addRightSwitch(String id, int x, int y, Direction orientation) {
-    this.tracks.add(baseCreateTrack(TrackKind.RIGHT_SWICH, id, x, y, orientation, 1.0F));
+    this.tracks.add(baseCreateTrack(TrackKind.RIGHT_SWICH, id, x, y, orientation, 0.5F));
   }
 
   public void addStellBlock(String id, int x, int y, Direction orientation) {
-    this.tracks.add(baseCreateTrack(TrackKind.STELLBLOCK, id, x, y, orientation, 1.0F));
+    this.tracks.add(baseCreateTrack(TrackKind.STELLBLOCK, id, x, y, orientation, 0.5F));
   }
 
   public void addBlock(String id, int x, int y, Direction orientation) {
-    this.tracks.add(baseCreateTrack(TrackKind.BLOCK, id, x, y, orientation, 1.0F));
+    this.tracks.add(baseCreateTrack(TrackKind.BLOCK, id, x, y, orientation, 0.5F));
   }
 
   public JsonArray toJson() {

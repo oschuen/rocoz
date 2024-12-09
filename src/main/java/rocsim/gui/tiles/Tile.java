@@ -30,7 +30,7 @@ public abstract class Tile {
   private Direction orientation = Direction.NORTH;
   private UseState state = UseState.FREE;
   private Point location = new Point(0, 0);
-  private float length = 1.0F;
+  private float length = 0.5F;
   private BlockKind block = BlockKind.NONE;
 
   public static enum UseState {

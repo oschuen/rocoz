@@ -100,7 +100,7 @@ public class EditorContainer {
     TrackPlanModel trackModel = new TrackPlanModel();
     trackModel.fromJson(obj.getJsonArray("track"));
     this.editorPanel.setTrackModel(trackModel);
-    this.blockIdDataModel.setValueList(trackModel.getBlockIds());
+    this.blockIdDataModel.setValueList(trackModel.getArrivableBlockIds());
 
     JsonArray tripsArr = obj.getJsonArray("trips");
     List<TripModel> trips = new ArrayList<>();

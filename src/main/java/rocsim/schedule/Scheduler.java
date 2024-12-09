@@ -139,31 +139,29 @@ public class Scheduler {
       Tile startTile = Scheduler.this.plan.getTile(this.schedule.getStartBlock());
       Tile endTile = Scheduler.this.plan.getTile(this.schedule.getEndBlock());
       boolean error = false;
-      String message = "";
       Block block = null;
       if (startTile == null || endTile == null) {
-        message = "Can't Block, " + this.schedule.getStartBlock() + " or " + this.schedule.getEndBlock()
-            + " doesn't exist";
+        Scheduler.this.logger.error("[{}] Can't Block, {} or {} doesn't exist", time, this.schedule.getStartBlock(),
+            this.schedule.getEndBlock());
         error = true;
       } else {
         block = Scheduler.this.plan.getBlock(startTile, endTile);
         if (block.isEmpty()) {
-          message = "Can't block from " + startTile.getId() + " " + " to " + endTile.getId();
+          Scheduler.this.logger.error("[{}] Can't block from {} to {}", time, startTile.getId(), endTile.getId());
           error = true;
         } else {
           if (this.loco.isInBw()) {
             this.loco.setLocation(startTile.getLocation());
             this.loco.setInBw(false);
           } else if (!this.loco.getLocation().equals(startTile.getLocation())) {
-            message = "Loco " + this.loco.getId() + " is not at location " + startTile.getId();
+
+            Scheduler.this.logger.error("[{}] Loco {} is not at location  {}", time, this.loco.getId(),
+                startTile.getId());
             error = true;
           }
         }
       }
-      if (error) {
-        Scheduler.this.logger.error("Can't schedule {}", this.schedule);
-        Scheduler.this.logger.error("Message {}", message);
-      } else {
+      if (!error) {
         block.markBlocked();
         block.layBlock();
         startTile.setState(UseState.TRAIN);
@@ -201,6 +199,7 @@ public class Scheduler {
               this.trip.getId(), this.trip.getLocoId(),
               Scheduler.this.timeModel.getTimeSecString(theLoco.getDontMoveTime()));
         } else {
+          theLoco.setCurrentTrain(this.trip.getId());
           for (ScheduleModel schedule : this.trip.getSchedules()) {
             Scheduler.this.jobList.add(new StartScheduleJob(schedule, theLoco, tempTime));
             tempTime += schedule.getDuration() + schedule.getPause();

@@ -84,7 +84,13 @@ public class PlanPanel extends JPanel {
         PlanPanel.this.origin.y + e.getY() / PlanPanel.this.raster);
     for (Loco loco : this.locos) {
       if (mouseLoc.equals(loco.getLocation()) && (!loco.isInBw())) {
-        return loco.getId();
+        String toolTip = "";
+        if (!loco.getCurrentTrain().isBlank()) {
+          toolTip = loco.getCurrentTrain() + "(" + loco.getId() + ")";
+        } else {
+          toolTip = loco.getId();
+        }
+        return toolTip;
       }
     }
     Tile tile = this.plan.getTile(mouseLoc);
