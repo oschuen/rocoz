@@ -40,6 +40,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -82,6 +84,15 @@ public class MainFrame extends JFrame {
     this.tabbedPane.addTab("Track", this.editorContainer.getEditorPanel());
     this.tabbedPane.addTab("Locos", this.editorContainer.getLocoFrame());
     this.tabbedPane.addTab("Trips", this.editorContainer.getTripFrame());
+    this.tabbedPane.addTab("Stations", this.editorContainer.getStationFrame());
+
+    this.tabbedPane.addChangeListener(new ChangeListener() {
+
+      @Override
+      public void stateChanged(ChangeEvent arg0) {
+        MainFrame.this.editorContainer.frameSelected(MainFrame.this.tabbedPane.getSelectedComponent());
+      }
+    });
 
     getContentPane().add(this.tabbedPane, BorderLayout.CENTER);
 

@@ -15,6 +15,7 @@
  */
 package rocsim.gui.editor;
 
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,21 +30,37 @@ import javax.swing.event.ListDataListener;
 
 import rocsim.gui.model.StringListDataModel;
 import rocsim.schedule.model.LocoModel;
+import rocsim.schedule.model.StationModel;
 import rocsim.schedule.model.TimeModel;
 import rocsim.schedule.model.TrackPlanModel;
 import rocsim.schedule.model.TripModel;
 
 public class EditorContainer {
 
+  private JScrollPane locoFrameWrapper;
   private LocoFrame locoFrame;
+  private JScrollPane tripFrameWrapper;
   private TripFrame tripFrame;
   private TrackEditorFrame editorPanel;
+  private JScrollPane stationFrameWrapper;
+  private StationFrame stationFrame;
   private StringListDataModel blockIdDataModel = new StringListDataModel();
   private StringListDataModel locoIdDataModel = new StringListDataModel();
+
+  private EditorContext myContext = new EditorContext() {
+
+    @Override
+    public List<String> getArrivableBlockIds() {
+      TrackPlanModel trackModel = EditorContainer.this.editorPanel.getTrackModel();
+      return trackModel.getArrivableBlockIds();
+    }
+  };
 
   public EditorContainer(TimeModel timeModel) {
 
     this.locoFrame = new LocoFrame();
+    this.locoFrameWrapper = new JScrollPane(this.locoFrame);
+
     this.locoFrame.addDataListener(new ListDataListener() {
 
       @Override
@@ -64,8 +81,12 @@ public class EditorContainer {
     });
 
     this.tripFrame = new TripFrame(timeModel, this.locoIdDataModel, this.blockIdDataModel);
+    this.tripFrameWrapper = new JScrollPane(this.tripFrame);
 
     this.editorPanel = new TrackEditorFrame(this.blockIdDataModel);
+
+    this.stationFrame = new StationFrame(this.myContext);
+    this.stationFrameWrapper = new JScrollPane(this.stationFrame);
   }
 
   public JsonObject toJson() {
@@ -83,6 +104,12 @@ public class EditorContainer {
     builder.add("trips", tripArr);
 
     builder.add("track", this.editorPanel.getTrackModel().toJson());
+
+    JsonArrayBuilder stationArr = Json.createArrayBuilder();
+    for (StationModel stationModel : this.stationFrame.getStationModels()) {
+      stationArr.add(stationModel.toJson());
+    }
+    builder.add("stations", stationArr);
     return builder.build();
   }
 
@@ -111,20 +138,29 @@ public class EditorContainer {
     }
     this.tripFrame.setTripModels(trips);
 
+    JsonArray stationArr = obj.getJsonArray("stations");
+    List<StationModel> stations = new ArrayList<>();
+    for (int i = 0; stationArr != null && i < stationArr.size(); i++) {
+      StationModel model = new StationModel();
+      model.fromJson(stationArr.getJsonObject(i));
+      stations.add(model);
+    }
+    this.stationFrame.setStationModels(stations);
+
   }
 
   /**
    * @return the locoFrame
    */
   public JScrollPane getLocoFrame() {
-    return new JScrollPane(this.locoFrame);
+    return this.locoFrameWrapper;
   }
 
   /**
    * @return the tripFrame
    */
   public JScrollPane getTripFrame() {
-    return new JScrollPane(this.tripFrame);
+    return this.tripFrameWrapper;
   }
 
   /**
@@ -132,5 +168,18 @@ public class EditorContainer {
    */
   public TrackEditorFrame getEditorPanel() {
     return this.editorPanel;
+  }
+
+  /**
+   * @return the stationFrame
+   */
+  public JScrollPane getStationFrame() {
+    return this.stationFrameWrapper;
+  }
+
+  public void frameSelected(Component selectedComponent) {
+    if (selectedComponent.equals(this.stationFrameWrapper)) {
+      this.stationFrame.updateContext();
+    }
   }
 }
