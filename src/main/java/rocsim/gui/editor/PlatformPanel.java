@@ -1,7 +1,6 @@
 package rocsim.gui.editor;
 
 import java.awt.FlowLayout;
-import java.util.List;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -17,6 +16,7 @@ public class PlatformPanel extends DataPanel {
   private JTextField platformNameTextField;
   private JComboBox<String> blockComboBox;
   private StringListDataModel blockIdDataModel;
+  private StringListDataModel stationNameDataModel;
   private EditorContext context;
 
   public PlatformPanel(EditorContext context) {
@@ -53,10 +53,6 @@ public class PlatformPanel extends DataPanel {
     model.setName(this.platformNameTextField.getText());
     model.setBlockId((String) this.blockComboBox.getSelectedItem());
     return model;
-  }
-
-  public void setArriveBlockIds(List<String> arriveBlockids) {
-
   }
 
   public void updateContext() {

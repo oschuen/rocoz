@@ -18,6 +18,7 @@ package rocsim.gui.editor;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -29,6 +30,7 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 import rocsim.gui.model.StringListDataModel;
+import rocsim.schedule.model.LineModel;
 import rocsim.schedule.model.LocoModel;
 import rocsim.schedule.model.StationModel;
 import rocsim.schedule.model.TimeModel;
@@ -47,12 +49,29 @@ public class EditorContainer {
   private StringListDataModel blockIdDataModel = new StringListDataModel();
   private StringListDataModel locoIdDataModel = new StringListDataModel();
 
+  private JScrollPane lineFrameWrapper;
+  private LineFrame lineFrame;
+
   private EditorContext myContext = new EditorContext() {
 
     @Override
     public List<String> getArrivableBlockIds() {
       TrackPlanModel trackModel = EditorContainer.this.editorPanel.getTrackModel();
       return trackModel.getArrivableBlockIds();
+    }
+
+    @Override
+    public List<String> getWatchBlockIds() {
+      TrackPlanModel trackModel = EditorContainer.this.editorPanel.getTrackModel();
+      return trackModel.getWatchBlockIds();
+    }
+
+    @Override
+    public List<String> getStationNames() {
+      List<StationModel> stationModels = EditorContainer.this.stationFrame.getStationModels();
+      return stationModels.stream().map(stationModel -> {
+        return stationModel.getName();
+      }).collect(Collectors.toList());
     }
   };
 
@@ -87,6 +106,9 @@ public class EditorContainer {
 
     this.stationFrame = new StationFrame(this.myContext);
     this.stationFrameWrapper = new JScrollPane(this.stationFrame);
+
+    this.lineFrame = new LineFrame(this.myContext);
+    this.lineFrameWrapper = new JScrollPane(this.lineFrame);
   }
 
   public JsonObject toJson() {
@@ -110,6 +132,12 @@ public class EditorContainer {
       stationArr.add(stationModel.toJson());
     }
     builder.add("stations", stationArr);
+
+    JsonArrayBuilder lineArr = Json.createArrayBuilder();
+    for (LineModel lineModel : this.lineFrame.getLineModels()) {
+      lineArr.add(lineModel.toJson());
+    }
+    builder.add("lines", lineArr);
     return builder.build();
   }
 
@@ -147,6 +175,14 @@ public class EditorContainer {
     }
     this.stationFrame.setStationModels(stations);
 
+    JsonArray lineArr = obj.getJsonArray("lines");
+    List<LineModel> lines = new ArrayList<>();
+    for (int i = 0; lineArr != null && i < lineArr.size(); i++) {
+      LineModel model = new LineModel();
+      model.fromJson(lineArr.getJsonObject(i));
+      lines.add(model);
+    }
+    this.lineFrame.setLineModels(lines);
   }
 
   /**
@@ -180,6 +216,15 @@ public class EditorContainer {
   public void frameSelected(Component selectedComponent) {
     if (selectedComponent.equals(this.stationFrameWrapper)) {
       this.stationFrame.updateContext();
+    } else if (selectedComponent.equals(this.lineFrameWrapper)) {
+      this.lineFrame.updateContext();
     }
+  }
+
+  /**
+   * @return the lineFrameWrapper
+   */
+  public JScrollPane getLineFrame() {
+    return this.lineFrameWrapper;
   }
 }

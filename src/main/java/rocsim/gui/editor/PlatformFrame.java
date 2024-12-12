@@ -26,6 +26,7 @@ public class PlatformFrame extends ListFrame<PlatformPanel> {
   public PlatformFrame(EditorContext context) {
     super(new PlatformPanelFactory(context));
     this.context = context;
+
   }
 
   public void setPlatformModels(List<PlatformModel> models) {
