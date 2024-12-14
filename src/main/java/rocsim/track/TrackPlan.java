@@ -84,7 +84,7 @@ public class TrackPlan {
 
   private void buildBlock(Block block, Tile from, Tile to, Direction dir, boolean ignoreFirstState) {
     List<Direction> dirs = from.getPossibleDirections(dir);
-    boolean fromAllowed = ignoreFirstState || from.getState() == UseState.FREE;
+    boolean fromAllowed = to.getState() == UseState.FREE && (ignoreFirstState || from.getState() == UseState.FREE);
     for (Iterator<Direction> iterator = dirs.iterator(); fromAllowed && block.isEmpty() && iterator.hasNext();) {
       Direction direction = iterator.next();
       Tile follow = getTileInDirection(from, direction);

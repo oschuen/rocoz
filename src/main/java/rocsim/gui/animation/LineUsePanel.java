@@ -78,7 +78,6 @@ public class LineUsePanel extends JPanel {
   }
 
   private void reorganize(String line) {
-    System.out.println("Reoganize " + line);
     LineModel displayLine = null;
     for (LineModel rocoLine : this.rocoLines) {
       if (rocoLine.getName().equals(line)) {
