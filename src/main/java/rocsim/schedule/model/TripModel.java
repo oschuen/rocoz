@@ -27,18 +27,22 @@ import javax.json.JsonObjectBuilder;
 public class TripModel {
   private String id = "";
   private String locoId = "";
+  private String station = "";
+  private String platform = "";
   private int startTime = 0;
   private String comment = "";
-  private List<ScheduleModel> schedules = new ArrayList<>();
+  private List<ScheduleStationModel> schedules = new ArrayList<>();
 
   public JsonObject toJson() {
     JsonObjectBuilder builder = Json.createObjectBuilder();
     builder.add("id", this.id);
     builder.add("loco-id", this.locoId);
+    builder.add("station", this.station);
+    builder.add("platform", this.platform);
     builder.add("start-time", this.startTime);
     builder.add("comment", this.comment);
     JsonArrayBuilder jSched = Json.createArrayBuilder();
-    for (ScheduleModel scheduleModel : this.schedules) {
+    for (ScheduleStationModel scheduleModel : this.schedules) {
       jSched.add(scheduleModel.toJson());
     }
     builder.add("schedules", jSched);
@@ -49,23 +53,25 @@ public class TripModel {
     this.schedules.clear();
     this.id = obj.getString("id", "");
     this.locoId = obj.getString("loco-id", "");
+    this.station = obj.getString("station", "");
+    this.platform = obj.getString("platform", "");
     this.startTime = obj.getInt("start-time", 0);
     this.comment = obj.getString("comment", "");
     JsonArray jSched = obj.getJsonArray("schedules");
     if (jSched != null) {
       for (int i = 0; i < jSched.size(); i++) {
-        ScheduleModel schedModel = new ScheduleModel();
+        ScheduleStationModel schedModel = new ScheduleStationModel();
         schedModel.fromJson(jSched.getJsonObject(i));
         addSchedule(schedModel);
       }
     }
   }
 
-  public void addSchedule(ScheduleModel model) {
+  public void addSchedule(ScheduleStationModel model) {
     this.schedules.add(model);
   }
 
-  public List<ScheduleModel> getSchedules() {
+  public List<ScheduleStationModel> getSchedules() {
     return new ArrayList<>(this.schedules);
   }
 
@@ -120,7 +126,7 @@ public class TripModel {
 
   public int getEndTime() {
     int time = this.startTime;
-    for (ScheduleModel scheduleModel : this.schedules) {
+    for (ScheduleStationModel scheduleModel : this.schedules) {
       time += scheduleModel.getDuration() + scheduleModel.getPause();
     }
     return time;
@@ -131,5 +137,33 @@ public class TripModel {
    */
   public void setStartTime(int startTime) {
     this.startTime = startTime;
+  }
+
+  /**
+   * @return the station
+   */
+  public String getStation() {
+    return this.station;
+  }
+
+  /**
+   * @param station the station to set
+   */
+  public void setStation(String station) {
+    this.station = station;
+  }
+
+  /**
+   * @return the platform
+   */
+  public String getPlatform() {
+    return this.platform;
+  }
+
+  /**
+   * @param platform the platform to set
+   */
+  public void setPlatform(String platform) {
+    this.platform = platform;
   }
 }

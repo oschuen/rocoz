@@ -11,14 +11,16 @@
         {
             "id": "DG1234",
             "loco-id": "BR160-1",
+            "station": "Links",
+            "platform": "1",
             "start-time": 18000,
             "comment": "",
             "schedules": [
                 {
-                    "start-block": "sb2",
-                    "end-block": "sb3",
+                    "station": "Rechts",
+                    "platform": "1",
                     "duration": 60,
-                    "pause": 60,
+                    "pause": 0,
                     "comment": ""
                 }
             ]
@@ -26,12 +28,14 @@
         {
             "id": "DG2345",
             "loco-id": "BR160-1",
-            "start-time": 18180,
+            "station": "Rechts",
+            "platform": "1",
+            "start-time": 18120,
             "comment": "",
             "schedules": [
                 {
-                    "start-block": "sb3",
-                    "end-block": "sb1",
+                    "station": "Links",
+                    "platform": "2",
                     "duration": 60,
                     "pause": 0,
                     "comment": ""
@@ -45,7 +49,7 @@
             "dir": "WEST",
             "loc_x": 6,
             "loc_y": 3,
-            "length": 1.0,
+            "length": 0.5,
             "kind": "TRACK"
         },
         {
@@ -53,7 +57,7 @@
             "dir": "WEST",
             "loc_x": 8,
             "loc_y": 2,
-            "length": 1.0,
+            "length": 0.5,
             "kind": "TRACK"
         },
         {
@@ -61,7 +65,7 @@
             "dir": "WEST",
             "loc_x": 9,
             "loc_y": 2,
-            "length": 1.0,
+            "length": 0.5,
             "kind": "TRACK"
         },
         {
@@ -69,7 +73,7 @@
             "dir": "WEST",
             "loc_x": 7,
             "loc_y": 3,
-            "length": 1.0,
+            "length": 0.5,
             "kind": "TRACK"
         },
         {
@@ -77,7 +81,7 @@
             "dir": "WEST",
             "loc_x": 10,
             "loc_y": 2,
-            "length": 1.0,
+            "length": 0.5,
             "kind": "TRACK"
         },
         {
@@ -85,7 +89,7 @@
             "dir": "WEST",
             "loc_x": 11,
             "loc_y": 2,
-            "length": 1.0,
+            "length": 0.5,
             "kind": "LEFT_SWITCH"
         },
         {
@@ -93,7 +97,7 @@
             "dir": "WEST",
             "loc_x": 12,
             "loc_y": 2,
-            "length": 1.0,
+            "length": 0.5,
             "kind": "TRACK"
         },
         {
@@ -101,23 +105,23 @@
             "dir": "WEST",
             "loc_x": 4,
             "loc_y": 3,
-            "length": 1.0,
+            "length": 0.5,
             "kind": "STELLBLOCK"
         },
         {
-            "id": "tk3",
+            "id": "wb1",
             "dir": "WEST",
             "loc_x": 13,
             "loc_y": 2,
-            "length": 1.0,
-            "kind": "TRACK"
+            "length": 0.5,
+            "kind": "WATCHBLOCK"
         },
         {
             "id": "tk2",
             "dir": "WEST",
             "loc_x": 14,
             "loc_y": 2,
-            "length": 1.0,
+            "length": 0.5,
             "kind": "TRACK"
         },
         {
@@ -125,7 +129,7 @@
             "dir": "WEST",
             "loc_x": 5,
             "loc_y": 3,
-            "length": 1.0,
+            "length": 0.5,
             "kind": "TRACK"
         },
         {
@@ -133,7 +137,7 @@
             "dir": "WEST",
             "loc_x": 15,
             "loc_y": 2,
-            "length": 1.0,
+            "length": 0.5,
             "kind": "TRACK"
         },
         {
@@ -141,7 +145,7 @@
             "dir": "WEST",
             "loc_x": 16,
             "loc_y": 2,
-            "length": 1.0,
+            "length": 0.5,
             "kind": "BLOCK"
         },
         {
@@ -149,7 +153,7 @@
             "dir": "WEST",
             "loc_x": 4,
             "loc_y": 2,
-            "length": 1.0,
+            "length": 0.5,
             "kind": "STELLBLOCK"
         },
         {
@@ -157,7 +161,7 @@
             "dir": "WEST",
             "loc_x": 5,
             "loc_y": 2,
-            "length": 1.0,
+            "length": 0.5,
             "kind": "TRACK"
         },
         {
@@ -165,7 +169,7 @@
             "dir": "WEST",
             "loc_x": 8,
             "loc_y": 3,
-            "length": 1.0,
+            "length": 0.5,
             "kind": "TRACK"
         },
         {
@@ -173,7 +177,7 @@
             "dir": "WEST",
             "loc_x": 6,
             "loc_y": 2,
-            "length": 1.0,
+            "length": 0.5,
             "kind": "TRACK"
         },
         {
@@ -181,7 +185,7 @@
             "dir": "WEST",
             "loc_x": 9,
             "loc_y": 3,
-            "length": 1.0,
+            "length": 0.5,
             "kind": "TRACK"
         },
         {
@@ -189,7 +193,7 @@
             "dir": "WEST",
             "loc_x": 10,
             "loc_y": 3,
-            "length": 1.0,
+            "length": 0.5,
             "kind": "TRACK"
         },
         {
@@ -197,7 +201,7 @@
             "dir": "WEST",
             "loc_x": 7,
             "loc_y": 2,
-            "length": 1.0,
+            "length": 0.5,
             "kind": "TRACK"
         },
         {
@@ -205,8 +209,44 @@
             "dir": "NORTH",
             "loc_x": 11,
             "loc_y": 3,
-            "length": 1.0,
+            "length": 0.5,
             "kind": "CURVE"
+        }
+    ],
+    "stations": [
+        {
+            "name": "Links",
+            "platforms": [
+                {
+                    "name": "1",
+                    "block-id": "sb1"
+                },
+                {
+                    "name": "2",
+                    "block-id": "sb2"
+                }
+            ]
+        },
+        {
+            "name": "Rechts",
+            "platforms": [
+                {
+                    "name": "1",
+                    "block-id": "sb3"
+                }
+            ]
+        }
+    ],
+    "lines": [
+        {
+            "name": "DB",
+            "segments": [
+                {
+                    "station-one": "Links",
+                    "station-two": "Rechts",
+                    "watch-block": "wb1"
+                }
+            ]
         }
     ]
 }

@@ -18,53 +18,54 @@ package rocsim.gui.editor;
 import java.util.ArrayList;
 import java.util.List;
 
-import rocsim.gui.model.StringListDataModel;
 import rocsim.gui.widgets.ListFrame;
-import rocsim.schedule.model.ScheduleModel;
-import rocsim.schedule.model.TimeModel;
+import rocsim.schedule.model.ScheduleStationModel;
 
-public class ScheduleFrame extends ListFrame<SchedulePanel> {
+public class ScheduleFrame extends ListFrame<ScheduleStationPanel> {
   private static final long serialVersionUID = 1L;
-  private StringListDataModel blockIdDataModel;
-  private TimeModel timeModel;
+  private EditorContext context;
 
-  private static class SchedulePanelFactory implements rocsim.gui.widgets.ListFrame.ListItemFactory<SchedulePanel> {
-    private StringListDataModel blockIdDataModel;
-    private TimeModel timeModel;
+  private static class SchedulePanelFactory
+      implements rocsim.gui.widgets.ListFrame.ListItemFactory<ScheduleStationPanel> {
+    private EditorContext context;
 
-    public SchedulePanelFactory(TimeModel timeModel, StringListDataModel blockIdDataModel) {
-      this.blockIdDataModel = blockIdDataModel;
-      this.timeModel = timeModel;
+    public SchedulePanelFactory(EditorContext context) {
+      this.context = context;
     }
 
     @Override
-    public SchedulePanel createNewItem() {
-      return new SchedulePanel(this.timeModel, this.blockIdDataModel);
+    public ScheduleStationPanel createNewItem() {
+      return new ScheduleStationPanel(this.context);
     }
   };
 
-  public ScheduleFrame(TimeModel timeModel, StringListDataModel blockIdDataModel) {
-    super(new SchedulePanelFactory(timeModel, blockIdDataModel));
-    this.blockIdDataModel = blockIdDataModel;
-    this.timeModel = timeModel;
+  public ScheduleFrame(EditorContext context) {
+    super(new SchedulePanelFactory(context));
+    this.context = context;
 
   }
 
-  public void setScheduleModels(List<ScheduleModel> models) {
-    List<SchedulePanel> panels = new ArrayList<>();
-    for (ScheduleModel scheduleModel : models) {
-      SchedulePanel panel = new SchedulePanel(this.timeModel, this.blockIdDataModel);
+  public void setScheduleModels(List<ScheduleStationModel> models) {
+    List<ScheduleStationPanel> panels = new ArrayList<>();
+    for (ScheduleStationModel scheduleModel : models) {
+      ScheduleStationPanel panel = new ScheduleStationPanel(this.context);
       panel.setModel(scheduleModel);
       panels.add(panel);
     }
     setContent(panels);
   }
 
-  public List<ScheduleModel> getScheduleModels() {
-    List<ScheduleModel> models = new ArrayList<>();
-    for (SchedulePanel schedule : getContent()) {
+  public List<ScheduleStationModel> getScheduleModels() {
+    List<ScheduleStationModel> models = new ArrayList<>();
+    for (ScheduleStationPanel schedule : getContent()) {
       models.add(schedule.getModel());
     }
     return models;
+  }
+
+  public void updateContext() {
+    for (ScheduleStationPanel schedules : getContent()) {
+      schedules.updateContext();
+    }
   }
 }

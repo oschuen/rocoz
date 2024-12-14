@@ -101,10 +101,12 @@ public class RightSwitch extends Tile {
   public void enableFollowUp(Direction from, Direction to) {
     List<Direction> possibles = getPossibleDirections(from);
     if (possibles.contains(to)) {
-      getFollowUpDirection(from).ifPresent(possible -> {
+      getFollowUpDirection(from).ifPresentOrElse(possible -> {
         if (possible != to) {
           this.switched = !this.switched;
         }
+      }, () -> {
+        this.switched = !this.switched;
       });
     }
   }

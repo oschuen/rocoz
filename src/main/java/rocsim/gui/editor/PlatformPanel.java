@@ -16,7 +16,6 @@ public class PlatformPanel extends DataPanel {
   private JTextField platformNameTextField;
   private JComboBox<String> blockComboBox;
   private StringListDataModel blockIdDataModel;
-  private StringListDataModel stationNameDataModel;
   private EditorContext context;
 
   public PlatformPanel(EditorContext context) {

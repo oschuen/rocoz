@@ -31,7 +31,7 @@ import javax.swing.text.MaskFormatter;
 import rocsim.gui.model.StringComboBoxModel;
 import rocsim.gui.model.StringListDataModel;
 import rocsim.gui.widgets.DataPanel;
-import rocsim.schedule.model.ScheduleModel;
+import rocsim.schedule.model.ScheduleStationModel;
 import rocsim.schedule.model.TimeModel;
 import rocsim.schedule.model.TripModel;
 
@@ -45,7 +45,8 @@ public class TripPanel extends DataPanel {
   private TimeModel timeModel;
   private ScheduleFrame scheduleFrame;
 
-  public TripPanel(TimeModel timeModel, StringListDataModel locoIdDataModel, StringListDataModel blockIdDataModel) {
+  public TripPanel(EditorContext context, TimeModel timeModel, StringListDataModel locoIdDataModel,
+      StringListDataModel blockIdDataModel) {
     this.timeModel = timeModel;
     GridBagLayout gridBagLayout = new GridBagLayout();
     setLayout(gridBagLayout);
@@ -164,7 +165,7 @@ public class TripPanel extends DataPanel {
     add(this.commentTextField, gbc_commentTextField);
     this.commentTextField.setColumns(20);
 
-    this.scheduleFrame = new ScheduleFrame(timeModel, blockIdDataModel);
+    this.scheduleFrame = new ScheduleFrame(context);
     GridBagConstraints gbc_panel = new GridBagConstraints();
     gbc_panel.weightx = 10.0;
     gbc_panel.gridwidth = 9;
@@ -188,7 +189,7 @@ public class TripPanel extends DataPanel {
     model.setId(this.idTextField.getText());
     model.setLocoId((String) this.comboBox.getSelectedItem());
     model.setStartTime(this.timeModel.convertTimeString(this.realTimeTextField.getText()));
-    for (ScheduleModel scheduleModel : this.scheduleFrame.getScheduleModels()) {
+    for (ScheduleStationModel scheduleModel : this.scheduleFrame.getScheduleModels()) {
       model.addSchedule(scheduleModel);
     }
     return model;
@@ -196,6 +197,11 @@ public class TripPanel extends DataPanel {
 
   public void adjustTime() {
     this.fremoTimeTextField.setText(this.timeModel.getFremoTimeSecString(getModel().getStartTime()));
+  }
+
+  public void updateContext() {
+    this.scheduleFrame.updateContext();
+
   }
 
 }

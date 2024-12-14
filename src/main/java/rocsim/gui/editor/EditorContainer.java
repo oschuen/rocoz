@@ -48,6 +48,7 @@ public class EditorContainer {
   private StationFrame stationFrame;
   private StringListDataModel blockIdDataModel = new StringListDataModel();
   private StringListDataModel locoIdDataModel = new StringListDataModel();
+  private TimeModel timeModel;
 
   private JScrollPane lineFrameWrapper;
   private LineFrame lineFrame;
@@ -73,9 +74,33 @@ public class EditorContainer {
         return stationModel.getName();
       }).collect(Collectors.toList());
     }
+
+    @Override
+    public TimeModel getTimeModel() {
+      return EditorContainer.this.timeModel;
+    }
+
+    @Override
+    public List<String> getPlatforms(String station) {
+      List<String> platforms = new ArrayList<>();
+      List<StationModel> stationModels = EditorContainer.this.stationFrame.getStationModels();
+      for (StationModel stationModel : stationModels) {
+        if (stationModel.getName().equals(station)) {
+          platforms = stationModel.getPlatforms().stream().map(platform -> platform.getName())
+              .collect(Collectors.toList());
+        }
+      }
+      return platforms;
+    }
+
+    @Override
+    public List<String> getLocoIds() {
+      return EditorContainer.this.locoFrame.getLocoIds();
+    }
   };
 
   public EditorContainer(TimeModel timeModel) {
+    this.timeModel = timeModel;
 
     this.locoFrame = new LocoFrame();
     this.locoFrameWrapper = new JScrollPane(this.locoFrame);
@@ -99,9 +124,6 @@ public class EditorContainer {
       }
     });
 
-    this.tripFrame = new TripFrame(timeModel, this.locoIdDataModel, this.blockIdDataModel);
-    this.tripFrameWrapper = new JScrollPane(this.tripFrame);
-
     this.editorPanel = new TrackEditorFrame(this.blockIdDataModel);
 
     this.stationFrame = new StationFrame(this.myContext);
@@ -109,6 +131,9 @@ public class EditorContainer {
 
     this.lineFrame = new LineFrame(this.myContext);
     this.lineFrameWrapper = new JScrollPane(this.lineFrame);
+
+    this.tripFrame = new TripFrame(this.myContext);
+    this.tripFrameWrapper = new JScrollPane(this.tripFrame);
   }
 
   public JsonObject toJson() {
@@ -157,15 +182,6 @@ public class EditorContainer {
     this.editorPanel.setTrackModel(trackModel);
     this.blockIdDataModel.setValueList(trackModel.getArrivableBlockIds());
 
-    JsonArray tripsArr = obj.getJsonArray("trips");
-    List<TripModel> trips = new ArrayList<>();
-    for (int i = 0; i < tripsArr.size(); i++) {
-      TripModel model = new TripModel();
-      model.fromJson(tripsArr.getJsonObject(i));
-      trips.add(model);
-    }
-    this.tripFrame.setTripModels(trips);
-
     JsonArray stationArr = obj.getJsonArray("stations");
     List<StationModel> stations = new ArrayList<>();
     for (int i = 0; stationArr != null && i < stationArr.size(); i++) {
@@ -183,6 +199,16 @@ public class EditorContainer {
       lines.add(model);
     }
     this.lineFrame.setLineModels(lines);
+
+    JsonArray tripsArr = obj.getJsonArray("trips");
+    List<TripModel> trips = new ArrayList<>();
+    for (int i = 0; i < tripsArr.size(); i++) {
+      TripModel model = new TripModel();
+      model.fromJson(tripsArr.getJsonObject(i));
+      trips.add(model);
+    }
+    this.tripFrame.setTripModels(trips);
+
   }
 
   /**
@@ -218,6 +244,8 @@ public class EditorContainer {
       this.stationFrame.updateContext();
     } else if (selectedComponent.equals(this.lineFrameWrapper)) {
       this.lineFrame.updateContext();
+    } else if (selectedComponent.equals(this.tripFrameWrapper)) {
+      this.tripFrame.updateContext();
     }
   }
 

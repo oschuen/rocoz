@@ -58,6 +58,7 @@ public class ControlPanel extends JPanel {
   private PlayButton playButton;
   private PauseButton pauseButton;
   private boolean paused = false;
+  private TimePanel timePanel;
 
   public ControlPanel(TimeModel model) {
     this.model = model;
@@ -99,6 +100,8 @@ public class ControlPanel extends JPanel {
         ControlPanel.this.paused = true;
       }
     });
+    this.timePanel = new TimePanel(model);
+    buttonPannel.add(this.timePanel);
 
     panel2.add(buttonPannel);
 

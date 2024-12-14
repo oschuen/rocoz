@@ -24,6 +24,7 @@ public class TimeModel {
   private int minTime = 0;
   private int maxTime = 0;
   private int increment = 1;
+  private boolean displayRealTime = true;
 
   private List<TimeModelChangeListener> listeners = new ArrayList<>();
 
@@ -169,6 +170,23 @@ public class TimeModel {
   public void setIncrement(int increment) {
     if (increment != this.increment) {
       this.increment = increment;
+      notifyListeners();
+    }
+  }
+
+  /**
+   * @return the displayRealTime
+   */
+  public boolean isDisplayRealTime() {
+    return this.displayRealTime;
+  }
+
+  /**
+   * @param displayRealTime the displayRealTime to set
+   */
+  public void setDisplayRealTime(boolean displayRealTime) {
+    if (displayRealTime != this.displayRealTime) {
+      this.displayRealTime = displayRealTime;
       notifyListeners();
     }
   }
