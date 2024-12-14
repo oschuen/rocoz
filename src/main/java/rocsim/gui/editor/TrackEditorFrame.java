@@ -19,7 +19,6 @@ import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
 
-import rocsim.gui.model.StringListDataModel;
 import rocsim.gui.widgets.TileSelectionPanel;
 import rocsim.schedule.model.TrackPlanModel;
 
@@ -28,11 +27,11 @@ public class TrackEditorFrame extends JPanel {
   private TrackEditorPanel planPannel;
   private TileSelectionPanel panel;
 
-  public TrackEditorFrame(StringListDataModel blockIdDataModel) {
+  public TrackEditorFrame() {
     setLayout(new BorderLayout(0, 0));
 
     this.panel = new TileSelectionPanel();
-    this.planPannel = new TrackEditorPanel(this.panel, blockIdDataModel);
+    this.planPannel = new TrackEditorPanel(this.panel);
     add(this.panel, BorderLayout.NORTH);
     add(this.planPannel, BorderLayout.CENTER);
 

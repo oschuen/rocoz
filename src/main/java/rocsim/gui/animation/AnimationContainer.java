@@ -33,6 +33,7 @@ import rocsim.gui.model.BlockStatusModel;
 import rocsim.gui.model.StringListDataModel;
 import rocsim.schedule.Loco;
 import rocsim.schedule.Scheduler;
+import rocsim.schedule.model.LineModel;
 import rocsim.schedule.model.LocoModel;
 import rocsim.schedule.model.TimeModel;
 import rocsim.schedule.model.TrackPlanModel;
@@ -46,7 +47,7 @@ public class AnimationContainer {
   private PlanPanel planPannel;
   private LogPanel logPanel;
   private ControlPanel controlPanel;
-  private BlockUsePanel blockUsePanel;
+  private LineUsePanel lineUsePanel;
   private BlockStatusModel blockStatusModel;
   private TrackPlan plan;
   private ScheduledFuture<?> executionFuture;
@@ -81,36 +82,43 @@ public class AnimationContainer {
     this.controlPanel.setMaxTime(3600);
     this.controlPanel.applyCurrentTime();
 
-    this.blockUsePanel = new BlockUsePanel(this.blockStatusModel, this.blockIdDataModel, timeModel);
-//    this.executorJob = new ExecutorJob(this.scheduler, this.blockUsePanel, this.planPannel, this.controlPanel,
-//        timeModel);
-//    this.executionFuture = this.service.scheduleAtFixedRate(this.executorJob, 1, 1, TimeUnit.SECONDS);
+    this.lineUsePanel = new LineUsePanel(this.blockStatusModel, timeModel);
   }
 
   public void fromJson(JsonObject obj) {
 
-    JsonArray locoArr = obj.getJsonArray("locos");
-    List<Loco> locos = new ArrayList<>();
-    for (int i = 0; i < locoArr.size(); i++) {
-      LocoModel model = new LocoModel();
-      model.fromJson(locoArr.getJsonObject(i));
-      Loco loco = new Loco(model);
-      locos.add(loco);
-    }
-    TrackPlanModel trackModel = new TrackPlanModel();
-    trackModel.fromJson(obj.getJsonArray("track"));
-    this.blockIdDataModel.setValueList(trackModel.getWatchBlockIds());
-    this.plan.setTilesList(trackModel.generateTiles(this.blockStatusModel));
-    this.planPannel.setLocos(locos);
-    JsonArray tripsArr = obj.getJsonArray("trips");
-    List<TripModel> trips = new ArrayList<>();
-    for (int i = 0; i < tripsArr.size(); i++) {
-      TripModel model = new TripModel();
-      model.fromJson(tripsArr.getJsonObject(i));
-      trips.add(model);
-    }
     this.lock.lock();
     try {
+      JsonArray locoArr = obj.getJsonArray("locos");
+      List<Loco> locos = new ArrayList<>();
+      for (int i = 0; i < locoArr.size(); i++) {
+        LocoModel model = new LocoModel();
+        model.fromJson(locoArr.getJsonObject(i));
+        Loco loco = new Loco(model);
+        locos.add(loco);
+      }
+      TrackPlanModel trackModel = new TrackPlanModel();
+      trackModel.fromJson(obj.getJsonArray("track"));
+      this.blockIdDataModel.setValueList(trackModel.getWatchBlockIds());
+      this.plan.setTilesList(trackModel.generateTiles(this.blockStatusModel));
+      this.planPannel.setLocos(locos);
+      JsonArray tripsArr = obj.getJsonArray("trips");
+      List<TripModel> trips = new ArrayList<>();
+      for (int i = 0; i < tripsArr.size(); i++) {
+        TripModel model = new TripModel();
+        model.fromJson(tripsArr.getJsonObject(i));
+        trips.add(model);
+      }
+      JsonArray lineArr = obj.getJsonArray("lines");
+      List<LineModel> lines = new ArrayList<>();
+      for (int i = 0; lineArr != null && i < lineArr.size(); i++) {
+        LineModel model = new LineModel();
+        model.fromJson(lineArr.getJsonObject(i));
+        lines.add(model);
+      }
+
+      this.lineUsePanel.setLines(lines);
+
       Scheduler scheduler = new Scheduler(this.plan, trips, locos, this.timeModel);
       this.timeModel.setMinTime(scheduler.getMinTime());
       this.timeModel.setMaxTime(scheduler.getMaxTime());
@@ -122,7 +130,7 @@ public class AnimationContainer {
         this.executionFuture.cancel(false);
         this.executorJob.stop();
       }
-      this.executorJob = new ExecutorJob(scheduler, this.blockUsePanel, this.planPannel, this.controlPanel,
+      this.executorJob = new ExecutorJob(scheduler, this.lineUsePanel, this.planPannel, this.controlPanel,
           this.timeModel);
       this.executionFuture = this.service.scheduleAtFixedRate(this.executorJob, 1, 1, TimeUnit.SECONDS);
     } finally {
@@ -135,12 +143,12 @@ public class AnimationContainer {
     private Scheduler scheduler;
     private TimeModel timeModel;
     private ControlPanel controlPanel;
-    private BlockUsePanel blockUsePanel;
+    private LineUsePanel blockUsePanel;
     private PlanPanel planPannel;
     private boolean running = true;
 
-    public ExecutorJob(Scheduler scheduler, BlockUsePanel blockUsePanel, PlanPanel planPannel,
-        ControlPanel controlPanel, TimeModel timeModel) {
+    public ExecutorJob(Scheduler scheduler, LineUsePanel blockUsePanel, PlanPanel planPannel, ControlPanel controlPanel,
+        TimeModel timeModel) {
       super();
       this.scheduler = scheduler;
       this.blockUsePanel = blockUsePanel;
@@ -196,6 +204,7 @@ public class AnimationContainer {
         if (AnimationContainer.this.currentWishTime % 4 == 0 || repaint) {
           javax.swing.SwingUtilities.invokeLater(() -> {
             this.blockUsePanel.triggerRebuild();
+            this.blockUsePanel.triggerRebuild();
           });
         }
         if (repaint) {
@@ -231,9 +240,9 @@ public class AnimationContainer {
   }
 
   /**
-   * @return the blockUsePanel
+   * @return the lineUsePanel
    */
-  public BlockUsePanel getBlockUsePanel() {
-    return this.blockUsePanel;
+  public LineUsePanel getLineUsePanel() {
+    return this.lineUsePanel;
   }
 }

@@ -28,7 +28,6 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.swing.JScrollPane;
 
-import rocsim.gui.model.StringListDataModel;
 import rocsim.gui.tiles.Tile;
 import rocsim.schedule.model.LineModel;
 import rocsim.schedule.model.LocoModel;
@@ -49,7 +48,6 @@ public class EditorContainer {
   private TrackEditorFrame editorPanel;
   private JScrollPane stationFrameWrapper;
   private StationFrame stationFrame;
-  private StringListDataModel blockIdDataModel = new StringListDataModel();
   private TimeModel timeModel;
 
   private JScrollPane lineFrameWrapper;
@@ -148,7 +146,7 @@ public class EditorContainer {
     this.locoFrame = new LocoFrame();
     this.locoFrameWrapper = new JScrollPane(this.locoFrame);
 
-    this.editorPanel = new TrackEditorFrame(this.blockIdDataModel);
+    this.editorPanel = new TrackEditorFrame();
 
     this.stationFrame = new StationFrame(this.myContext);
     this.stationFrameWrapper = new JScrollPane(this.stationFrame);
@@ -203,7 +201,6 @@ public class EditorContainer {
     TrackPlanModel trackModel = new TrackPlanModel();
     trackModel.fromJson(obj.getJsonArray("track"));
     this.editorPanel.setTrackModel(trackModel);
-    this.blockIdDataModel.setValueList(trackModel.getArrivableBlockIds());
 
     JsonArray stationArr = obj.getJsonArray("stations");
     List<StationModel> stations = new ArrayList<>();
@@ -213,6 +210,7 @@ public class EditorContainer {
       stations.add(model);
     }
     this.stationFrame.setStationModels(stations);
+    this.stationFrame.updateContext();
 
     JsonArray lineArr = obj.getJsonArray("lines");
     List<LineModel> lines = new ArrayList<>();
@@ -222,6 +220,7 @@ public class EditorContainer {
       lines.add(model);
     }
     this.lineFrame.setLineModels(lines);
+    this.lineFrame.updateContext();
 
     JsonArray tripsArr = obj.getJsonArray("trips");
     List<TripModel> trips = new ArrayList<>();
@@ -231,7 +230,7 @@ public class EditorContainer {
       trips.add(model);
     }
     this.tripFrame.setTripModels(trips);
-
+    this.tripFrame.updateContext();
   }
 
   /**
