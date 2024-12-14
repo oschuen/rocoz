@@ -17,8 +17,8 @@
             "comment": "",
             "schedules": [
                 {
-                    "station": "Rechts",
-                    "platform": "1",
+                    "start-block": "sb1",
+                    "end-block": "sb3",
                     "duration": 60,
                     "pause": 0,
                     "comment": ""
@@ -34,8 +34,8 @@
             "comment": "",
             "schedules": [
                 {
-                    "station": "Links",
-                    "platform": "2",
+                    "start-block": "sb3",
+                    "end-block": "sb2",
                     "duration": 60,
                     "pause": 0,
                     "comment": ""

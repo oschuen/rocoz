@@ -20,7 +20,7 @@ import javax.swing.text.MaskFormatter;
 import rocsim.gui.model.StringComboBoxModel;
 import rocsim.gui.model.StringListDataModel;
 import rocsim.gui.widgets.DataPanel;
-import rocsim.schedule.model.ScheduleStationModel;
+import rocsim.schedule.model.ScheduleModel;
 import rocsim.schedule.model.TimeModel.TimeModelChangeListener;
 import rocsim.schedule.model.TripModel;
 
@@ -260,7 +260,7 @@ public class TripStationPanel extends DataPanel {
     model.setStartTime(this.startInRealTime);
     model.setStation((String) this.stationComboBox.getSelectedItem());
     model.setPlatform((String) this.platformComboBox.getSelectedItem());
-    for (ScheduleStationModel scheduleModel : this.scheduleFrame.getScheduleModels()) {
+    for (ScheduleModel scheduleModel : this.scheduleFrame.getScheduleModels()) {
       model.addSchedule(scheduleModel);
     }
     return model;
@@ -276,5 +276,6 @@ public class TripStationPanel extends DataPanel {
     this.scheduleFrame.updateContext();
     this.locoModel.setValueList(this.context.getLocoIds());
     this.stationNameDataModel.setValueList(this.context.getStationNames());
+    updatePreviousBlockIds();
   }
 }

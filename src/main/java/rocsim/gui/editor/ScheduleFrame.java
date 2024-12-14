@@ -19,14 +19,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rocsim.gui.widgets.ListFrame;
-import rocsim.schedule.model.ScheduleStationModel;
+import rocsim.schedule.model.ScheduleModel;
 
-public class ScheduleFrame extends ListFrame<ScheduleStationPanel> {
+public class ScheduleFrame extends ListFrame<SchedulePanel> {
   private static final long serialVersionUID = 1L;
   private EditorContext context;
 
   private static class SchedulePanelFactory
-      implements rocsim.gui.widgets.ListFrame.ListItemFactory<ScheduleStationPanel> {
+      implements rocsim.gui.widgets.ListFrame.ListItemFactory<SchedulePanel> {
     private EditorContext context;
 
     public SchedulePanelFactory(EditorContext context) {
@@ -34,8 +34,8 @@ public class ScheduleFrame extends ListFrame<ScheduleStationPanel> {
     }
 
     @Override
-    public ScheduleStationPanel createNewItem() {
-      return new ScheduleStationPanel(this.context);
+    public SchedulePanel createNewItem() {
+      return new SchedulePanel(this.context);
     }
   };
 
@@ -45,33 +45,33 @@ public class ScheduleFrame extends ListFrame<ScheduleStationPanel> {
 
   }
 
-  public void setScheduleModels(List<ScheduleStationModel> models) {
-    List<ScheduleStationPanel> panels = new ArrayList<>();
-    for (ScheduleStationModel scheduleModel : models) {
-      ScheduleStationPanel panel = new ScheduleStationPanel(this.context);
+  public void setScheduleModels(List<ScheduleModel> models) {
+    List<SchedulePanel> panels = new ArrayList<>();
+    for (ScheduleModel scheduleModel : models) {
+      SchedulePanel panel = new SchedulePanel(this.context);
       panel.setModel(scheduleModel);
       panels.add(panel);
     }
     setContent(panels);
   }
 
-  public List<ScheduleStationModel> getScheduleModels() {
-    List<ScheduleStationModel> models = new ArrayList<>();
-    for (ScheduleStationPanel schedule : getContent()) {
+  public List<ScheduleModel> getScheduleModels() {
+    List<ScheduleModel> models = new ArrayList<>();
+    for (SchedulePanel schedule : getContent()) {
       models.add(schedule.getModel());
     }
     return models;
   }
 
   public void updateContext() {
-    for (ScheduleStationPanel schedules : getContent()) {
+    for (SchedulePanel schedules : getContent()) {
       schedules.updateContext();
     }
   }
 
   public void updatePreviousBlockIds(String blockId) {
     String blockIdK1 = blockId;
-    for (ScheduleStationPanel schedule : getContent()) {
+    for (SchedulePanel schedule : getContent()) {
       schedule.setPreviousBlockId(blockIdK1);
       blockIdK1 = schedule.getBlockId();
     }

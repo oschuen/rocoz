@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import rocsim.gui.tiles.Tile;
 import rocsim.gui.tiles.Tile.UseState;
 import rocsim.schedule.model.ScheduleModel;
-import rocsim.schedule.model.ScheduleStationModel;
 import rocsim.schedule.model.TimeModel;
 import rocsim.schedule.model.TrackPlanModel.BlockKind;
 import rocsim.schedule.model.TripModel;
@@ -201,9 +200,9 @@ public class Scheduler {
               Scheduler.this.timeModel.getTimeSecString(theLoco.getDontMoveTime()));
         } else {
           theLoco.setCurrentTrain(this.trip.getId());
-          for (ScheduleStationModel schedule : this.trip.getSchedules()) {
-//            Scheduler.this.jobList.add(new StartScheduleJob(schedule, theLoco, tempTime));
-//            tempTime += schedule.getDuration() + schedule.getPause();
+          for (ScheduleModel schedule : this.trip.getSchedules()) {
+            Scheduler.this.jobList.add(new StartScheduleJob(schedule, theLoco, tempTime));
+            tempTime += schedule.getDuration() + schedule.getPause();
           }
         }
       }, () -> {

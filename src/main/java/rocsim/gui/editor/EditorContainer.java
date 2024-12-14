@@ -18,6 +18,7 @@ package rocsim.gui.editor;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.json.Json;
@@ -26,10 +27,9 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.swing.JScrollPane;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
 
 import rocsim.gui.model.StringListDataModel;
+import rocsim.gui.tiles.Tile;
 import rocsim.schedule.model.LineModel;
 import rocsim.schedule.model.LocoModel;
 import rocsim.schedule.model.PlatformModel;
@@ -37,6 +37,8 @@ import rocsim.schedule.model.StationModel;
 import rocsim.schedule.model.TimeModel;
 import rocsim.schedule.model.TrackPlanModel;
 import rocsim.schedule.model.TripModel;
+import rocsim.track.Block;
+import rocsim.track.TrackPlan;
 
 public class EditorContainer {
 
@@ -48,7 +50,6 @@ public class EditorContainer {
   private JScrollPane stationFrameWrapper;
   private StationFrame stationFrame;
   private StringListDataModel blockIdDataModel = new StringListDataModel();
-  private StringListDataModel locoIdDataModel = new StringListDataModel();
   private TimeModel timeModel;
 
   private JScrollPane lineFrameWrapper;
@@ -113,6 +114,32 @@ public class EditorContainer {
       }
       return "";
     }
+
+    @Override
+    public Block getBlock(String blockIdStart, String blockIdEnd) {
+      TrackPlanModel trackModel = EditorContainer.this.editorPanel.getTrackModel();
+      TrackPlan trackPlan = new TrackPlan();
+      trackPlan.setTilesList(trackModel.generateTiles());
+      Tile startBlock = trackPlan.getTile(blockIdStart);
+      Tile endBlock = trackPlan.getTile(blockIdEnd);
+      if (startBlock == null || endBlock == null) {
+        return new Block();
+      }
+      return trackPlan.getBlock(startBlock, endBlock);
+    }
+
+    @Override
+    public Entry<String, String> getStationAndPlatform(String blockId) {
+      List<StationModel> stationModels = EditorContainer.this.stationFrame.getStationModels();
+      for (StationModel stationModel : stationModels) {
+        for (PlatformModel platformModel : stationModel.getPlatforms()) {
+          if (platformModel.getBlockId().equals(blockId)) {
+            return new java.util.AbstractMap.SimpleEntry<>(stationModel.getName(), platformModel.getName());
+          }
+        }
+      }
+      return new java.util.AbstractMap.SimpleEntry<>("", "");
+    }
   };
 
   public EditorContainer(TimeModel timeModel) {
@@ -120,25 +147,6 @@ public class EditorContainer {
 
     this.locoFrame = new LocoFrame();
     this.locoFrameWrapper = new JScrollPane(this.locoFrame);
-
-    this.locoFrame.addDataListener(new ListDataListener() {
-
-      @Override
-      public void intervalRemoved(ListDataEvent arg0) {
-        contentsChanged(arg0);
-      }
-
-      @Override
-      public void intervalAdded(ListDataEvent arg0) {
-        contentsChanged(arg0);
-      }
-
-      @Override
-      public void contentsChanged(ListDataEvent arg0) {
-        List<String> ids = EditorContainer.this.locoFrame.getLocoIds();
-        EditorContainer.this.locoIdDataModel.setValueList(ids);
-      }
-    });
 
     this.editorPanel = new TrackEditorFrame(this.blockIdDataModel);
 
@@ -191,7 +199,6 @@ public class EditorContainer {
       locos.add(model);
     }
     this.locoFrame.setLocoModels(locos);
-    this.locoIdDataModel.setValueList(this.locoFrame.getLocoIds());
 
     TrackPlanModel trackModel = new TrackPlanModel();
     trackModel.fromJson(obj.getJsonArray("track"));

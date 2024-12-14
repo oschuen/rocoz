@@ -18,16 +18,11 @@ package rocsim.gui.editor;
 import java.util.ArrayList;
 import java.util.List;
 
-import rocsim.gui.model.StringListDataModel;
 import rocsim.gui.widgets.ListFrame;
-import rocsim.schedule.model.TimeModel;
 import rocsim.schedule.model.TripModel;
 
 public class TripFrame extends ListFrame<TripStationPanel> {
   private static final long serialVersionUID = 1L;
-  private StringListDataModel blockIdDataModel;
-  private StringListDataModel locoIdDataModel;
-  private TimeModel timeModel;
   private EditorContext context;
 
   private static class TripPanelFactory implements rocsim.gui.widgets.ListFrame.ListItemFactory<TripStationPanel> {

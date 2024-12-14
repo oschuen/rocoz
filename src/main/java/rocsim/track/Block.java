@@ -73,4 +73,12 @@ public class Block {
       k1 = tile;
     }
   }
+
+  public int getDriveTime(int speed) {
+    int time = 0;
+    for (Tile tile : this.tilesList) {
+      time += tile.getDrivingTime(Math.max(1, speed));
+    }
+    return Math.max(1, time);
+  }
 }

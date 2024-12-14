@@ -31,7 +31,7 @@ import javax.swing.text.MaskFormatter;
 import rocsim.gui.model.StringComboBoxModel;
 import rocsim.gui.model.StringListDataModel;
 import rocsim.gui.widgets.DataPanel;
-import rocsim.schedule.model.ScheduleStationModel;
+import rocsim.schedule.model.ScheduleModel;
 import rocsim.schedule.model.TimeModel;
 import rocsim.schedule.model.TripModel;
 
@@ -44,10 +44,13 @@ public class TripPanel extends DataPanel {
   private JComboBox<String> comboBox;
   private TimeModel timeModel;
   private ScheduleFrame scheduleFrame;
+  private StringListDataModel locoIdDataModel;
+  private EditorContext context;
 
-  public TripPanel(EditorContext context, TimeModel timeModel, StringListDataModel locoIdDataModel,
-      StringListDataModel blockIdDataModel) {
-    this.timeModel = timeModel;
+  public TripPanel(EditorContext context) {
+    super();
+    this.context = context;
+    this.timeModel = context.getTimeModel();
     GridBagLayout gridBagLayout = new GridBagLayout();
     setLayout(gridBagLayout);
     MaskFormatter mask = null;
@@ -80,8 +83,11 @@ public class TripPanel extends DataPanel {
     gbc_locoLabel.gridy = 0;
     add(locoLabel, gbc_locoLabel);
 
+    this.locoIdDataModel = new StringListDataModel();
+    this.locoIdDataModel.setValueList(context.getLocoIds());
+
     this.comboBox = new JComboBox<>();
-    this.comboBox.setModel(new StringComboBoxModel(locoIdDataModel));
+    this.comboBox.setModel(new StringComboBoxModel(this.locoIdDataModel));
     GridBagConstraints gbc_comboBox = new GridBagConstraints();
     gbc_comboBox.insets = new Insets(0, 0, 5, 5);
     gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;
@@ -109,8 +115,8 @@ public class TripPanel extends DataPanel {
 
       @Override
       public void focusLost(FocusEvent arg0) {
-        int time = timeModel.convertTimeString(TripPanel.this.realTimeTextField.getText());
-        TripPanel.this.fremoTimeTextField.setValue(timeModel.getFremoTimeSecString(time));
+        int time = TripPanel.this.timeModel.convertTimeString(TripPanel.this.realTimeTextField.getText());
+        TripPanel.this.fremoTimeTextField.setValue(TripPanel.this.timeModel.getFremoTimeSecString(time));
       }
 
       @Override
@@ -138,9 +144,9 @@ public class TripPanel extends DataPanel {
 
       @Override
       public void focusLost(FocusEvent arg0) {
-        int time = timeModel.convertTimeString(TripPanel.this.fremoTimeTextField.getText());
-        time = timeModel.toRealTime(time);
-        TripPanel.this.realTimeTextField.setValue(timeModel.getTimeSecString(time));
+        int time = TripPanel.this.timeModel.convertTimeString(TripPanel.this.fremoTimeTextField.getText());
+        time = TripPanel.this.timeModel.toRealTime(time);
+        TripPanel.this.realTimeTextField.setValue(TripPanel.this.timeModel.getTimeSecString(time));
       }
 
       @Override
@@ -189,7 +195,7 @@ public class TripPanel extends DataPanel {
     model.setId(this.idTextField.getText());
     model.setLocoId((String) this.comboBox.getSelectedItem());
     model.setStartTime(this.timeModel.convertTimeString(this.realTimeTextField.getText()));
-    for (ScheduleStationModel scheduleModel : this.scheduleFrame.getScheduleModels()) {
+    for (ScheduleModel scheduleModel : this.scheduleFrame.getScheduleModels()) {
       model.addSchedule(scheduleModel);
     }
     return model;
@@ -201,7 +207,7 @@ public class TripPanel extends DataPanel {
 
   public void updateContext() {
     this.scheduleFrame.updateContext();
-
+    this.locoIdDataModel.setValueList(this.context.getLocoIds());
   }
 
 }

@@ -31,7 +31,7 @@ public class TripModel {
   private String platform = "";
   private int startTime = 0;
   private String comment = "";
-  private List<ScheduleStationModel> schedules = new ArrayList<>();
+  private List<ScheduleModel> schedules = new ArrayList<>();
 
   public JsonObject toJson() {
     JsonObjectBuilder builder = Json.createObjectBuilder();
@@ -42,7 +42,7 @@ public class TripModel {
     builder.add("start-time", this.startTime);
     builder.add("comment", this.comment);
     JsonArrayBuilder jSched = Json.createArrayBuilder();
-    for (ScheduleStationModel scheduleModel : this.schedules) {
+    for (ScheduleModel scheduleModel : this.schedules) {
       jSched.add(scheduleModel.toJson());
     }
     builder.add("schedules", jSched);
@@ -60,18 +60,18 @@ public class TripModel {
     JsonArray jSched = obj.getJsonArray("schedules");
     if (jSched != null) {
       for (int i = 0; i < jSched.size(); i++) {
-        ScheduleStationModel schedModel = new ScheduleStationModel();
+        ScheduleModel schedModel = new ScheduleModel();
         schedModel.fromJson(jSched.getJsonObject(i));
         addSchedule(schedModel);
       }
     }
   }
 
-  public void addSchedule(ScheduleStationModel model) {
+  public void addSchedule(ScheduleModel model) {
     this.schedules.add(model);
   }
 
-  public List<ScheduleStationModel> getSchedules() {
+  public List<ScheduleModel> getSchedules() {
     return new ArrayList<>(this.schedules);
   }
 
@@ -126,7 +126,7 @@ public class TripModel {
 
   public int getEndTime() {
     int time = this.startTime;
-    for (ScheduleStationModel scheduleModel : this.schedules) {
+    for (ScheduleModel scheduleModel : this.schedules) {
       time += scheduleModel.getDuration() + scheduleModel.getPause();
     }
     return time;
