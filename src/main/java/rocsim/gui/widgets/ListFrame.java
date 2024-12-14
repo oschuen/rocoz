@@ -53,6 +53,7 @@ public class ListFrame<T extends DataPanel> extends DataPanel {
         ListFrame.this.items.add(newFrame);
       }
       rebuildChilds();
+      fireDataChanged();
     }
 
     @Override

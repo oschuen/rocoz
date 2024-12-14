@@ -16,4 +16,6 @@ public interface EditorContext {
   TimeModel getTimeModel();
 
   List<String> getLocoIds();
+
+  String getBlockForPlatform(String station, String platform);
 }

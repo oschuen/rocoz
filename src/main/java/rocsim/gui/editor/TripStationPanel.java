@@ -13,6 +13,8 @@ import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 import javax.swing.text.MaskFormatter;
 
 import rocsim.gui.model.StringComboBoxModel;
@@ -110,6 +112,7 @@ public class TripStationPanel extends DataPanel {
           TripStationPanel.this.platformDataModel
               .setValueList(context.getPlatforms((String) TripStationPanel.this.stationComboBox.getSelectedItem()));
         }
+        fireDataChanged();
       }
     });
 
@@ -131,6 +134,13 @@ public class TripStationPanel extends DataPanel {
     this.platformDataModel = new StringListDataModel();
     this.platformDataModel.setValueList(context.getPlatforms((String) this.stationComboBox.getSelectedItem()));
     this.platformComboBox.setModel(new StringComboBoxModel(this.platformDataModel));
+    this.platformComboBox.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        fireDataChanged();
+      }
+    });
 
     JLabel lblTime = new JLabel("Time");
     GridBagConstraints gbc_lblTime = new GridBagConstraints();
@@ -203,6 +213,27 @@ public class TripStationPanel extends DataPanel {
         updateTime();
       }
     });
+    ListDataListener dataListener = new ListDataListener() {
+
+      @Override
+      public void intervalRemoved(ListDataEvent arg0) {
+        contentsChanged(arg0);
+
+      }
+
+      @Override
+      public void intervalAdded(ListDataEvent arg0) {
+        contentsChanged(arg0);
+
+      }
+
+      @Override
+      public void contentsChanged(ListDataEvent arg0) {
+        updatePreviousBlockIds();
+      }
+    };
+    this.scheduleFrame.addDataListener(dataListener);
+    this.addDataListener(dataListener);
   }
 
   private void updateTime() {
@@ -216,8 +247,8 @@ public class TripStationPanel extends DataPanel {
   public void setModel(TripModel tripModel) {
     this.idTextField.setText(tripModel.getId());
     this.locoComboBox.setSelectedItem(tripModel.getLocoId());
-    this.platformComboBox.setSelectedItem(tripModel.getPlatform());
     this.stationComboBox.setSelectedItem(tripModel.getStation());
+    this.platformComboBox.setSelectedItem(tripModel.getPlatform());
     this.startInRealTime = tripModel.getStartTime();
     this.scheduleFrame.setScheduleModels(tripModel.getSchedules());
   }
@@ -233,6 +264,12 @@ public class TripStationPanel extends DataPanel {
       model.addSchedule(scheduleModel);
     }
     return model;
+  }
+
+  private void updatePreviousBlockIds() {
+    String myBlockIdK1 = this.context.getBlockForPlatform((String) this.stationComboBox.getSelectedItem(),
+        (String) this.platformComboBox.getSelectedItem());
+    this.scheduleFrame.updatePreviousBlockIds(myBlockIdK1);
   }
 
   public void updateContext() {

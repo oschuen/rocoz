@@ -9,6 +9,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.text.ParseException;
 
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
@@ -33,6 +34,7 @@ public class ScheduleStationPanel extends DataPanel {
   private EditorContext context;
   private StringListDataModel stationNameDataModel;
   private StringListDataModel platformDataModel;
+  private String previousBlockId = "";
 
   public ScheduleStationPanel(EditorContext context) {
     this.context = context;
@@ -52,9 +54,10 @@ public class ScheduleStationPanel extends DataPanel {
     });
 
     GridBagLayout gridBagLayout = new GridBagLayout();
-    gridBagLayout.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    gridBagLayout.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0 };
-    gridBagLayout.columnWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE };
+    gridBagLayout.columnWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0,
+        Double.MIN_VALUE };
     gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, Double.MIN_VALUE };
     setLayout(gridBagLayout);
 
@@ -85,6 +88,7 @@ public class ScheduleStationPanel extends DataPanel {
           ScheduleStationPanel.this.platformDataModel
               .setValueList(context.getPlatforms((String) ScheduleStationPanel.this.stationComboBox.getSelectedItem()));
         }
+        fireDataChanged();
       }
     });
 
@@ -106,12 +110,26 @@ public class ScheduleStationPanel extends DataPanel {
     this.platformDataModel = new StringListDataModel();
     this.platformDataModel.setValueList(context.getPlatforms((String) this.stationComboBox.getSelectedItem()));
     this.platformComboBox.setModel(new StringComboBoxModel(this.platformDataModel));
+    this.platformComboBox.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        fireDataChanged();
+      }
+    });
+
+    JButton calcButton = new JButton("Calculate");
+    GridBagConstraints gbc_Button = new GridBagConstraints();
+    gbc_Button.anchor = GridBagConstraints.WEST;
+    gbc_Button.insets = new Insets(0, 0, 5, 5);
+    gbc_Button.gridx = 4;
+    gbc_Button.gridy = 0;
+    add(calcButton, gbc_Button);
 
     JLabel lblNewLabel = new JLabel("Driving Time");
     GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
     gbc_lblNewLabel.anchor = GridBagConstraints.WEST;
     gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
-    gbc_lblNewLabel.gridx = 4;
+    gbc_lblNewLabel.gridx = 5;
     gbc_lblNewLabel.gridy = 0;
     add(lblNewLabel, gbc_lblNewLabel);
 
@@ -120,7 +138,7 @@ public class ScheduleStationPanel extends DataPanel {
     GridBagConstraints gbc_textField = new GridBagConstraints();
     gbc_textField.anchor = GridBagConstraints.WEST;
     gbc_textField.insets = new Insets(0, 0, 5, 0);
-    gbc_textField.gridx = 5;
+    gbc_textField.gridx = 6;
     gbc_textField.gridy = 0;
     gbc_textField.fill = GridBagConstraints.HORIZONTAL;
     add(this.drivingTimeTextField, gbc_textField);
@@ -147,7 +165,7 @@ public class ScheduleStationPanel extends DataPanel {
     GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
     gbc_lblNewLabel_1.anchor = GridBagConstraints.WEST;
     gbc_lblNewLabel_1.insets = new Insets(0, 0, 5, 5);
-    gbc_lblNewLabel_1.gridx = 6;
+    gbc_lblNewLabel_1.gridx = 7;
     gbc_lblNewLabel_1.gridy = 0;
     add(lblNewLabel_1, gbc_lblNewLabel_1);
 
@@ -156,7 +174,7 @@ public class ScheduleStationPanel extends DataPanel {
     GridBagConstraints gbc_textField_1 = new GridBagConstraints();
     gbc_textField_1.anchor = GridBagConstraints.WEST;
     gbc_textField_1.insets = new Insets(0, 0, 5, 5);
-    gbc_textField_1.gridx = 7;
+    gbc_textField_1.gridx = 8;
     gbc_textField_1.gridy = 0;
     gbc_textField_1.fill = GridBagConstraints.HORIZONTAL;
     add(this.pauseTextField, gbc_textField_1);
@@ -182,7 +200,7 @@ public class ScheduleStationPanel extends DataPanel {
     GridBagConstraints gbc_lblComment = new GridBagConstraints();
     gbc_lblComment.anchor = GridBagConstraints.WEST;
     gbc_lblComment.insets = new Insets(0, 0, 5, 5);
-    gbc_lblComment.gridx = 8;
+    gbc_lblComment.gridx = 9;
     gbc_lblComment.gridy = 0;
     add(lblComment, gbc_lblComment);
 
@@ -214,6 +232,19 @@ public class ScheduleStationPanel extends DataPanel {
     this.pauseInRealTime = scheduleModel.getPause();
     this.durationInRealTime = scheduleModel.getDuration();
     this.commentTextField.setText(scheduleModel.getComment());
+  }
+
+  /**
+   * @param previousBlockId the previousBlockId to set
+   */
+  public void setPreviousBlockId(String previousBlockId) {
+    System.out.println("Previous = " + previousBlockId);
+    this.previousBlockId = previousBlockId;
+  }
+
+  public String getBlockId() {
+    return this.context.getBlockForPlatform((String) this.stationComboBox.getSelectedItem(),
+        (String) this.platformComboBox.getSelectedItem());
   }
 
   public ScheduleStationModel getModel() {

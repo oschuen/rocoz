@@ -83,9 +83,9 @@ public class MainFrame extends JFrame {
     this.tabbedPane.addTab("Logs", this.animationContainer.getLogPanel());
     this.tabbedPane.addTab("Track", this.editorContainer.getEditorPanel());
     this.tabbedPane.addTab("Locos", this.editorContainer.getLocoFrame());
-    this.tabbedPane.addTab("Trips", this.editorContainer.getTripFrame());
     this.tabbedPane.addTab("Stations", this.editorContainer.getStationFrame());
     this.tabbedPane.addTab("Lines", this.editorContainer.getLineFrame());
+    this.tabbedPane.addTab("Trips", this.editorContainer.getTripFrame());
 
     this.tabbedPane.addChangeListener(new ChangeListener() {
 

@@ -68,4 +68,12 @@ public class ScheduleFrame extends ListFrame<ScheduleStationPanel> {
       schedules.updateContext();
     }
   }
+
+  public void updatePreviousBlockIds(String blockId) {
+    String blockIdK1 = blockId;
+    for (ScheduleStationPanel schedule : getContent()) {
+      schedule.setPreviousBlockId(blockIdK1);
+      blockIdK1 = schedule.getBlockId();
+    }
+  }
 }

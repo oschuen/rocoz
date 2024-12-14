@@ -32,6 +32,7 @@ import javax.swing.event.ListDataListener;
 import rocsim.gui.model.StringListDataModel;
 import rocsim.schedule.model.LineModel;
 import rocsim.schedule.model.LocoModel;
+import rocsim.schedule.model.PlatformModel;
 import rocsim.schedule.model.StationModel;
 import rocsim.schedule.model.TimeModel;
 import rocsim.schedule.model.TrackPlanModel;
@@ -96,6 +97,21 @@ public class EditorContainer {
     @Override
     public List<String> getLocoIds() {
       return EditorContainer.this.locoFrame.getLocoIds();
+    }
+
+    @Override
+    public String getBlockForPlatform(String station, String platform) {
+      List<StationModel> stationModels = EditorContainer.this.stationFrame.getStationModels();
+      for (StationModel stationModel : stationModels) {
+        if (stationModel.getName().equals(station)) {
+          for (PlatformModel platformModel : stationModel.getPlatforms()) {
+            if (platformModel.getName().equals(platform)) {
+              return platformModel.getBlockId();
+            }
+          }
+        }
+      }
+      return "";
     }
   };
 
