@@ -86,6 +86,7 @@ public class MainFrame extends JFrame {
     this.tabbedPane.addTab("Stations", this.editorContainer.getStationFrame());
     this.tabbedPane.addTab("Lines", this.editorContainer.getLineFrame());
     this.tabbedPane.addTab("Trips", this.editorContainer.getTripFrame());
+    this.tabbedPane.addTab("Timetable", this.editorContainer.getTimeTableFrame());
 
     this.tabbedPane.addChangeListener(new ChangeListener() {
 
@@ -169,8 +170,8 @@ public class MainFrame extends JFrame {
       this.currentFile = f;
       try (JsonReader reader = Json.createReader(new FileReader(f))) {
         this.lastConfig = reader.readObject();
-        this.editorContainer.fromJson(this.lastConfig);
         this.animationContainer.fromJson(this.lastConfig);
+        this.editorContainer.fromJson(this.lastConfig);
       } catch (Exception exp) {
         exp.printStackTrace();
       }

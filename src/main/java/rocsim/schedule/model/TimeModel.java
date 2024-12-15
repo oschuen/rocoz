@@ -62,6 +62,10 @@ public class TimeModel {
     return this.minTime + (fremoTime - this.minTime) / this.radix;
   }
 
+  public int toFremoTime(int realTime) {
+    return this.minTime + (realTime - this.minTime) * this.radix;
+  }
+
   public int getFremoTime() {
     return this.minTime + (this.currentTime - this.minTime) * this.radix;
   }

@@ -49,6 +49,7 @@ public class EditorContainer {
   private JScrollPane stationFrameWrapper;
   private StationFrame stationFrame;
   private TimeModel timeModel;
+  private TimeTableFrame timeTableFrame;
 
   private JScrollPane lineFrameWrapper;
   private LineFrame lineFrame;
@@ -138,6 +139,40 @@ public class EditorContainer {
       }
       return new java.util.AbstractMap.SimpleEntry<>("", "");
     }
+
+    @Override
+    public LineModel getLineModel(String line) {
+      List<LineModel> lineModels = EditorContainer.this.lineFrame.getLineModels();
+      for (LineModel lineModel : lineModels) {
+        if (lineModel.getName().equals(line)) {
+          return lineModel;
+        }
+      }
+      return new LineModel();
+    }
+
+    @Override
+    public StationModel getStationModel(String station) {
+      for (StationModel stationModel : EditorContainer.this.stationFrame.getStationModels()) {
+        if (stationModel.getName().equals(station)) {
+          return stationModel;
+        }
+      }
+      return new StationModel();
+    }
+
+    @Override
+    public List<String> getLineNames() {
+
+      return EditorContainer.this.lineFrame.getLineModels().stream().map(lineModel -> {
+        return lineModel.getName();
+      }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TripModel> getTripModels() {
+      return EditorContainer.this.tripFrame.getTripModels();
+    }
   };
 
   public EditorContainer(TimeModel timeModel) {
@@ -156,6 +191,8 @@ public class EditorContainer {
 
     this.tripFrame = new TripFrame(this.myContext);
     this.tripFrameWrapper = new JScrollPane(this.tripFrame);
+
+    this.timeTableFrame = new TimeTableFrame(this.myContext);
   }
 
   public JsonObject toJson() {
@@ -231,6 +268,8 @@ public class EditorContainer {
     }
     this.tripFrame.setTripModels(trips);
     this.tripFrame.updateContext();
+
+    this.timeTableFrame.updateContext();
   }
 
   /**
@@ -268,6 +307,8 @@ public class EditorContainer {
       this.lineFrame.updateContext();
     } else if (selectedComponent.equals(this.tripFrameWrapper)) {
       this.tripFrame.updateContext();
+    } else if (selectedComponent.equals(this.timeTableFrame)) {
+      this.timeTableFrame.updateContext();
     }
   }
 
@@ -276,5 +317,12 @@ public class EditorContainer {
    */
   public JScrollPane getLineFrame() {
     return this.lineFrameWrapper;
+  }
+
+  /**
+   * @return the timeTableFrame
+   */
+  public TimeTableFrame getTimeTableFrame() {
+    return this.timeTableFrame;
   }
 }

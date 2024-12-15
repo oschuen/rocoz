@@ -1,3 +1,18 @@
+/*
+ * Copyright © 2024 Oliver Schünemann (oschuen@users.noreply.github.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package rocsim.gui.animation;
 
 import java.awt.GridBagConstraints;
@@ -49,7 +64,6 @@ public class TimePanel extends JPanel {
     setLayout(gridBagLayout);
 
     this.rdbtnRealTime = new JRadioButton("Real Time");
-    this.rdbtnRealTime.setSelected(true);
     GridBagConstraints gbc_rdbtnRealTime = new GridBagConstraints();
     gbc_rdbtnRealTime.anchor = GridBagConstraints.WEST;
     gbc_rdbtnRealTime.insets = new Insets(0, 0, 5, 5);
@@ -72,6 +86,7 @@ public class TimePanel extends JPanel {
     gbc_rdbtnModelTime.gridy = 3;
     add(this.rdbtnModelTime, gbc_rdbtnModelTime);
     this.rdbtnModelTime.addActionListener(radioBtnActionListener);
+    this.rdbtnModelTime.setSelected(true);
 
     JLabel lblStartTime = new JLabel("Start Time");
     GridBagConstraints gbc_lblStartTime = new GridBagConstraints();
@@ -102,6 +117,7 @@ public class TimePanel extends JPanel {
     ButtonGroup timeButtonGroup = new ButtonGroup();
     timeButtonGroup.add(this.rdbtnModelTime);
     timeButtonGroup.add(this.rdbtnRealTime);
+    timeModel.setDisplayRealTime(TimePanel.this.rdbtnRealTime.isSelected());
   }
 
 }
