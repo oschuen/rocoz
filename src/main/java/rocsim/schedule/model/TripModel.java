@@ -30,6 +30,7 @@ public class TripModel {
   private String station = "";
   private String platform = "";
   private int startTime = 0;
+  private boolean shunting = false;
   private String comment = "";
   private List<ScheduleModel> schedules = new ArrayList<>();
 
@@ -41,6 +42,7 @@ public class TripModel {
     builder.add("platform", this.platform);
     builder.add("start-time", this.startTime);
     builder.add("comment", this.comment);
+    builder.add("shunting", this.shunting);
     JsonArrayBuilder jSched = Json.createArrayBuilder();
     for (ScheduleModel scheduleModel : this.schedules) {
       jSched.add(scheduleModel.toJson());
@@ -56,6 +58,7 @@ public class TripModel {
     this.station = obj.getString("station", "");
     this.platform = obj.getString("platform", "");
     this.startTime = obj.getInt("start-time", 0);
+    this.shunting = obj.getBoolean("shunting", false);
     this.comment = obj.getString("comment", "");
     JsonArray jSched = obj.getJsonArray("schedules");
     if (jSched != null) {
@@ -165,5 +168,19 @@ public class TripModel {
    */
   public void setPlatform(String platform) {
     this.platform = platform;
+  }
+
+  /**
+   * @return the shunting
+   */
+  public boolean isShunting() {
+    return this.shunting;
+  }
+
+  /**
+   * @param shunting the shunting to set
+   */
+  public void setShunting(boolean shunting) {
+    this.shunting = shunting;
   }
 }

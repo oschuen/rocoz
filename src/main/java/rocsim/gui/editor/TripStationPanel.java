@@ -24,6 +24,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.text.ParseException;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
@@ -47,6 +48,7 @@ public class TripStationPanel extends DataPanel {
   private JComboBox<String> locoComboBox;
   private JComboBox<String> platformComboBox;
   private JComboBox<String> stationComboBox;
+  private JCheckBox shuntingBox;
   private ScheduleFrame scheduleFrame;
   private EditorContext context;
   private StringListDataModel locoModel;
@@ -172,7 +174,7 @@ public class TripStationPanel extends DataPanel {
     gbc_textField_1.gridx = 10;
     gbc_textField_1.gridy = 0;
     add(this.timeTextField, gbc_textField_1);
-    this.timeTextField.setColumns(10);
+    this.timeTextField.setColumns(8);
     this.timeTextField.addFocusListener(new FocusListener() {
 
       @Override
@@ -191,12 +193,21 @@ public class TripStationPanel extends DataPanel {
     });
     updateTime();
 
+    this.shuntingBox = new JCheckBox("Shunting Trip");
+    GridBagConstraints gbc_Shunting = new GridBagConstraints();
+    gbc_Shunting.anchor = GridBagConstraints.WEST;
+    gbc_Shunting.fill = GridBagConstraints.NONE;
+    gbc_Shunting.insets = new Insets(0, 0, 5, 5);
+    gbc_Shunting.gridx = 11;
+    gbc_Shunting.gridy = 0;
+    add(this.shuntingBox, gbc_Shunting);
+
     JLabel lblComent = new JLabel("Comment");
     GridBagConstraints gbc_lblComent = new GridBagConstraints();
     gbc_lblComent.anchor = GridBagConstraints.WEST;
     gbc_lblComent.fill = GridBagConstraints.NONE;
     gbc_lblComent.insets = new Insets(0, 0, 5, 5);
-    gbc_lblComent.gridx = 11;
+    gbc_lblComent.gridx = 12;
     gbc_lblComent.gridy = 0;
     add(lblComent, gbc_lblComent);
 
@@ -204,7 +215,7 @@ public class TripStationPanel extends DataPanel {
     GridBagConstraints gbc_textField_2 = new GridBagConstraints();
     gbc_textField_2.insets = new Insets(0, 0, 5, 5);
     gbc_textField_2.fill = GridBagConstraints.HORIZONTAL;
-    gbc_textField_2.gridx = 12;
+    gbc_textField_2.gridx = 13;
     gbc_textField_2.gridy = 0;
     gbc_textField_2.weightx = 20.0;
     gbc_textField_2.anchor = GridBagConstraints.WEST;
@@ -215,7 +226,7 @@ public class TripStationPanel extends DataPanel {
     this.scheduleFrame = new ScheduleFrame(context);
     GridBagConstraints gbc_panel = new GridBagConstraints();
     gbc_panel.weightx = 10.0;
-    gbc_panel.gridwidth = 12;
+    gbc_panel.gridwidth = 13;
     gbc_panel.insets = new Insets(0, 0, 0, 5);
     gbc_panel.fill = GridBagConstraints.HORIZONTAL;
     gbc_panel.gridx = 1;
@@ -266,6 +277,8 @@ public class TripStationPanel extends DataPanel {
     this.platformComboBox.setSelectedItem(tripModel.getPlatform());
     this.startInRealTime = tripModel.getStartTime();
     this.scheduleFrame.setScheduleModels(tripModel.getSchedules());
+    this.shuntingBox.setSelected(tripModel.isShunting());
+    updateTime();
   }
 
   public TripModel getModel() {
@@ -275,6 +288,7 @@ public class TripStationPanel extends DataPanel {
     model.setStartTime(this.startInRealTime);
     model.setStation((String) this.stationComboBox.getSelectedItem());
     model.setPlatform((String) this.platformComboBox.getSelectedItem());
+    model.setShunting(this.shuntingBox.isSelected());
     for (ScheduleModel scheduleModel : this.scheduleFrame.getScheduleModels()) {
       model.addSchedule(scheduleModel);
     }

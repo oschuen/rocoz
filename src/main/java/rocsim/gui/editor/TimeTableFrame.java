@@ -14,10 +14,12 @@ import rocsim.gui.model.StringComboBoxModel;
 import rocsim.gui.model.StringListDataModel;
 
 public class TimeTableFrame extends JPanel {
+  private static final long serialVersionUID = 1L;
   private StringListDataModel lineModel;
   private EditorContext context;
   private JScrollBar timeScrollBar;
   private JComboBox<String> comboBox;
+  private TimeTablePanel timeTablePanel;
 
   public TimeTableFrame(EditorContext context) {
     setLayout(new BorderLayout(0, 0));
@@ -39,21 +41,21 @@ public class TimeTableFrame extends JPanel {
     this.timeScrollBar = new JScrollBar();
     add(this.timeScrollBar, BorderLayout.EAST);
 
-    TimeTablePanel timeTablePanel = new TimeTablePanel(context);
-    add(timeTablePanel, BorderLayout.CENTER);
+    this.timeTablePanel = new TimeTablePanel(context);
+    add(this.timeTablePanel, BorderLayout.CENTER);
 
     this.comboBox.addActionListener(new ActionListener() {
 
       @Override
       public void actionPerformed(ActionEvent arg0) {
-        timeTablePanel.setLine((String) TimeTableFrame.this.comboBox.getSelectedItem());
+        TimeTableFrame.this.timeTablePanel.setLine((String) TimeTableFrame.this.comboBox.getSelectedItem());
       }
     });
     this.timeScrollBar.addAdjustmentListener(new AdjustmentListener() {
 
       @Override
       public void adjustmentValueChanged(AdjustmentEvent arg0) {
-        timeTablePanel.setTopTime(arg0.getValue() * 60);
+        TimeTableFrame.this.timeTablePanel.setTopTime(arg0.getValue() * 60);
 
       }
     });
@@ -66,5 +68,6 @@ public class TimeTableFrame extends JPanel {
     if (this.comboBox.getSelectedIndex() < 0) {
       this.comboBox.setSelectedIndex(0);
     }
+    this.timeTablePanel.setLine((String) TimeTableFrame.this.comboBox.getSelectedItem());
   }
 }

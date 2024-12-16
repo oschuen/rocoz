@@ -67,6 +67,53 @@ public class Scheduler {
     }
   }
 
+  private class RunShuntingScheduleJob implements Job {
+
+    Block block;
+    Loco loco;
+    Tile currentLocation;
+    int scheduleTime;
+    int dontMoveTime;
+
+    public RunShuntingScheduleJob(Block block, Loco loco, Tile currentLocation, int scheduleTime, int dontMoveTime) {
+      super();
+      this.block = block;
+      this.loco = loco;
+      this.currentLocation = currentLocation;
+      this.scheduleTime = scheduleTime;
+      this.dontMoveTime = dontMoveTime;
+    }
+
+    @Override
+    public int getSchedule() {
+
+      return this.scheduleTime;
+    }
+
+    @Override
+    public void run(int time) {
+      Optional<Tile> nextTile = this.block.getNextTile(this.currentLocation);
+      nextTile.ifPresentOrElse((tile) -> {
+        this.currentLocation.setState(UseState.FREE);
+        this.loco.setLocation(tile.getLocation());
+        this.currentLocation = tile;
+        this.scheduleTime = time + tile.getDrivingTime(this.loco.getvMax());
+        tile.setState(UseState.TRAIN);
+        Scheduler.this.jobList.add(this);
+      }, () -> {
+        if (this.currentLocation.getBlockKind() != BlockKind.NONE) {
+          if (this.currentLocation.getBlockKind() == BlockKind.STELLBLOCK) {
+            this.currentLocation.setState(UseState.BLOCK);
+            this.loco.setInBw(true);
+          }
+          Scheduler.this.logger.info("[{}] Loco {} arrived at {}", time, this.loco.getId(),
+              this.currentLocation.getId());
+        }
+        this.loco.setDontMoveTime(this.dontMoveTime);
+      });
+    }
+  }
+
   private class RunScheduleJob implements Job {
 
     Block block;
@@ -112,6 +159,65 @@ public class Scheduler {
         }
         this.loco.setDontMoveTime(this.dontMoveTime);
       });
+    }
+
+  }
+
+  private class StartShuntingScheduleJob implements Job {
+
+    private Loco loco;
+    private ScheduleModel schedule;
+    private int startTime;
+
+    public StartShuntingScheduleJob(ScheduleModel schedule, Loco loco, int startTime) {
+      super();
+      this.schedule = schedule;
+      this.loco = loco;
+      this.startTime = startTime;
+    }
+
+    @Override
+    public int getSchedule() {
+      return this.startTime;
+    }
+
+    @Override
+    public void run(int time) {
+      Tile startTile = Scheduler.this.plan.getTile(this.schedule.getStartBlock());
+      Tile endTile = Scheduler.this.plan.getTile(this.schedule.getEndBlock());
+      boolean error = false;
+      Block block = null;
+      if (startTile == null || endTile == null) {
+        Scheduler.this.logger.error("[{}] Can't Block, {} or {} doesn't exist", time, this.schedule.getStartBlock(),
+            this.schedule.getEndBlock());
+        error = true;
+      } else {
+        block = Scheduler.this.plan.getBlock(startTile, endTile);
+        if (block.isEmpty()) {
+          Scheduler.this.logger.error("[{}] Can't block from {} to {}", time, startTile.getId(), endTile.getId());
+          error = true;
+        } else {
+          if (this.loco.isInBw()) {
+            this.loco.setLocation(startTile.getLocation());
+            this.loco.setInBw(false);
+          } else if (!this.loco.getLocation().equals(startTile.getLocation())) {
+
+            Scheduler.this.logger.error("[{}] Loco {} is not at location  {}", time, this.loco.getId(),
+                startTile.getId());
+            error = true;
+          }
+        }
+      }
+      if (!error) {
+        // block.markBlocked();
+        block.layBlock();
+        startTile.setState(UseState.TRAIN);
+        int drivingTime = startTile.getDrivingTime(this.loco.getvMax());
+        Scheduler.this.logger.info("[{}] Start Trip. Loco: {} from: {} to {}", time, this.loco.getId(),
+            startTile.getId(), endTile.getId());
+        Scheduler.this.jobList.add(new RunShuntingScheduleJob(block, this.loco, startTile, time + drivingTime,
+            time + this.schedule.getDuration() + this.schedule.getPause()));
+      }
     }
 
   }
@@ -173,6 +279,43 @@ public class Scheduler {
       }
     }
 
+  }
+
+  private class StartShuntingTripJob implements Job {
+
+    private TripModel trip;
+
+    public StartShuntingTripJob(TripModel trip) {
+      super();
+      this.trip = trip;
+    }
+
+    @Override
+    public int getSchedule() {
+      return this.trip.getStartTime();
+    }
+
+    @Override
+    public void run(int time) {
+      Optional<Loco> loco = getLoco(this.trip.getLocoId());
+      loco.ifPresentOrElse((theLoco) -> {
+        int tempTime = time;
+        if (theLoco.getDontMoveTime() > time) {
+          Scheduler.this.logger.error("[{}] Can't perform Trip {}. Lok Id {} still in pause till {}", time,
+              this.trip.getId(), this.trip.getLocoId(),
+              Scheduler.this.timeModel.getTimeSecString(theLoco.getDontMoveTime()));
+        } else {
+          theLoco.setCurrentTrain(this.trip.getId());
+          for (ScheduleModel schedule : this.trip.getSchedules()) {
+            Scheduler.this.jobList.add(new StartShuntingScheduleJob(schedule, theLoco, tempTime));
+            tempTime += schedule.getDuration() + schedule.getPause();
+          }
+        }
+      }, () -> {
+        Scheduler.this.logger.error("[{}] Can't perform Trip {}. Lok Id {} not available", time, this.trip.getId(),
+            this.trip.getLocoId());
+      });
+    }
   }
 
   private class StartTripJob implements Job {
@@ -257,7 +400,11 @@ public class Scheduler {
       loco.setDontMoveTime(Integer.MIN_VALUE);
     }
     for (TripModel trip : this.trips) {
-      this.jobList.add(new StartTripJob(trip));
+      if (trip.isShunting()) {
+        this.jobList.add(new StartShuntingTripJob(trip));
+      } else {
+        this.jobList.add(new StartTripJob(trip));
+      }
       if (first) {
         this.minTime = trip.getStartTime();
         this.maxTime = trip.getEndTime();
