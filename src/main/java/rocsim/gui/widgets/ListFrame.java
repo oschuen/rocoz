@@ -86,7 +86,7 @@ public class ListFrame<T extends DataPanel> extends DataPanel {
 
   private ListFrame() {
     super();
-    this.setLayout(new BorderLayout());
+    this.setLayout(new BorderLayout(5, 5));
     this.contentPanel = Box.createVerticalBox();
     add(this.contentPanel, BorderLayout.NORTH);
   }
@@ -134,9 +134,10 @@ public class ListFrame<T extends DataPanel> extends DataPanel {
 
   private void rebuildChilds() {
     this.contentPanel.removeAll();
+    this.contentPanel.add(Box.createVerticalStrut(5));
     for (ListItemFrame<T> listItemFrame : ListFrame.this.items) {
       this.contentPanel.add(listItemFrame);
+      this.contentPanel.add(Box.createVerticalStrut(5));
     }
-    this.contentPanel.add(Box.createGlue());
   }
 }

@@ -18,8 +18,6 @@ package rocsim;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 
-import javax.swing.UIManager;
-
 import rocsim.gui.MainFrame;
 
 public class SimApp {
@@ -46,11 +44,11 @@ public class SimApp {
 
   /** Main-Methode */
   public static void main(String[] args) {
-    try {
-      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+//    try {
+//      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//    }
     new SimApp();
   }
 }

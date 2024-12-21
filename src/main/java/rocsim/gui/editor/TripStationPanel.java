@@ -49,7 +49,7 @@ public class TripStationPanel extends DataPanel {
   private JComboBox<String> platformComboBox;
   private JComboBox<String> stationComboBox;
   private JCheckBox shuntingBox;
-  private ScheduleFrame scheduleFrame;
+  private ScheduleTableFrame scheduleFrame;
   private EditorContext context;
   private StringListDataModel locoModel;
   private StringListDataModel stationNameDataModel;
@@ -223,7 +223,7 @@ public class TripStationPanel extends DataPanel {
     add(this.commentTextField, gbc_textField_2);
     this.commentTextField.setColumns(40);
 
-    this.scheduleFrame = new ScheduleFrame(context);
+    this.scheduleFrame = new ScheduleTableFrame(context);
     GridBagConstraints gbc_panel = new GridBagConstraints();
     gbc_panel.weightx = 10.0;
     gbc_panel.gridwidth = 13;

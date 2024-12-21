@@ -6,12 +6,15 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 
 import rocsim.schedule.model.LineModel;
 import rocsim.schedule.model.LineSegmentModel;
@@ -67,6 +70,20 @@ public class TimeTablePanel extends JPanel {
         triggerRepaint();
       }
     });
+    setToolTipText("");
+    JPopupMenu menu = new JPopupMenu();
+    JMenuItem myItem = new JMenuItem("Edit");
+    menu.add(myItem);
+    setComponentPopupMenu(menu);
+  }
+
+  @Override
+  public String getToolTipText(MouseEvent event) {
+    int time = getTopTime() + (event.getY() - DRAW_ORIGIN) * this.timeRadix;
+    if (this.context.getTimeModel().isDisplayRealTime()) {
+      return this.context.getTimeModel().getTimeSecString(time);
+    }
+    return this.context.getTimeModel().getTimeSecString(this.context.getTimeModel().toFremoTime(time));
   }
 
   private int addStation(StationModel stationModel, int sumX) {
