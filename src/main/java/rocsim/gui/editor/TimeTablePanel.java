@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -45,6 +46,7 @@ public class TimeTablePanel extends JPanel {
   private JPopupMenu menu;
   private EditTripMouseAdapter mouseAdapter;
   private String lineId = "";
+  private String locoId;
 
   private class PlatformWidget {
     int x;
@@ -63,6 +65,7 @@ public class TimeTablePanel extends JPanel {
     int startX;
     int endX;
     String id;
+    String locoId;
     boolean displayDeparture;
   }
 
@@ -126,6 +129,11 @@ public class TimeTablePanel extends JPanel {
     return sumX;
   }
 
+  public void setLoco(String locoId) {
+    this.locoId = locoId;
+    triggerRepaint();
+  }
+
   public void setLine(String lineId) {
     boolean first = true;
     this.lineId = lineId;
@@ -159,6 +167,7 @@ public class TimeTablePanel extends JPanel {
           schedule.endTime = tripTime + segment.getDuration();
           schedule.pauseTime = segment.getPause();
           schedule.id = tripName;
+          schedule.locoId = trip.getLocoId();
           schedule.displayDeparture = firstSchedule;
           tripTime += segment.getDuration() + segment.getPause();
           this.schedules.add(schedule);
@@ -197,12 +206,14 @@ public class TimeTablePanel extends JPanel {
     g2.translate(0, -this.topTime / this.timeRadix);
 
     for (ScheduleWidget schedule : this.schedules) {
-      int startY = schedule.startTime / this.timeRadix;
-      int endY = schedule.endTime / this.timeRadix;
-      int blockY = (schedule.endTime + 60) / this.timeRadix;
-      g2.setColor(new Color(255, 255, 0));
-      g2.fillRect(Math.min(schedule.startX, schedule.endX), Math.min(startY, endY),
-          Math.abs(schedule.endX - schedule.startX), Math.abs(startY - blockY));
+      if (Objects.equals(this.locoId, schedule.locoId)) {
+        int startY = schedule.startTime / this.timeRadix;
+        int endY = schedule.endTime / this.timeRadix;
+        int blockY = (schedule.endTime + 60) / this.timeRadix;
+        g2.setColor(new Color(255, 255, 0));
+        g2.fillRect(Math.min(schedule.startX, schedule.endX), Math.min(startY, endY),
+            Math.abs(schedule.endX - schedule.startX), Math.abs(startY - blockY));
+      }
     }
 
     gr.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 15));
@@ -357,4 +368,5 @@ public class TimeTablePanel extends JPanel {
     dialog.setVisible(true);
     setLine(this.lineId);
   }
+
 }

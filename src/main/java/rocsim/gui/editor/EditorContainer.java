@@ -43,8 +43,7 @@ public class EditorContainer {
 
   private JScrollPane locoFrameWrapper;
   private LocoFrame locoFrame;
-  private JScrollPane tripFrameWrapper;
-  private TripFrame tripFrame;
+  private TripSortFrame tripFrame;
   private TrackEditorFrame editorPanel;
   private JScrollPane stationFrameWrapper;
   private StationFrame stationFrame;
@@ -204,8 +203,7 @@ public class EditorContainer {
     this.lineFrame = new LineFrame(this.myContext);
     this.lineFrameWrapper = new JScrollPane(this.lineFrame);
 
-    this.tripFrame = new TripFrame(this.myContext);
-    this.tripFrameWrapper = new JScrollPane(this.tripFrame);
+    this.tripFrame = new TripSortFrame(this.myContext);
 
     this.timeTableFrame = new TimeTableFrame(this.myContext);
   }
@@ -297,8 +295,8 @@ public class EditorContainer {
   /**
    * @return the tripFrame
    */
-  public JScrollPane getTripFrame() {
-    return this.tripFrameWrapper;
+  public TripSortFrame getTripFrame() {
+    return this.tripFrame;
   }
 
   /**
@@ -320,7 +318,7 @@ public class EditorContainer {
       this.stationFrame.updateContext();
     } else if (selectedComponent.equals(this.lineFrameWrapper)) {
       this.lineFrame.updateContext();
-    } else if (selectedComponent.equals(this.tripFrameWrapper)) {
+    } else if (selectedComponent.equals(this.tripFrame)) {
       this.tripFrame.updateContext();
     } else if (selectedComponent.equals(this.timeTableFrame)) {
       this.timeTableFrame.updateContext();
