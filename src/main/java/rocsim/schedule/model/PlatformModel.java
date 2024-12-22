@@ -22,17 +22,20 @@ import javax.json.JsonObjectBuilder;
 public class PlatformModel {
   private String name = "";
   private String blockId;
+  private boolean shuntingBlock = false;
 
   public JsonObject toJson() {
     JsonObjectBuilder builder = Json.createObjectBuilder();
     builder.add("name", this.name);
     builder.add("block-id", this.blockId);
+    builder.add("shunting-block", this.shuntingBlock);
     return builder.build();
   }
 
   public void fromJson(JsonObject obj) {
     this.name = obj.getString("name", "");
     this.blockId = obj.getString("block-id", "");
+    this.shuntingBlock = obj.getBoolean("shunting-block", false);
   }
 
   /**
@@ -61,6 +64,20 @@ public class PlatformModel {
    */
   public void setBlockId(String blockId) {
     this.blockId = blockId;
+  }
+
+  /**
+   * @return the shuntingBlock
+   */
+  public boolean isShuntingBlock() {
+    return this.shuntingBlock;
+  }
+
+  /**
+   * @param shuntingBlock the shuntingBlock to set
+   */
+  public void setShuntingBlock(boolean shuntingBlock) {
+    this.shuntingBlock = shuntingBlock;
   }
 
 }

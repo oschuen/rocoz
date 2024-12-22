@@ -17,6 +17,7 @@ package rocsim.gui.editor;
 
 import java.awt.FlowLayout;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -31,6 +32,7 @@ public class PlatformPanel extends DataPanel {
   private JTextField platformNameTextField;
   private JComboBox<String> blockComboBox;
   private StringListDataModel blockIdDataModel;
+  private JCheckBox shuntingBlockCheckBox;
   private EditorContext context;
 
   public PlatformPanel(EditorContext context) {
@@ -55,17 +57,22 @@ public class PlatformPanel extends DataPanel {
     this.blockComboBox = new JComboBox<>();
     add(this.blockComboBox);
     this.blockComboBox.setModel(new StringComboBoxModel(this.blockIdDataModel));
+
+    this.shuntingBlockCheckBox = new JCheckBox("Shunting Block");
+    add(this.shuntingBlockCheckBox);
   }
 
   public void setModel(PlatformModel model) {
     this.platformNameTextField.setText(model.getName());
     this.blockComboBox.setSelectedItem(model.getBlockId());
+    this.shuntingBlockCheckBox.setSelected(model.isShuntingBlock());
   }
 
   public PlatformModel getModel() {
     PlatformModel model = new PlatformModel();
     model.setName(this.platformNameTextField.getText());
     model.setBlockId((String) this.blockComboBox.getSelectedItem());
+    model.setShuntingBlock(this.shuntingBlockCheckBox.isSelected());
     return model;
   }
 

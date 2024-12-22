@@ -10,6 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Area;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -110,12 +112,14 @@ public class TimeTablePanel extends JPanel {
     station.x = sumX;
     this.stations.add(station);
     for (PlatformModel platformModel : stationModel.getPlatforms()) {
-      PlatformWidget platform = new PlatformWidget();
-      platform.name = platformModel.getName();
-      platform.x = sumX;
-      this.platforms.add(platform);
-      this.platformMap.put(platformModel.getBlockId(), platform);
-      sumX += this.platformDistance;
+      if (!platformModel.isShuntingBlock()) {
+        PlatformWidget platform = new PlatformWidget();
+        platform.name = platformModel.getName();
+        platform.x = sumX;
+        this.platforms.add(platform);
+        this.platformMap.put(platformModel.getBlockId(), platform);
+        sumX += this.platformDistance;
+      }
     }
 
     sumX += this.stationDistance;
@@ -189,6 +193,18 @@ public class TimeTablePanel extends JPanel {
     TimeModel timeModel = this.context.getTimeModel();
 
     Graphics2D gr = (Graphics2D) graphics;
+    Graphics g2 = gr.create(0, DRAW_ORIGIN, getWidth(), getHeight() - DRAW_ORIGIN);
+    g2.translate(0, -this.topTime / this.timeRadix);
+
+    for (ScheduleWidget schedule : this.schedules) {
+      int startY = schedule.startTime / this.timeRadix;
+      int endY = schedule.endTime / this.timeRadix;
+      int blockY = (schedule.endTime + 60) / this.timeRadix;
+      g2.setColor(new Color(255, 255, 0));
+      g2.fillRect(Math.min(schedule.startX, schedule.endX), Math.min(startY, endY),
+          Math.abs(schedule.endX - schedule.startX), Math.abs(startY - blockY));
+    }
+
     gr.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 15));
     gr.setColor(Color.BLACK);
     for (StationWidget station : this.stations) {
@@ -201,9 +217,8 @@ public class TimeTablePanel extends JPanel {
       gr.setColor(Color.PINK);
       gr.drawLine(platform.x, DRAW_ORIGIN, platform.x, getHeight());
     }
-    Graphics g2 = gr.create(0, DRAW_ORIGIN, getWidth(), getHeight() - DRAW_ORIGIN);
+
     g2.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 15));
-    g2.translate(0, -this.topTime / this.timeRadix);
     int hour = this.topTime - this.topTime % 3600;
     if (timeModel.isDisplayRealTime()) {
       int timeY = hour / this.timeRadix;
@@ -229,26 +244,10 @@ public class TimeTablePanel extends JPanel {
     }
 
     for (ScheduleWidget schedule : this.schedules) {
-      if (schedule.id.toLowerCase().startsWith("n")) {
-        g2.setColor(Color.GREEN);
-      } else if (schedule.id.toLowerCase().startsWith("D")) {
-        g2.setColor(Color.BLUE);
-      } else if (schedule.id.toLowerCase().startsWith("L")) {
-        g2.setColor(Color.ORANGE);
-      } else {
-        g2.setColor(Color.BLACK);
-      }
-
+      g2.setColor(Color.BLACK);
       int startY = schedule.startTime / this.timeRadix;
       int endY = schedule.endTime / this.timeRadix;
-      int blockY = (schedule.endTime + 60) / this.timeRadix;
       int pauseY = (schedule.endTime + schedule.pauseTime) / this.timeRadix;
-      g2.drawLine(schedule.startX, startY, schedule.endX, endY);
-      if (schedule.pauseTime == 0) {
-        g2.fillOval(schedule.endX - 3, endY - 3, 6, 6);
-      } else {
-        g2.drawLine(schedule.endX, endY, schedule.endX, pauseY);
-      }
       int minEnd;
       int minStart;
       if (timeModel.isDisplayRealTime()) {
@@ -282,13 +281,31 @@ public class TimeTablePanel extends JPanel {
       FontMetrics metrics = g2.getFontMetrics(g2.getFont());
       int adv = metrics.stringWidth(schedule.id);
       int adw = metrics.getHeight();
-      g2.setColor(getBackground());
-      g2.fillRect(centerX - adv / 2, centerY - adw / 2, adv, adw);
+
       g2.setColor(Color.BLACK);
       g2.drawString(schedule.id, centerX - adv / 2, centerY + adw / 2);
-      g2.setColor(new Color(255, 255, 0, 100));
-      g2.fillRect(Math.min(schedule.startX, schedule.endX), Math.min(startY, endY),
-          Math.abs(schedule.endX - schedule.startX), Math.abs(startY - blockY));
+      Graphics2D g3 = (Graphics2D) g2.create();
+      g3.setStroke(new BasicStroke(2));
+      if (schedule.id.toLowerCase().startsWith("n")) {
+        g3.setColor(Color.GREEN);
+      } else if (schedule.id.toLowerCase().startsWith("D")) {
+        g3.setColor(Color.BLUE);
+      } else if (schedule.id.toLowerCase().startsWith("L")) {
+        g3.setColor(Color.ORANGE);
+      } else {
+        g3.setColor(Color.BLACK);
+      }
+      if (schedule.pauseTime == 0) {
+        g3.fillOval(schedule.endX - 3, endY - 3, 6, 6);
+      } else {
+        g3.drawLine(schedule.endX, endY, schedule.endX, pauseY);
+      }
+      Area area = new Area(new Rectangle2D.Double(Math.min(schedule.startX, schedule.endX), Math.min(startY, endY) - 4,
+          Math.abs(schedule.endX - schedule.startX), Math.abs(startY - endY) + 8));
+      area.subtract(new Area(new Rectangle2D.Double(centerX - adv / 2, centerY - adw / 2, adv, adw)));
+      area.subtract(new Area(new Rectangle2D.Double(0, 0, getWidth(), this.topTime / this.timeRadix)));
+      g3.setClip(area);
+      g3.drawLine(schedule.startX, startY, schedule.endX, endY);
     }
   }
 
