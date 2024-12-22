@@ -173,6 +173,21 @@ public class EditorContainer {
     public List<TripModel> getTripModels() {
       return EditorContainer.this.tripFrame.getTripModels();
     }
+
+    @Override
+    public TripModel getTripModel(String tripId) {
+      for (TripModel model : getTripModels()) {
+        if (model.getId().equals(tripId)) {
+          return model;
+        }
+      }
+      return new TripModel();
+    }
+
+    @Override
+    public void updateModel(String tripId, TripModel updatedModel) {
+      EditorContainer.this.tripFrame.updateModel(tripId, updatedModel);
+    }
   };
 
   public EditorContainer(TimeModel timeModel) {

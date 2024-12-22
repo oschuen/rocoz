@@ -343,7 +343,6 @@ public class TrackEditorPanel extends JPanel {
           configureDialog.setVisible(true);
         }
       }
-
     }
 
     @Override

@@ -50,4 +50,8 @@ public interface EditorContext {
 
   List<TripModel> getTripModels();
 
+  TripModel getTripModel(String tripId);
+
+  void updateModel(String tripId, TripModel updatedModel);
+
 }

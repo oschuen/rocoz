@@ -65,6 +65,14 @@ public class TripFrame extends ListFrame<TripStationPanel> {
     for (TripStationPanel trip : getContent()) {
       trip.updateContext();
     }
+  }
 
+  public void updateModel(String tripId, TripModel updatedModel) {
+    for (TripStationPanel trip : getContent()) {
+      TripModel tripModel = trip.getModel();
+      if (tripModel.getId().equals(tripId)) {
+        trip.setModel(updatedModel);
+      }
+    }
   }
 }

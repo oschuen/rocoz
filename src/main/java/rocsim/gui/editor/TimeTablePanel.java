@@ -6,6 +6,9 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,6 +40,9 @@ public class TimeTablePanel extends JPanel {
   private Map<String, PlatformWidget> platformMap = new HashMap<>();
   private int topTime = 4 * 3600 + 10 * 60;
   private int timeRadix = 6;
+  private JPopupMenu menu;
+  private EditTripMouseAdapter mouseAdapter;
+  private String lineId = "";
 
   private class PlatformWidget {
     int x;
@@ -71,15 +77,27 @@ public class TimeTablePanel extends JPanel {
       }
     });
     setToolTipText("");
-    JPopupMenu menu = new JPopupMenu();
+    this.menu = new JPopupMenu();
     JMenuItem myItem = new JMenuItem("Edit");
-    menu.add(myItem);
-    setComponentPopupMenu(menu);
+    this.menu.add(myItem);
+    myItem.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        editTrip();
+      }
+    });
+    this.mouseAdapter = new EditTripMouseAdapter();
+    addMouseListener(this.mouseAdapter);
+  }
+
+  private int getTimeForY(int y) {
+    return getTopTime() + (y - DRAW_ORIGIN) * this.timeRadix;
   }
 
   @Override
   public String getToolTipText(MouseEvent event) {
-    int time = getTopTime() + (event.getY() - DRAW_ORIGIN) * this.timeRadix;
+    int time = getTimeForY(event.getY());
     if (this.context.getTimeModel().isDisplayRealTime()) {
       return this.context.getTimeModel().getTimeSecString(time);
     }
@@ -106,6 +124,7 @@ public class TimeTablePanel extends JPanel {
 
   public void setLine(String lineId) {
     boolean first = true;
+    this.lineId = lineId;
     this.stations.clear();
     this.platforms.clear();
     this.platformMap.clear();
@@ -271,5 +290,54 @@ public class TimeTablePanel extends JPanel {
       g2.fillRect(Math.min(schedule.startX, schedule.endX), Math.min(startY, endY),
           Math.abs(schedule.endX - schedule.startX), Math.abs(startY - blockY));
     }
+  }
+
+  class EditTripMouseAdapter extends MouseAdapter {
+    private ScheduleWidget widget = new ScheduleWidget();
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+      if (e.isPopupTrigger()) {
+        ScheduleWidget foundWidget = null;
+        int time = getTimeForY(e.getY());
+        for (ScheduleWidget scheduleWidget : TimeTablePanel.this.schedules) {
+          int minX = Math.min(scheduleWidget.startX, scheduleWidget.endX);
+          int maxX = Math.max(scheduleWidget.startX, scheduleWidget.endX);
+          if (scheduleWidget.startTime <= time && scheduleWidget.endTime >= time && e.getX() >= minX
+              && e.getX() <= maxX) {
+            foundWidget = scheduleWidget;
+            break;
+          }
+        }
+        if (foundWidget != null) {
+          this.widget = foundWidget;
+          showPopup(e);
+        }
+      }
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+      if (e.isPopupTrigger())
+        showPopup(e);
+    }
+
+    private void showPopup(MouseEvent e) {
+      TimeTablePanel.this.menu.show(e.getComponent(), e.getX(), e.getY());
+    }
+
+    /**
+     * @return the widget
+     */
+    public ScheduleWidget getWidget() {
+      return this.widget;
+    }
+  }
+
+  private void editTrip() {
+    ConfigTripDialog dialog = new ConfigTripDialog(this.context, this.mouseAdapter.getWidget().id);
+    dialog.setLocationRelativeTo(null);
+    dialog.setVisible(true);
+    setLine(this.lineId);
   }
 }
