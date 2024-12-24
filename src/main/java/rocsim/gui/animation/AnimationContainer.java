@@ -120,10 +120,10 @@ public class AnimationContainer {
       this.lineUsePanel.setLines(lines);
 
       Scheduler scheduler = new Scheduler(this.plan, trips, locos, this.timeModel);
-      this.timeModel.setMinTime(scheduler.getMinTime());
-      this.timeModel.setMaxTime(scheduler.getMaxTime());
-      this.controlPanel.setMinTime(scheduler.getMinTime());
-      this.controlPanel.setMaxTime(scheduler.getMaxTime());
+      this.timeModel.setMinTime(obj.getInt("Min-Time", 4 * 3600));
+      this.timeModel.setMaxTime(obj.getInt("Max-Time", 7 * 3600));
+      this.controlPanel.setMinTime(Math.min(this.timeModel.getMinTime(), scheduler.getMinTime()));
+      this.controlPanel.setMaxTime(Math.max(this.timeModel.getMaxTime(), scheduler.getMaxTime()));
       this.currentWishTime = scheduler.getMinTime();
       this.timeModel.setCurrentTime(scheduler.getMinTime());
       if (this.executionFuture != null) {

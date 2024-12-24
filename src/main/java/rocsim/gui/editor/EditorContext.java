@@ -54,4 +54,6 @@ public interface EditorContext {
 
   void updateModel(String tripId, TripModel updatedModel);
 
+  void addModel(TripModel updatedModel);
+
 }

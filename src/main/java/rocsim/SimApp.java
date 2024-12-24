@@ -39,6 +39,7 @@ public class SimApp {
       frameSize.width = screenSize.width;
     }
     frame.setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
+    frame.setSize(frameSize);
     frame.setVisible(true);
   }
 

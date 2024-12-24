@@ -43,7 +43,8 @@ public class TimeTablePanel extends JPanel {
   private Map<String, PlatformWidget> platformMap = new HashMap<>();
   private int topTime = 4 * 3600 + 10 * 60;
   private int timeRadix = 6;
-  private JPopupMenu menu;
+  private JPopupMenu editMenu;
+  private JPopupMenu addMenu;
   private EditTripMouseAdapter mouseAdapter;
   private String lineId = "";
   private String locoId;
@@ -82,9 +83,9 @@ public class TimeTablePanel extends JPanel {
       }
     });
     setToolTipText("");
-    this.menu = new JPopupMenu();
+    this.editMenu = new JPopupMenu();
     JMenuItem myItem = new JMenuItem("Edit");
-    this.menu.add(myItem);
+    this.editMenu.add(myItem);
     myItem.addActionListener(new ActionListener() {
 
       @Override
@@ -92,6 +93,26 @@ public class TimeTablePanel extends JPanel {
         editTrip();
       }
     });
+    JMenuItem menuItemDuplicate = new JMenuItem("Duplicate");
+    this.editMenu.add(menuItemDuplicate);
+    menuItemDuplicate.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        duplicateTrip();
+      }
+    });
+    this.addMenu = new JPopupMenu();
+    JMenuItem addItem = new JMenuItem("Add");
+    this.addMenu.add(addItem);
+    addItem.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        addTrip();
+      }
+    });
+
     this.mouseAdapter = new EditTripMouseAdapter();
     addMouseListener(this.mouseAdapter);
   }
@@ -340,18 +361,23 @@ public class TimeTablePanel extends JPanel {
         if (foundWidget != null) {
           this.widget = foundWidget;
           showPopup(e);
+        } else {
+          showAddPopup(e);
         }
       }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-      if (e.isPopupTrigger())
-        showPopup(e);
+      mousePressed(e);
     }
 
     private void showPopup(MouseEvent e) {
-      TimeTablePanel.this.menu.show(e.getComponent(), e.getX(), e.getY());
+      TimeTablePanel.this.editMenu.show(e.getComponent(), e.getX(), e.getY());
+    }
+
+    private void showAddPopup(MouseEvent e) {
+      TimeTablePanel.this.addMenu.show(e.getComponent(), e.getX(), e.getY());
     }
 
     /**
@@ -363,7 +389,21 @@ public class TimeTablePanel extends JPanel {
   }
 
   private void editTrip() {
-    ConfigTripDialog dialog = new ConfigTripDialog(this.context, this.mouseAdapter.getWidget().id);
+    ConfigTripDialog dialog = new ConfigTripDialog(this.context, this.mouseAdapter.getWidget().id, false);
+    dialog.setLocationRelativeTo(null);
+    dialog.setVisible(true);
+    setLine(this.lineId);
+  }
+
+  private void duplicateTrip() {
+    ConfigTripDialog dialog = new ConfigTripDialog(this.context, this.mouseAdapter.getWidget().id, true);
+    dialog.setLocationRelativeTo(null);
+    dialog.setVisible(true);
+    setLine(this.lineId);
+  }
+
+  private void addTrip() {
+    ConfigTripDialog dialog = new ConfigTripDialog(this.context, "", true);
     dialog.setLocationRelativeTo(null);
     dialog.setVisible(true);
     setLine(this.lineId);

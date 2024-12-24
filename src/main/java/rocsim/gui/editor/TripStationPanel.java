@@ -54,7 +54,7 @@ public class TripStationPanel extends DataPanel {
   private StringListDataModel locoModel;
   private StringListDataModel stationNameDataModel;
   private StringListDataModel platformDataModel;
-  private int startInRealTime = 0;
+  private int startInRealTime = 18000;
 
   public TripStationPanel(EditorContext context) {
     this.context = context;
@@ -81,6 +81,8 @@ public class TripStationPanel extends DataPanel {
     gbc_textField.anchor = GridBagConstraints.WEST;
     gbc_textField.gridx = 1;
     gbc_textField.gridy = 0;
+    gbc_textField.fill = GridBagConstraints.HORIZONTAL;
+    gbc_textField.weightx = 1.0;
     add(this.idTextField, gbc_textField);
     this.idTextField.setColumns(10);
 
@@ -170,11 +172,13 @@ public class TripStationPanel extends DataPanel {
     this.timeTextField = new JFormattedTextField(mask);
     GridBagConstraints gbc_textField_1 = new GridBagConstraints();
     gbc_textField_1.insets = new Insets(0, 0, 5, 5);
-    gbc_textField_1.fill = GridBagConstraints.NONE;
+    gbc_textField_1.fill = GridBagConstraints.HORIZONTAL;
     gbc_textField_1.gridx = 10;
     gbc_textField_1.gridy = 0;
+    gbc_textField_1.weightx = 1.0;
     add(this.timeTextField, gbc_textField_1);
     this.timeTextField.setColumns(8);
+    this.timeTextField.setValue("00:00:00");
     this.timeTextField.addFocusListener(new FocusListener() {
 
       @Override
@@ -217,7 +221,7 @@ public class TripStationPanel extends DataPanel {
     gbc_textField_2.fill = GridBagConstraints.HORIZONTAL;
     gbc_textField_2.gridx = 13;
     gbc_textField_2.gridy = 0;
-    gbc_textField_2.weightx = 20.0;
+    gbc_textField_2.weightx = 8.0;
     gbc_textField_2.anchor = GridBagConstraints.WEST;
 
     add(this.commentTextField, gbc_textField_2);
@@ -225,7 +229,7 @@ public class TripStationPanel extends DataPanel {
 
     this.scheduleFrame = new ScheduleTableFrame(context);
     GridBagConstraints gbc_panel = new GridBagConstraints();
-    gbc_panel.weightx = 10.0;
+    gbc_panel.weightx = 20.0;
     gbc_panel.gridwidth = 13;
     gbc_panel.insets = new Insets(0, 0, 0, 5);
     gbc_panel.fill = GridBagConstraints.HORIZONTAL;

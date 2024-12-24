@@ -37,16 +37,30 @@ import rocsim.schedule.model.TimeModel.TimeModelChangeListener;
 public class TimePanel extends JPanel {
 
   private static final long serialVersionUID = 1L;
-  private JFormattedTextField textField;
+  private JFormattedTextField startTimeTextField;
   private JRadioButton rdbtnModelTime;
   private JRadioButton rdbtnRealTime;
+  private JLabel lblEndTime;
+  private JFormattedTextField endTimeTextField;
+  private TimeModel timeModel;
+
+  private void updateTimeFields() {
+    TimePanel.this.startTimeTextField.setValue(this.timeModel.getTimeSecString(this.timeModel.getMinTime()));
+    if (this.timeModel.isDisplayRealTime()) {
+      TimePanel.this.endTimeTextField.setValue(this.timeModel.getTimeSecString(this.timeModel.getMaxTime()));
+    } else {
+      TimePanel.this.endTimeTextField
+          .setValue(this.timeModel.getTimeSecString(this.timeModel.toFremoTime(this.timeModel.getMaxTime())));
+    }
+  }
 
   public TimePanel(TimeModel timeModel) {
+    this.timeModel = timeModel;
     timeModel.addListener(new TimeModelChangeListener() {
 
       @Override
       public void timeModelChanged() {
-        TimePanel.this.textField.setValue(timeModel.getTimeSecString(timeModel.getMinTime()));
+        updateTimeFields();
       }
     });
     MaskFormatter mask = null;
@@ -58,9 +72,9 @@ public class TimePanel extends JPanel {
 
     GridBagLayout gridBagLayout = new GridBagLayout();
     gridBagLayout.columnWidths = new int[] { 0, 0, 0, 0, 0 };
-    gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0 };
+    gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     gridBagLayout.columnWeights = new double[] { 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE };
-    gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+    gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
     setLayout(gridBagLayout);
 
     this.rdbtnRealTime = new JRadioButton("Real Time");
@@ -74,6 +88,7 @@ public class TimePanel extends JPanel {
       @Override
       public void actionPerformed(ActionEvent arg0) {
         timeModel.setDisplayRealTime(TimePanel.this.rdbtnRealTime.isSelected());
+        updateTimeFields();
       }
     };
     this.rdbtnRealTime.addActionListener(radioBtnActionListener);
@@ -90,23 +105,24 @@ public class TimePanel extends JPanel {
 
     JLabel lblStartTime = new JLabel("Start Time");
     GridBagConstraints gbc_lblStartTime = new GridBagConstraints();
-    gbc_lblStartTime.insets = new Insets(0, 0, 0, 5);
+    gbc_lblStartTime.insets = new Insets(0, 0, 5, 5);
     gbc_lblStartTime.gridx = 1;
     gbc_lblStartTime.gridy = 5;
     add(lblStartTime, gbc_lblStartTime);
 
-    this.textField = new JFormattedTextField(mask);
+    this.startTimeTextField = new JFormattedTextField(mask);
     GridBagConstraints gbc_textField = new GridBagConstraints();
+    gbc_textField.insets = new Insets(0, 0, 5, 0);
     gbc_textField.gridx = 3;
     gbc_textField.gridy = 5;
-    add(this.textField, gbc_textField);
-    this.textField.setColumns(10);
-    this.textField.setValue(timeModel.getTimeSecString(timeModel.getMinTime()));
-    this.textField.addFocusListener(new FocusListener() {
+    add(this.startTimeTextField, gbc_textField);
+    this.startTimeTextField.setColumns(10);
+    this.startTimeTextField.setValue(timeModel.getTimeSecString(timeModel.getMinTime()));
+    this.startTimeTextField.addFocusListener(new FocusListener() {
 
       @Override
       public void focusLost(FocusEvent arg0) {
-        timeModel.setMinTime(timeModel.convertTimeString(TimePanel.this.textField.getText()));
+        timeModel.setMinTime(timeModel.convertTimeString(TimePanel.this.startTimeTextField.getText()));
       }
 
       @Override
@@ -117,7 +133,40 @@ public class TimePanel extends JPanel {
     ButtonGroup timeButtonGroup = new ButtonGroup();
     timeButtonGroup.add(this.rdbtnModelTime);
     timeButtonGroup.add(this.rdbtnRealTime);
+
+    this.lblEndTime = new JLabel("End Time");
+    GridBagConstraints gbc_lblEndTime = new GridBagConstraints();
+    gbc_lblEndTime.insets = new Insets(0, 0, 0, 5);
+    gbc_lblEndTime.gridx = 1;
+    gbc_lblEndTime.gridy = 7;
+    add(this.lblEndTime, gbc_lblEndTime);
+
+    this.endTimeTextField = new JFormattedTextField(mask);
+    GridBagConstraints gbc_textField_1 = new GridBagConstraints();
+    gbc_textField_1.gridx = 3;
+    gbc_textField_1.gridy = 7;
+    this.endTimeTextField.setColumns(10);
+    add(this.endTimeTextField, gbc_textField_1);
     timeModel.setDisplayRealTime(TimePanel.this.rdbtnRealTime.isSelected());
+    updateTimeFields();
+    this.endTimeTextField.addFocusListener(new FocusListener() {
+
+      @Override
+      public void focusLost(FocusEvent arg0) {
+        if (timeModel.isDisplayRealTime()) {
+          timeModel.setMaxTime(timeModel.convertTimeString(TimePanel.this.endTimeTextField.getText()));
+        } else {
+          timeModel
+              .setMaxTime(timeModel.toRealTime(timeModel.convertTimeString(TimePanel.this.endTimeTextField.getText())));
+        }
+      }
+
+      @Override
+      public void focusGained(FocusEvent arg0) {
+
+      }
+    });
+
   }
 
 }

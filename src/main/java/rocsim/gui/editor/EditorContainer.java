@@ -187,6 +187,12 @@ public class EditorContainer {
     public void updateModel(String tripId, TripModel updatedModel) {
       EditorContainer.this.tripFrame.updateModel(tripId, updatedModel);
     }
+
+    @Override
+    public void addModel(TripModel updatedModel) {
+      EditorContainer.this.tripFrame.addModel(updatedModel);
+
+    }
   };
 
   public EditorContainer(TimeModel timeModel) {
@@ -235,10 +241,16 @@ public class EditorContainer {
       lineArr.add(lineModel.toJson());
     }
     builder.add("lines", lineArr);
+
+    builder.add("Min-Time", this.timeModel.getMinTime());
+    builder.add("Max-Time", this.timeModel.getMaxTime());
     return builder.build();
   }
 
   public void fromJson(JsonObject obj) {
+    this.timeModel.setMinTime(obj.getInt("Min-Time", 4 * 3600));
+    this.timeModel.setMaxTime(obj.getInt("Max-Time", 12 * 3600));
+
     JsonArray locoArr = obj.getJsonArray("locos");
     List<LocoModel> locos = new ArrayList<>();
     for (int i = 0; i < locoArr.size(); i++) {

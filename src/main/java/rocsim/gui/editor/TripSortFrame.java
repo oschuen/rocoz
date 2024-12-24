@@ -158,6 +158,8 @@ public class TripSortFrame extends JPanel {
       for (TripStationPanel trip : getContent()) {
         models.add(trip.getModel());
       }
+
+      Collections.sort(models, (tripA, tripB) -> tripA.getId().compareTo(tripB.getId()));
       return models;
     }
 
@@ -175,5 +177,11 @@ public class TripSortFrame extends JPanel {
         }
       }
     }
+  }
+
+  public void addModel(TripModel updatedModel) {
+    List<TripModel> currentTrips = getTripModels();
+    currentTrips.add(updatedModel);
+    setTripModels(currentTrips);
   }
 }

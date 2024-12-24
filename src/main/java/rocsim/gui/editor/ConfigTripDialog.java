@@ -14,7 +14,7 @@ public class ConfigTripDialog extends JDialog {
 
   private TripStationPanel tripPanel;
 
-  public ConfigTripDialog(EditorContext context, String tripId) {
+  public ConfigTripDialog(EditorContext context, String tripId, boolean newTrip) {
     setTitle(tripId);
     setModal(true);
 
@@ -31,12 +31,15 @@ public class ConfigTripDialog extends JDialog {
       @Override
       public void actionPerformed(ActionEvent arg0) {
         TripModel updatedModel = ConfigTripDialog.this.tripPanel.getModel();
-        context.updateModel(getTitle(), updatedModel);
+        if (newTrip) {
+          context.addModel(updatedModel);
+        } else {
+          context.updateModel(getTitle(), updatedModel);
+        }
         setVisible(false);
       }
     });
     panel.add(btnNewButton);
-
     pack();
   }
 
