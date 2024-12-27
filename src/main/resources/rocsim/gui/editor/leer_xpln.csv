@@ -1,0 +1,62 @@
+Project	Scope	X1Index	X2Index	Step	FieldName	TypeValue	Value				
+Default	#Master	XChar		3	Xchar	Char					
+Default	#Master	Xdir		1	Xurl	Dir					
+Default	#Master	XInteger		2	Xinteger	Integer					
+Default	#Master	Xurl		1	Xurl	Url					
+Default	#System	CurrentProject		3	Xchar	Char	Default				
+Default	#System	PropertiesInit		3	Xchar	Char	1				
+Default	#System	PropertiesVersion		3	Xchar	Char	2				
+[LINES]
+Default	LineType	Job		5				60			
+Default	LineType	Text		5				15			
+Default	LineType	Time		5				60			
+Default	LineType	Track		5				60			
+Default	LineType	Train		5				15			
+Default	TrainType	D		5				80	None	D:\xpln\xplnzip\templates\Train_Book_Body3.stw	G_Zug
+Default	TrainType	DE		5				80	Last	D:\xpln\xplnzip\templates\Train_Book_Body3.stw	G_Zug
+Default	TrainType	Dg		5				60	Last	D:\xpln\xplnzip\templates\Train_Book_Body3.stw	G_Zug
+Default	TrainType	Dstg		5				20	None	D:\xpln\xplnzip\templates\Train_Book_Body3.stw	G_Zug
+Default	TrainType	E		5				80	None	D:\xpln\xplnzip\templates\Train_Book_Body3.stw	P_Zug
+Default	TrainType	F		5				100	None	D:\xpln\xplnzip\templates\Train_Book_Body3.stw	P_Zug
+Default	TrainType	G		5				80	Last	D:\xpln\xplnzip\templates\Train_Book_Body3.stw	G_Zug
+Default	TrainType	GmP		5				60	Last	D:\xpln\xplnzip\templates\Train_Book_Body3.stw	G_Zug
+Default	TrainType	Ne		5				40	All	D:\xpln\xplnzip\templates\Train_Book_Body3.stw	G_Zug
+Default	TrainType	Ng		5				40	All	D:\xpln\xplnzip\templates\Train_Book_Body3.stw	G_Zug
+Default	TrainType	P		5				60	None	D:\xpln\xplnzip\templates\Train_Book_Body3.stw	P_Zug
+Default	TrainType	Pt		5				60	All	D:\xpln\xplnzip\templates\Train_Book_Body3.stw	P_Zug
+Default	TrainType	Ptb		5				60	All	D:\xpln\xplnzip\templates\Train_Book_Body3.stw	P_Zug
+Default	TrainType	TEE		5				100	None	D:\xpln\xplnzip\templates\Train_Book_Body3.stw	P_Zug
+Default	TrainType	Ü		5				20	All	D:\xpln\xplnzip\templates\Train_Book_Body3.stw	G_Zug
+Default	TrainType	UEH		5				40	All	D:\xpln\xplnzip\templates\Train_Book_Body3.stw	Ueh
+Default	TrainType	Üg		5				20	All	D:\xpln\xplnzip\templates\Train_Book_Body3.stw	G_Zug
+Default	TrainType	Üs		5				20	All	D:\xpln\xplnzip\templates\Train_Book_Body3.stw	G_Zug
+Default	TrainType			5				0	None		unb
+Default	Typedef	job		4			 Übernahme Zug	 Abgabe Zug	n		
+Default	Typedef	locomotive		4			 TFZ einsetzen	 TFZ aussetzen	y		
+Default	Typedef	nexttrain		4			 von  	 Ü 			
+Default	Typedef	timetable		4					y		
+Default	Typedef	trainset		4			 einstellen	 ausstellen	y		
+Default	User	DirectorySaveBFO		1	Xurl	Dir					
+Default	User	DirectorySaveStartList		1	Xurl	Dir					
+Default	User	JobTimePrefix		2	Xinteger	Integer	30				
+Default	User	JobTimeSuffix		2	Xinteger	Integer	30				
+Default	User	PageDirection		3	Xchar	Char					
+Default	User	PageName		3	Xchar	Char					
+Default	User	ProjectDescription		3	Xchar	Char	Default project, never delete				
+Default	User	TemplateBFO		1	Xurl	Url					
+Default	User	TemplateBody		1	Xurl	Url					
+Default	User	TemplateNote		1	Xurl	Url					
+Default	User	TemplateObject		1	Xurl	Url					
+Default	User	TemplatePrefix		1	Xurl	Url					
+Default	User	TemplateStartList		1	Xurl	Url					
+Default	User	TemplateSuffix		1	Xurl	Url					
+Default	User	TrainSheetName		3	Xchar	Char	Trains				
+Default	User	DoubleLineBFO		3	Xchar	Char	Y				
+Default	User	TrainNameTemplate		3	Xchar	Char	prefixnumbersuffix				
+Default	User	TrainNameDisplayTemplate		3	Xchar	Char	part0				
+Default	User	TrainNameSeparator		3	Xchar	Char	.				
+Default	User	Routes		3	Xchar	Char					
+Default	User	Namewithblank		3	Xchar	Char	prefix. .number				
+Default	User	NameHolland		3	Xchar	Char	number				
+Default	Var	ZugnameT		3	Xchar	Char	XPLN.Trains.traindef..Itrainname.first.Getdisplayname.Namewithblank				
+Default	Var	ZugnameH		3	Xchar	Char	XPLN.Trains.traindef..Itrainname.first.Getdisplayname.NameHolland				

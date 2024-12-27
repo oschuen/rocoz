@@ -75,14 +75,12 @@ public class ControlPanel extends JPanel {
     this.scrollBar.setOrientation(JScrollBar.HORIZONTAL);
 
     JPanel panel2 = new JPanel();
-    panel2.setLayout(new GridLayout(1, 3, 0, 0));
+    // panel2.setLayout(new GridLayout(1, 3, 0, 0));
+    panel2.setLayout(new FlowLayout(FlowLayout.LEFT));
     add(panel2, BorderLayout.CENTER);
 
-    JPanel buttonPannel = new JPanel();
-    buttonPannel.setLayout(new FlowLayout(FlowLayout.LEFT));
-
     this.playButton = new PlayButton();
-    buttonPannel.add(this.playButton);
+    panel2.add(this.playButton);
     this.playButton.addActionListener(new ActionListener() {
 
       @Override
@@ -92,7 +90,7 @@ public class ControlPanel extends JPanel {
     });
 
     this.pauseButton = new PauseButton();
-    buttonPannel.add(this.pauseButton);
+    panel2.add(this.pauseButton);
     this.pauseButton.addActionListener(new ActionListener() {
 
       @Override
@@ -101,17 +99,15 @@ public class ControlPanel extends JPanel {
       }
     });
     this.timePanel = new TimePanel(model);
-    buttonPannel.add(this.timePanel);
-
-    panel2.add(buttonPannel);
+    panel2.add(this.timePanel);
 
     JPanel animationTimePanel = new JPanel();
-    animationTimePanel.setLayout(new GridLayout(3, 2, 0, 0));
+    animationTimePanel.setLayout(new GridLayout(3, 2, 80, 0));
     animationTimePanel.setBorder(BorderFactory.createTitledBorder("Animation-Speed"));
     panel2.add(animationTimePanel);
 
     JPanel fremoTimePanel = new JPanel();
-    fremoTimePanel.setLayout(new GridLayout(3, 2, 0, 0));
+    fremoTimePanel.setLayout(new GridLayout(3, 2, 80, 0));
     fremoTimePanel.setBorder(BorderFactory.createTitledBorder("Time Speed"));
     panel2.add(fremoTimePanel);
 

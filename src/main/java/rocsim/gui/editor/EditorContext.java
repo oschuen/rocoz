@@ -46,6 +46,10 @@ public interface EditorContext {
 
   LineModel getLineModel(String line);
 
+  List<LineModel> getLineModels();
+
+  List<StationModel> getStationModels();
+
   StationModel getStationModel(String station);
 
   List<TripModel> getTripModels();

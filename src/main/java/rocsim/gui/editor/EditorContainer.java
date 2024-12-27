@@ -49,6 +49,7 @@ public class EditorContainer {
   private StationFrame stationFrame;
   private TimeModel timeModel;
   private TimeTableFrame timeTableFrame;
+  private StationTrackDataPanel stationData;
 
   private JScrollPane lineFrameWrapper;
   private LineFrame lineFrame;
@@ -193,6 +194,16 @@ public class EditorContainer {
       EditorContainer.this.tripFrame.addModel(updatedModel);
 
     }
+
+    @Override
+    public List<StationModel> getStationModels() {
+      return new ArrayList<>(EditorContainer.this.stationFrame.getStationModels());
+    }
+
+    @Override
+    public List<LineModel> getLineModels() {
+      return new ArrayList<>(EditorContainer.this.lineFrame.getLineModels());
+    }
   };
 
   public EditorContainer(TimeModel timeModel) {
@@ -212,6 +223,8 @@ public class EditorContainer {
     this.tripFrame = new TripSortFrame(this.myContext);
 
     this.timeTableFrame = new TimeTableFrame(this.myContext);
+
+    this.stationData = new StationTrackDataPanel(this.myContext);
   }
 
   public JsonObject toJson() {
@@ -334,6 +347,8 @@ public class EditorContainer {
       this.tripFrame.updateContext();
     } else if (selectedComponent.equals(this.timeTableFrame)) {
       this.timeTableFrame.updateContext();
+    } else if (selectedComponent.equals(this.stationData)) {
+      this.stationData.updateContext();
     }
   }
 
@@ -349,5 +364,12 @@ public class EditorContainer {
    */
   public TimeTableFrame getTimeTableFrame() {
     return this.timeTableFrame;
+  }
+
+  /**
+   * @return the stationData
+   */
+  public StationTrackDataPanel getStationData() {
+    return this.stationData;
   }
 }

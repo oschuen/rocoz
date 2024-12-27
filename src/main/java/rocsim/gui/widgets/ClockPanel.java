@@ -42,10 +42,11 @@ public class ClockPanel extends JPanel {
   @Override
   public void paint(Graphics gr) {
     super.paint(gr);
-    gr.setColor(Color.WHITE);
-    gr.fillOval(0, 0, getWidth() - 1, getHeight() - 1);
-    gr.setColor(Color.BLACK);
     float r = Math.min(getWidth(), getHeight()) / 2.0F;
+    gr.setColor(Color.WHITE);
+    gr.fillOval(0, 0, (int) (2 * r - 1), (int) (2 * r - 1));
+    gr.setColor(Color.BLACK);
+
     Graphics2D g2 = (Graphics2D) gr;
     g2.setStroke(new BasicStroke(3));
     double w;

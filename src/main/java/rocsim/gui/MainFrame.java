@@ -87,6 +87,12 @@ public class MainFrame extends JFrame {
     this.tabbedPane.addTab("Lines", this.editorContainer.getLineFrame());
     this.tabbedPane.addTab("Trips", this.editorContainer.getTripFrame());
     this.tabbedPane.addTab("Timetable", this.editorContainer.getTimeTableFrame());
+    this.tabbedPane.addTab("StationData", this.editorContainer.getStationData());
+
+//    System.out.println("Plan Pannel " + this.animationContainer.getPlanPannel().getPreferredSize());
+//    System.out.println("Animation Pannel " + this.animationContainer.getLineUsePanel().getPreferredSize());
+//    System.out.println("Log Pannel " + this.animationContainer.getLogPanel().getPreferredSize());
+//    System.out.println("time Pannel " + this.editorContainer.getTimeTableFrame().getPreferredSize());
 
     this.tabbedPane.addChangeListener(new ChangeListener() {
 

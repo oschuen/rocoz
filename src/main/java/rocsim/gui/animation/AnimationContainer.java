@@ -124,8 +124,8 @@ public class AnimationContainer {
       this.timeModel.setMaxTime(obj.getInt("Max-Time", 7 * 3600));
       this.controlPanel.setMinTime(Math.min(this.timeModel.getMinTime(), scheduler.getMinTime()));
       this.controlPanel.setMaxTime(Math.max(this.timeModel.getMaxTime(), scheduler.getMaxTime()));
-      this.currentWishTime = scheduler.getMinTime();
-      this.timeModel.setCurrentTime(scheduler.getMinTime());
+      this.currentWishTime = Math.min(this.timeModel.getMinTime(), scheduler.getMinTime());
+      this.timeModel.setCurrentTime(Math.min(this.timeModel.getMinTime(), scheduler.getMinTime()));
       if (this.executionFuture != null) {
         this.executionFuture.cancel(false);
         this.executorJob.stop();
