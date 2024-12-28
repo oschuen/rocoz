@@ -15,6 +15,7 @@
  */
 package rocsim.log;
 
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.UnsynchronizedAppenderBase;
 
@@ -29,6 +30,7 @@ public class PlanLogAdapter extends UnsynchronizedAppenderBase<ILoggingEvent> {
   public static class LogEvent {
     public int time = 0;
     public String message = "";
+    public boolean severe = false;
 
     @Override
     public String toString() {
@@ -49,6 +51,7 @@ public class PlanLogAdapter extends UnsynchronizedAppenderBase<ILoggingEvent> {
     if (index >= 0 && endIndex > index) {
       event.time = Integer.valueOf(complete.substring(index + 1, endIndex));
     }
+    event.severe = eventObject.getLevel().isGreaterOrEqual(Level.WARN);
     event.message = complete.substring(endIndex + 1);
     javax.swing.SwingUtilities.invokeLater(() -> {
       if (listener != null) {

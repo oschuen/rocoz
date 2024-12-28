@@ -32,8 +32,8 @@ public class SimApp {
     }
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     Dimension frameSize = frame.getSize();
-    if (frameSize.height > screenSize.height) {
-      frameSize.height = screenSize.height;
+    if (frameSize.height > screenSize.height - 50) {
+      frameSize.height = screenSize.height - 50;
     }
     if (frameSize.width > screenSize.width) {
       frameSize.width = screenSize.width;

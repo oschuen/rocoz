@@ -55,10 +55,11 @@ public class LogPanel extends JPanel implements LogEventListener, TimeModelChang
     this.logTable = new JTable(this.model);
     scrollPane.getViewport().add(this.logTable);
     this.logTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-    this.logTable.getColumnModel().getColumn(2).setPreferredWidth(800);
+    this.logTable.getColumnModel().getColumn(3).setPreferredWidth(800);
     this.logTable.getColumnModel().getColumn(0).setHeaderValue("Real Time");
     this.logTable.getColumnModel().getColumn(1).setHeaderValue("Fremo Time");
-    this.logTable.getColumnModel().getColumn(2).setHeaderValue("Event");
+    this.logTable.getColumnModel().getColumn(2).setHeaderValue("Severe");
+    this.logTable.getColumnModel().getColumn(3).setHeaderValue("Event");
   }
 
   private class TableModel extends AbstractTableModel {
@@ -68,7 +69,7 @@ public class LogPanel extends JPanel implements LogEventListener, TimeModelChang
 
     @Override
     public int getColumnCount() {
-      return 3;
+      return 4;
     }
 
     @Override
@@ -116,6 +117,12 @@ public class LogPanel extends JPanel implements LogEventListener, TimeModelChang
           } else if (column == 1) {
             value = LogPanel.this.incrModel.getFremoTimeSecString(event.time);
 
+          } else if (column == 2) {
+            if (event.severe) {
+              value = " ***   !   *** ";
+            } else {
+              value = "";
+            }
           } else {
             value = event.message;
           }

@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -22,6 +23,7 @@ public class TimeTableFrame extends JPanel {
   private JScrollBar timeScrollBar;
   private JComboBox<String> lineComboBox;
   private JComboBox<String> locoComboBox;
+  private JCheckBox shuntingBox;
   private TimeTablePanel timeTablePanel;
 
   public TimeTableFrame(EditorContext context) {
@@ -42,6 +44,8 @@ public class TimeTableFrame extends JPanel {
     panel.add(this.locoComboBox);
     this.locoModel = new StringListDataModel();
     this.locoComboBox.setModel(new StringComboBoxModel(this.locoModel));
+    this.shuntingBox = new JCheckBox("Shunting");
+    panel.add(this.shuntingBox);
 
     JScrollBar scrollBar = new JScrollBar();
     scrollBar.setOrientation(JScrollBar.HORIZONTAL);
@@ -73,6 +77,13 @@ public class TimeTableFrame extends JPanel {
       @Override
       public void adjustmentValueChanged(AdjustmentEvent arg0) {
         TimeTableFrame.this.timeTablePanel.setTopTime(arg0.getValue() * 60);
+      }
+    });
+    this.shuntingBox.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        TimeTableFrame.this.timeTablePanel.setShuntingView(TimeTableFrame.this.shuntingBox.isSelected());
       }
     });
   }

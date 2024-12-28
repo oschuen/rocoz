@@ -35,6 +35,7 @@ public class TimeTablePanel extends JPanel {
   private static final int DRAW_ORIGIN = 40;
   private static final long serialVersionUID = 1L;
   private final int platformDistance = 20;
+  private final int shuntingDistance = 60;
   private final int stationDistance = 150;
   private EditorContext context;
   private List<PlatformWidget> platforms = new ArrayList<>();
@@ -42,12 +43,13 @@ public class TimeTablePanel extends JPanel {
   private List<ScheduleWidget> schedules = new ArrayList<>();
   private Map<String, PlatformWidget> platformMap = new HashMap<>();
   private int topTime = 4 * 3600 + 10 * 60;
-  private int timeRadix = 6;
+  private int timeRadix = 4;
   private JPopupMenu editMenu;
   private JPopupMenu addMenu;
   private EditTripMouseAdapter mouseAdapter;
   private String lineId = "";
   private String locoId;
+  private boolean isShuntingVisible;
 
   private class PlatformWidget {
     int x;
@@ -135,8 +137,25 @@ public class TimeTablePanel extends JPanel {
     station.name = stationModel.getName();
     station.x = sumX;
     this.stations.add(station);
+    boolean first = true;
+    boolean shuntingBefore = false;
     for (PlatformModel platformModel : stationModel.getPlatforms()) {
-      if (!platformModel.isShuntingBlock()) {
+      if (this.isShuntingVisible && platformModel.isShuntingBlock()) {
+        if (!first) {
+          sumX += this.shuntingDistance;
+        }
+        PlatformWidget platform = new PlatformWidget();
+        platform.name = platformModel.getName();
+        platform.x = sumX;
+        this.platforms.add(platform);
+        this.platformMap.put(platformModel.getBlockId(), platform);
+        sumX += this.platformDistance;
+        shuntingBefore = true;
+      } else if (!platformModel.isShuntingBlock()) {
+        if (shuntingBefore) {
+          sumX += this.shuntingDistance;
+          shuntingBefore = false;
+        }
         PlatformWidget platform = new PlatformWidget();
         platform.name = platformModel.getName();
         platform.x = sumX;
@@ -144,6 +163,7 @@ public class TimeTablePanel extends JPanel {
         this.platformMap.put(platformModel.getBlockId(), platform);
         sumX += this.platformDistance;
       }
+      first = false;
     }
 
     sumX += this.stationDistance;
@@ -153,6 +173,14 @@ public class TimeTablePanel extends JPanel {
   public void setLoco(String locoId) {
     this.locoId = locoId;
     triggerRepaint();
+  }
+
+  public void setShuntingView(boolean shunting) {
+    if (this.isShuntingVisible != shunting) {
+      this.isShuntingVisible = shunting;
+      setLine(this.lineId);
+    }
+
   }
 
   public void setLine(String lineId) {

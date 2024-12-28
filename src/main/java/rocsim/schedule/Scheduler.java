@@ -253,7 +253,8 @@ public class Scheduler {
       } else {
         block = Scheduler.this.plan.getBlock(startTile, endTile);
         if (block.isEmpty()) {
-          Scheduler.this.logger.error("[{}] Can't block from {} to {}", time, startTile.getId(), endTile.getId());
+          Scheduler.this.logger.error("[{}] Trip: {} Loco: {} Can't block from {} to {}", time,
+              this.loco.getCurrentTrain(), this.loco.getId(), startTile.getId(), endTile.getId());
           error = true;
         } else {
           if (this.loco.isInBw()) {
@@ -261,8 +262,8 @@ public class Scheduler {
             this.loco.setInBw(false);
           } else if (!this.loco.getLocation().equals(startTile.getLocation())) {
 
-            Scheduler.this.logger.error("[{}] Loco {} is not at location  {}", time, this.loco.getId(),
-                startTile.getId());
+            Scheduler.this.logger.error("[{}] Trip: {} Loco {} is not at location  {}", time,
+                this.loco.getCurrentTrain(), this.loco.getId(), startTile.getId());
             error = true;
           }
         }
@@ -272,8 +273,8 @@ public class Scheduler {
         block.layBlock();
         startTile.setState(UseState.TRAIN);
         int drivingTime = startTile.getDrivingTime(this.loco.getvMax());
-        Scheduler.this.logger.info("[{}] Start Trip. Loco: {} from: {} to {}", time, this.loco.getId(),
-            startTile.getId(), endTile.getId());
+        Scheduler.this.logger.info("[{}] Start Trip {}. Loco: {} from: {} to {}", time, this.loco.getCurrentTrain(),
+            this.loco.getId(), startTile.getId(), endTile.getId());
         Scheduler.this.jobList.add(new RunScheduleJob(block, this.loco, startTile, time + drivingTime,
             time + this.schedule.getDuration() + this.schedule.getPause()));
       }
