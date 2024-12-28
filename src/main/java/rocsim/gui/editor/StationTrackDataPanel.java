@@ -66,10 +66,11 @@ public class StationTrackDataPanel extends JPanel {
       break;
     case 2:
       updateLines();
-    default:
-    case 4:
+      break;
+    case 3:
       updateTrains();
       break;
+    default:
     }
   }
 
@@ -92,8 +93,6 @@ public class StationTrackDataPanel extends JPanel {
     String startStation = "XXX";
     String endStation = "YYY";
     int startTime = 0;
-    buffer.append(
-        "Train number\tenum\ttrain prefix/ station \ttrain suffix/ track/ station\tArrival\tDeparture\tSpeed/ Group/ wheels\tObject\ttype\tTrainname\tremark\ttrapez post\tcrossing\tovertaking\ttrainreport\tmessages\n");
     for (TripModel tripModel : this.context.getTripModels()) {
       if (tripModel.isShunting()) {
         continue;
@@ -101,18 +100,18 @@ public class StationTrackDataPanel extends JPanel {
       int time = tripModel.getStartTime();
       startTime = time;
       startStation = tripModel.getStation();
-      buffer.append(tripModel.getId());
-      buffer.append("\t0\t \t \t");
+      buffer.append(tripModel.getId().replace(" ", ""));
+      buffer.append("\t0\t\t\t");
       buffer.append(this.context.getTimeModel().getFremoTimeMinString(time));
       buffer.append("\t");
       buffer.append(this.context.getTimeModel().getFremoTimeMinString(time));
       buffer.append("\t80\t");
-      buffer.append(getObjectId(tripModel.getId()));
+      buffer.append(getObjectId(tripModel.getId().replace(" ", "")));
       buffer.append("\ttraindef\t");
-      buffer.append(tripModel.getId());
-      buffer.append("\t \t \t \t \t \t\n");
+      buffer.append(tripModel.getId().replace(" ", ""));
+      buffer.append("\t\t\t\t\t\t\n");
 
-      buffer.append(tripModel.getId());
+      buffer.append(tripModel.getId().replace(" ", ""));
       buffer.append("\t10\t");
       buffer.append(tripModel.getStation());
       buffer.append("\t");
@@ -121,14 +120,14 @@ public class StationTrackDataPanel extends JPanel {
       buffer.append(this.context.getTimeModel().getFremoTimeMinString(time));
       buffer.append("\t");
       buffer.append(this.context.getTimeModel().getFremoTimeMinString(time));
-      buffer.append("\t \t");
-      buffer.append(" \ttimetable\t");
-      buffer.append(tripModel.getId());
-      buffer.append("\t \t \t \t \t \t\n");
+      buffer.append("\t\t");
+      buffer.append("\ttimetable\t");
+      buffer.append(tripModel.getId().replace(" ", ""));
+      buffer.append("\t\t\t\t\t\t\n");
       int enVal = 10;
       for (ScheduleModel schedule : tripModel.getSchedules()) {
         enVal += 10;
-        buffer.append(tripModel.getId());
+        buffer.append(tripModel.getId().replace(" ", ""));
         buffer.append("\t" + enVal + "\t");
         Entry<String, String> interStation = this.context.getStationAndPlatform(schedule.getEndBlock());
         endStation = interStation.getKey();
@@ -141,12 +140,12 @@ public class StationTrackDataPanel extends JPanel {
         buffer.append("\t");
         time = time + schedule.getPause();
         buffer.append(this.context.getTimeModel().getFremoTimeMinString(time));
-        buffer.append("\t \t");
-        buffer.append(" \ttimetable\t");
-        buffer.append(tripModel.getId());
-        buffer.append("\t \t \t \t \t \t\n");
+        buffer.append("\t\t");
+        buffer.append("\ttimetable\t");
+        buffer.append(tripModel.getId().replace(" ", ""));
+        buffer.append("\t\t\t\t\t\t\n");
       }
-      buffer.append(tripModel.getId());
+      buffer.append(tripModel.getId().replace(" ", ""));
       buffer.append("\t1000\t");
       buffer.append(startStation);
       buffer.append("\t");
@@ -155,13 +154,13 @@ public class StationTrackDataPanel extends JPanel {
       buffer.append(this.context.getTimeModel().getFremoTimeMinString(startTime));
       buffer.append("\t");
       buffer.append(this.context.getTimeModel().getFremoTimeMinString(time));
-      buffer.append("\t \t");
+      buffer.append("\t\t");
       buffer.append(tripModel.getLocoId());
-      buffer.append(" \tlocomotive\t");
-      buffer.append(tripModel.getId());
-      buffer.append("\t \t \t \t \t \t\n");
+      buffer.append("\tlocomotive\t");
+      buffer.append(tripModel.getId().replace(" ", ""));
+      buffer.append("\t\t\t\t\t\t\n");
 
-      buffer.append(tripModel.getId());
+      buffer.append(tripModel.getId().replace(" ", ""));
       buffer.append("\t3000\t");
       buffer.append(startStation);
       buffer.append("\t");
@@ -170,12 +169,13 @@ public class StationTrackDataPanel extends JPanel {
       buffer.append(this.context.getTimeModel().getFremoTimeMinString(startTime));
       buffer.append("\t");
       buffer.append(this.context.getTimeModel().getFremoTimeMinString(time));
-      buffer.append("\t \t");
-      buffer.append(" \tjob\t");
-      buffer.append(tripModel.getId());
-      buffer.append("\t \t \t \t \t \t\n");
+      buffer.append("\t\t");
+      buffer.append(tripModel.getId().replace(" ", ""));
+      buffer.append("\tjob\t");
+      buffer.append(tripModel.getId().replace(" ", ""));
+      buffer.append("\t\t\t\t\t\t\n");
 
-      buffer.append(tripModel.getId());
+      buffer.append(tripModel.getId().replace(" ", ""));
       buffer.append("\t4000\t");
       buffer.append(startStation);
       buffer.append("\t");
@@ -184,22 +184,22 @@ public class StationTrackDataPanel extends JPanel {
       buffer.append(this.context.getTimeModel().getFremoTimeMinString(startTime));
       buffer.append("\t");
       buffer.append(this.context.getTimeModel().getFremoTimeMinString(time));
-      buffer.append("\t30\t");
-      buffer.append(" \twheel\t");
-      buffer.append(tripModel.getId());
-      buffer.append("\t \t \t \t \t \t\n");
+      buffer.append("\t0\t");
+      buffer.append("\twheel\t");
+      buffer.append(tripModel.getId().replace(" ", ""));
+      buffer.append("\t\t\t\t\t\t\n");
 
-      buffer.append(tripModel.getId());
+      buffer.append(tripModel.getId().replace(" ", ""));
       buffer.append("\t5000\t");
-      buffer.append(" \t");
-      buffer.append(" \t");
+      buffer.append("\t");
+      buffer.append("\t");
       buffer.append("00:00");
       buffer.append("\t");
       buffer.append("00:00");
       buffer.append("\t0\tunb");
       buffer.append("\tgroup\t");
-      buffer.append(tripModel.getId());
-      buffer.append("\t \t \t \t \t \t\n");
+      buffer.append(tripModel.getId().replace(" ", ""));
+      buffer.append("\t\t\t\t\t\t\n");
     }
     this.dataTextArea.setText(buffer.toString());
   }
@@ -234,9 +234,10 @@ public class StationTrackDataPanel extends JPanel {
           (this.context.getTimeModel().getRadix() * this.context.getTimeModel().getMaxTime() / 3600 / 24.0F)));
       buffer.append("\t1\t300\tStation,Main\t100\t100\t5\t \t");
     }
-    String text = new String(this.template);
-    text = text.replace("[LINES]", buffer.toString());
-    this.dataTextArea.setText(text);
+//    String text = new String(this.template);
+//    text = text.replace("[LINES]", buffer.toString());
+//    this.dataTextArea.setText(text);
+    this.dataTextArea.setText(buffer.toString());
   }
 
   private void updateRoutes() {
@@ -280,7 +281,7 @@ public class StationTrackDataPanel extends JPanel {
       buffer.append(station.getName());
       buffer.append("\t");
       buffer.append(enValue);
-      buffer.append("\t \t \t");
+      buffer.append("\t\t\t");
       buffer.append(station.getName());
       buffer.append("\tStation\tStation\t");
       buffer.append("\n");
@@ -293,7 +294,7 @@ public class StationTrackDataPanel extends JPanel {
           buffer.append(enValue);
           buffer.append("\t");
           buffer.append(platform.getName());
-          buffer.append("\t200\t ");
+          buffer.append("\t200\t");
           buffer.append("\tTrack\tMain\t");
           buffer.append("\n");
         }
