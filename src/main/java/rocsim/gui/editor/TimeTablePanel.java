@@ -13,6 +13,7 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,14 +52,28 @@ public class TimeTablePanel extends JPanel {
   private String locoId;
   private boolean isShuntingVisible;
 
+  private class UseEvent {
+    int time;
+    boolean used;
+  }
+
   private class PlatformWidget {
     int x;
     String name;
+    List<UseEvent> events = new ArrayList<>();
+
+    void addEvent(int time, boolean used) {
+      UseEvent event = new UseEvent();
+      event.time = time;
+      event.used = used;
+      this.events.add(event);
+    }
   }
 
   private class StationWidget {
     int x;
     String name;
+
   }
 
   private class ScheduleWidget {
@@ -214,6 +229,8 @@ public class TimeTablePanel extends JPanel {
           schedule.endX = two.x;
           schedule.startTime = tripTime;
           schedule.endTime = tripTime + segment.getDuration();
+          one.addEvent(schedule.startTime, false);
+          two.addEvent(schedule.endTime, true);
           schedule.pauseTime = segment.getPause();
           schedule.id = tripName;
           schedule.locoId = trip.getLocoId();
@@ -223,6 +240,9 @@ public class TimeTablePanel extends JPanel {
           firstSchedule = (segment.getPause() > 0);
         }
       }
+    }
+    for (PlatformWidget platform : this.platforms) {
+      Collections.sort(platform.events, (event1, event2) -> Integer.compare(event1.time, event2.time));
     }
 
     triggerRepaint();
@@ -251,7 +271,7 @@ public class TimeTablePanel extends JPanel {
     TimeModel timeModel = this.context.getTimeModel();
 
     Graphics2D gr = (Graphics2D) graphics;
-    Graphics g2 = gr.create(0, DRAW_ORIGIN, getWidth(), getHeight() - DRAW_ORIGIN);
+    Graphics2D g2 = (Graphics2D) gr.create(0, DRAW_ORIGIN, getWidth(), getHeight() - DRAW_ORIGIN);
     g2.translate(0, -this.topTime / this.timeRadix);
 
     for (ScheduleWidget schedule : this.schedules) {
@@ -276,7 +296,27 @@ public class TimeTablePanel extends JPanel {
       gr.drawString(platform.name, platform.x, 36);
       gr.setColor(Color.PINK);
       gr.drawLine(platform.x, DRAW_ORIGIN, platform.x, getHeight());
+    }    
+    for (PlatformWidget platform : this.platforms) {
+      g2.setStroke(new BasicStroke(3));
+      g2.setColor(Color.BLACK);
+      g2.drawString(platform.name, platform.x, 36);
+      g2.setColor(Color.PINK);
+      int yk1 = this.context.getTimeModel().getMinTime() / this.timeRadix;
+      for (UseEvent event : platform.events) {
+        int y = event.time / this.timeRadix;
+        g2.drawLine(platform.x, yk1, platform.x, y);
+        if (event.used) {
+          g2.setStroke(new BasicStroke(7));
+        } else {
+          g2.setStroke(new BasicStroke(3));
+        }
+        yk1 = y;
+      }
+      int yy = this.context.getTimeModel().getMaxTime() / this.timeRadix;
+      g2.drawLine(platform.x, yk1, platform.x, yy);
     }
+    g2.setStroke(new BasicStroke(3));
 
     g2.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 15));
     int hour = this.topTime - this.topTime % 3600;

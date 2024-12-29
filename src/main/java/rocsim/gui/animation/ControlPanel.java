@@ -65,10 +65,10 @@ public class ControlPanel extends JPanel {
     setLayout(new BorderLayout(10, 10));
 
     this.fremoClock = new ClockPanel(0, false);
-    add(this.fremoClock, BorderLayout.EAST);
+    add(this.fremoClock, BorderLayout.WEST);
 
     this.clock = new ClockPanel(0, true);
-    add(this.clock, BorderLayout.WEST);
+    add(this.clock, BorderLayout.EAST);
 
     this.scrollBar = new JScrollBar();
     add(this.scrollBar, BorderLayout.SOUTH);
