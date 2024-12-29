@@ -44,7 +44,7 @@ public class TimeTablePanel extends JPanel {
   private List<ScheduleWidget> schedules = new ArrayList<>();
   private Map<String, PlatformWidget> platformMap = new HashMap<>();
   private int topTime = 4 * 3600 + 10 * 60;
-  private int timeRadix = 4;
+  private int timeRadix = 3;
   private JPopupMenu editMenu;
   private JPopupMenu addMenu;
   private EditTripMouseAdapter mouseAdapter;
@@ -238,6 +238,10 @@ public class TimeTablePanel extends JPanel {
           tripTime += segment.getDuration() + segment.getPause();
           this.schedules.add(schedule);
           firstSchedule = (segment.getPause() > 0);
+        } else if (one != null) {
+          one.addEvent(tripTime, false);
+        } else if (two != null) {
+          two.addEvent(tripTime + segment.getDuration(), true);
         }
       }
     }
@@ -296,7 +300,7 @@ public class TimeTablePanel extends JPanel {
       gr.drawString(platform.name, platform.x, 36);
       gr.setColor(Color.PINK);
       gr.drawLine(platform.x, DRAW_ORIGIN, platform.x, getHeight());
-    }    
+    }
     for (PlatformWidget platform : this.platforms) {
       g2.setStroke(new BasicStroke(3));
       g2.setColor(Color.BLACK);
