@@ -15,6 +15,7 @@
             "platform": "1",
             "start-time": 18000,
             "comment": "",
+            "shunting": false,
             "schedules": [
                 {
                     "start-block": "sb1",
@@ -32,6 +33,7 @@
             "platform": "1",
             "start-time": 18120,
             "comment": "",
+            "shunting": false,
             "schedules": [
                 {
                     "start-block": "sb3",
@@ -219,11 +221,13 @@
             "platforms": [
                 {
                     "name": "1",
-                    "block-id": "sb1"
+                    "block-id": "sb1",
+                    "shunting-block": false
                 },
                 {
                     "name": "2",
-                    "block-id": "sb2"
+                    "block-id": "sb2",
+                    "shunting-block": false
                 }
             ]
         },
@@ -232,7 +236,8 @@
             "platforms": [
                 {
                     "name": "1",
-                    "block-id": "sb3"
+                    "block-id": "sb3",
+                    "shunting-block": false
                 }
             ]
         }
@@ -248,5 +253,7 @@
                 }
             ]
         }
-    ]
+    ],
+    "Min-Time": 18000,
+    "Max-Time": 21600
 }

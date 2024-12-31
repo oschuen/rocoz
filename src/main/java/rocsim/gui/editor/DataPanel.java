@@ -3,15 +3,12 @@ package rocsim.gui.editor;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Map.Entry;
 
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-
-import org.apache.commons.io.IOUtils;
 
 import rocsim.schedule.model.LineModel;
 import rocsim.schedule.model.LineSegmentModel;
@@ -20,20 +17,24 @@ import rocsim.schedule.model.ScheduleModel;
 import rocsim.schedule.model.StationModel;
 import rocsim.schedule.model.TripModel;
 
-public class StationTrackDataPanel extends JPanel {
+public class DataPanel extends JPanel {
   private static final long serialVersionUID = 1L;
   private EditorContext context;
   private JTextArea dataTextArea;
   private JComboBox<String> dataBox;
-  private String template;
+  private JScrollPane scrollPane;
 
-  public StationTrackDataPanel(EditorContext context) {
+  public DataPanel(EditorContext context) {
     this.context = context;
     setLayout(new BorderLayout(0, 0));
 
+    this.scrollPane = new JScrollPane();
+
     this.dataTextArea = new JTextArea();
     this.dataTextArea.setText("data");
-    add(this.dataTextArea, BorderLayout.CENTER);
+    // add(this.dataTextArea, BorderLayout.CENTER);
+    add(this.scrollPane, BorderLayout.CENTER);
+    this.scrollPane.getViewport().add(this.dataTextArea);
 
     JPanel selectionPanel = new JPanel();
     String[] dataSelection = new String[] { "Stations", "Routes", "Lines", "Trains" };
@@ -48,12 +49,6 @@ public class StationTrackDataPanel extends JPanel {
       }
     });
     add(selectionPanel, BorderLayout.NORTH);
-    try {
-      this.template = IOUtils.toString(StationTrackDataPanel.class.getResourceAsStream("leer_xpln.csv"),
-          StandardCharsets.UTF_8);
-    } catch (IOException e) {
-      this.template = "";
-    }
   }
 
   public void updateContext() {
@@ -234,9 +229,6 @@ public class StationTrackDataPanel extends JPanel {
           (this.context.getTimeModel().getRadix() * this.context.getTimeModel().getMaxTime() / 3600 / 24.0F)));
       buffer.append("\t1\t300\tStation,Main\t100\t100\t5\t \t");
     }
-//    String text = new String(this.template);
-//    text = text.replace("[LINES]", buffer.toString());
-//    this.dataTextArea.setText(text);
     this.dataTextArea.setText(buffer.toString());
   }
 

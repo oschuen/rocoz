@@ -209,7 +209,6 @@ public class Scheduler {
         }
       }
       if (!error) {
-        // block.markBlocked();
         block.layBlock();
         startTile.setState(UseState.TRAIN);
         int drivingTime = startTile.getDrivingTime(this.loco.getvMax());

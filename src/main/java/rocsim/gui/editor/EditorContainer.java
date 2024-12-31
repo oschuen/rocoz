@@ -49,7 +49,7 @@ public class EditorContainer {
   private StationFrame stationFrame;
   private TimeModel timeModel;
   private TimeTableFrame timeTableFrame;
-  private StationTrackDataPanel stationData;
+  private DataPanel stationData;
 
   private JScrollPane lineFrameWrapper;
   private LineFrame lineFrame;
@@ -224,7 +224,7 @@ public class EditorContainer {
 
     this.timeTableFrame = new TimeTableFrame(this.myContext);
 
-    this.stationData = new StationTrackDataPanel(this.myContext);
+    this.stationData = new DataPanel(this.myContext);
   }
 
   public JsonObject toJson() {
@@ -369,7 +369,7 @@ public class EditorContainer {
   /**
    * @return the stationData
    */
-  public StationTrackDataPanel getStationData() {
+  public DataPanel getStationData() {
     return this.stationData;
   }
 }

@@ -23,6 +23,9 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.prefs.Preferences;
@@ -45,6 +48,9 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+
 import rocsim.gui.animation.AnimationContainer;
 import rocsim.gui.editor.EditorContainer;
 import rocsim.schedule.model.TimeModel;
@@ -57,6 +63,7 @@ public class MainFrame extends JFrame {
   private AnimationContainer animationContainer;
   private TimeModel timeModel = new TimeModel();
   private File currentFile = new File(".");
+  private File activeFile = null;
   private Preferences prefs = Preferences.userRoot().node(MainFrame.class.getName());
   private static final String CURRENT_FILE = "Current File";
   private JsonObject lastConfig;
@@ -131,6 +138,16 @@ public class MainFrame extends JFrame {
       }
     });
 
+    JMenuItem mntmSaveAs = new JMenuItem("Save As");
+    mnFile.add(mntmSaveAs);
+    mntmSaveAs.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        jMenuFileSaveAs_actionPerformed(arg0);
+      }
+    });
+
     JMenuItem mntmExit = new JMenuItem("Exit");
     mnFile.add(mntmExit);
     mntmExit.addActionListener(new ActionListener() {
@@ -174,6 +191,7 @@ public class MainFrame extends JFrame {
     File f = choose.getSelectedFile();
     if ((f != null) && (returnVal == JFileChooser.APPROVE_OPTION)) {
       this.currentFile = f;
+      this.activeFile = f;
       try (JsonReader reader = Json.createReader(new FileReader(f))) {
         this.lastConfig = reader.readObject();
         this.animationContainer.fromJson(this.lastConfig);
@@ -184,7 +202,40 @@ public class MainFrame extends JFrame {
     }
   }
 
+  private void createBackup(File f) {
+    String extension = FilenameUtils.getExtension(f.getAbsolutePath());
+    String name = FilenameUtils.getBaseName(f.getAbsolutePath());
+    String path = FilenameUtils.getFullPath(f.getAbsolutePath());
+    String backup = new SimpleDateFormat("yyyyMMddHHmmss").format(Calendar.getInstance().getTime());
+    File backupFile = new File(path + File.separator + name + "_" + backup + "." + extension);
+    try {
+      FileUtils.copyFile(f, backupFile);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
   public int jMenuFileSave_actionPerformed(ActionEvent e) {
+    if (this.activeFile == null) {
+      return jMenuFileSaveAs_actionPerformed(e);
+    } else {
+      if (this.activeFile.exists()) {
+        createBackup(this.activeFile);
+      }
+      Map<String, Object> config = new HashMap<>(1);
+      config.put(JsonGenerator.PRETTY_PRINTING, true);
+      JsonWriterFactory factory = Json.createWriterFactory(config);
+      try (JsonWriter jsonWriter = factory.createWriter(new FileWriter(this.activeFile))) {
+        this.lastConfig = this.editorContainer.toJson();
+        jsonWriter.write(this.lastConfig);
+      } catch (Exception exp) {
+        exp.printStackTrace();
+      }
+    }
+    return JFileChooser.APPROVE_OPTION;
+  }
+
+  public int jMenuFileSaveAs_actionPerformed(ActionEvent e) {
     int returnVal = JFileChooser.CANCEL_OPTION;
     try {
       JFileChooser choose;
@@ -201,6 +252,10 @@ public class MainFrame extends JFrame {
       File f = choose.getSelectedFile();
       if ((f != null) && (returnVal == JFileChooser.APPROVE_OPTION)) {
         this.currentFile = f;
+        this.activeFile = f;
+        if (f.exists()) {
+          createBackup(f);
+        }
         Map<String, Object> config = new HashMap<>(1);
         config.put(JsonGenerator.PRETTY_PRINTING, true);
         JsonWriterFactory factory = Json.createWriterFactory(config);
