@@ -158,7 +158,10 @@ public class TimeModel {
    * @param maxTime the maxTime to set
    */
   public void setMaxTime(int maxTime) {
-    this.maxTime = maxTime;
+    if (this.maxTime != maxTime) {
+      this.maxTime = maxTime;
+      notifyListeners();
+    }
   }
 
   /**
