@@ -250,7 +250,6 @@ public class TimeTablePanel extends JPanel {
           schedule.id = tripName;
           schedule.locoId = trip.getLocoId();
           schedule.displayDeparture = firstSchedule;
-          tripTime += segment.getDuration() + segment.getPause();
           this.schedules.add(schedule);
           firstSchedule = (segment.getPause() > 0);
         } else if (one != null) {
@@ -258,6 +257,7 @@ public class TimeTablePanel extends JPanel {
         } else if (two != null) {
           two.addEvent(tripTime + segment.getDuration(), true);
         }
+        tripTime += segment.getDuration() + segment.getPause();
       }
     }
     for (PlatformWidget platform : this.platforms) {
