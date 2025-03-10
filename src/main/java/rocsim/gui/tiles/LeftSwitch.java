@@ -27,8 +27,8 @@ import rocsim.schedule.model.TrackPlanModel.TrackKind;
 
 public class LeftSwitch extends Tile {
 
-  public LeftSwitch(String id, int x, int y, Direction orientation) {
-    super(id, x, y, orientation);
+  public LeftSwitch(String id, int x, int y, float length, Direction orientation) {
+    super(id, x, y, length, orientation);
   }
 
   @Override

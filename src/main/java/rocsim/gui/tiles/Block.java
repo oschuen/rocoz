@@ -51,8 +51,8 @@ public class Block extends Tile {
     return track;
   }
 
-  public Block(String id, int x, int y, Direction orientation, BlockKind kind) {
-    super(id, x, y, orientation, kind);
+  public Block(String id, int x, int y, float length, Direction orientation, BlockKind kind) {
+    super(id, x, y, length, orientation, kind);
   }
 
   @Override

@@ -200,6 +200,9 @@ public class MainFrame extends JFrame {
         exp.printStackTrace();
       }
     }
+    javax.swing.SwingUtilities.invokeLater(() -> {
+      this.repaint();
+    });
   }
 
   private void createBackup(File f) {

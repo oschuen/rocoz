@@ -37,11 +37,11 @@ public abstract class Tile {
     FREE, BLOCK, TRAIN
   }
 
-  public Tile(String id, int x, int y, Direction orientation) {
-    this(id, x, y, orientation, BlockKind.NONE);
+  public Tile(String id, int x, int y, float length, Direction orientation) {
+    this(id, x, y, length, orientation, BlockKind.NONE);
   }
 
-  public Tile(String id, int x, int y, Direction orientation, BlockKind block) {
+  public Tile(String id, int x, int y, float length, Direction orientation, BlockKind block) {
 
     super();
     this.id = id;

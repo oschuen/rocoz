@@ -121,16 +121,17 @@ public class TrackPlanModel {
     for (Track track : this.tracks) {
       switch (track.kind) {
       case BLOCK:
-        Block block = new Block(track.id, track.location.x, track.location.y, track.orientation, BlockKind.BLOCK);
+        Block block = new Block(track.id, track.location.x, track.location.y, track.length, track.orientation,
+            BlockKind.BLOCK);
         tiles.add(block);
         break;
       case STELLBLOCK:
-        Block stellBlock = new Block(track.id, track.location.x, track.location.y, track.orientation,
+        Block stellBlock = new Block(track.id, track.location.x, track.location.y, track.length, track.orientation,
             BlockKind.STELLBLOCK);
         tiles.add(stellBlock);
         break;
       case WATCHBLOCK:
-        Block watchBlock = new Block(track.id, track.location.x, track.location.y, track.orientation,
+        Block watchBlock = new Block(track.id, track.location.x, track.location.y, track.length, track.orientation,
             BlockKind.WATCHBLOCK);
         if (listener != null) {
           watchBlock.addStatusListener(listener);
@@ -138,16 +139,17 @@ public class TrackPlanModel {
         tiles.add(watchBlock);
         break;
       case CURVE:
-        tiles.add(new Curve(track.id, track.location.x, track.location.y, track.orientation));
+        tiles.add(new Curve(track.id, track.location.x, track.location.y, track.length, track.orientation));
         break;
       case LEFT_SWITCH:
-        tiles.add(new LeftSwitch(track.id, track.location.x, track.location.y, track.orientation));
+        tiles.add(new LeftSwitch(track.id, track.location.x, track.location.y, track.length, track.orientation));
         break;
       case RIGHT_SWICH:
-        tiles.add(new RightSwitch(track.id, track.location.x, track.location.y, track.orientation));
+        tiles.add(new RightSwitch(track.id, track.location.x, track.location.y, track.length, track.orientation));
         break;
       case TRACK:
-        tiles.add(new rocsim.gui.tiles.Track(track.id, track.location.x, track.location.y, track.orientation));
+        tiles.add(
+            new rocsim.gui.tiles.Track(track.id, track.location.x, track.location.y, track.length, track.orientation));
         break;
       default:
         break;

@@ -28,7 +28,7 @@ public class RightSwitchTest {
 
   @Test
   public void testUnswitched() {
-    RightSwitch weiche = new RightSwitch("", 3, 4, Direction.NORTH);
+    RightSwitch weiche = new RightSwitch("", 3, 4, 0.5F, Direction.NORTH);
     weiche.setSwitched(false);
     assertEquals(Optional.of(Direction.NORTH), weiche.getFollowUpDirection(Direction.NORTH));
     assertEquals(Optional.of(Direction.SOUTH), weiche.getFollowUpDirection(Direction.SOUTH));
@@ -43,7 +43,7 @@ public class RightSwitchTest {
 
   @Test
   public void testswitched() {
-    RightSwitch weiche = new RightSwitch("", 3, 4, Direction.NORTH);
+    RightSwitch weiche = new RightSwitch("", 3, 4, 0.5F, Direction.NORTH);
     weiche.setSwitched(true);
     assertEquals(Optional.of(Direction.EAST), weiche.getFollowUpDirection(Direction.NORTH));
     assertEquals(Optional.of(Direction.SOUTH), weiche.getFollowUpDirection(Direction.WEST));

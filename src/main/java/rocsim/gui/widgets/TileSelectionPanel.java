@@ -51,7 +51,7 @@ public class TileSelectionPanel extends JScrollPane implements TileEditModel {
 
     @Override
     public Tile createTile() {
-      return new Track("", 0, 0, Direction.WEST);
+      return new Track("", 0, 0, 0.5F, Direction.WEST);
     }
   });
 
@@ -59,7 +59,7 @@ public class TileSelectionPanel extends JScrollPane implements TileEditModel {
 
     @Override
     public Tile createTile() {
-      return new Track("", 0, 0, Direction.NORTH);
+      return new Track("", 0, 0, 0.5F, Direction.NORTH);
     }
   });
 
@@ -70,7 +70,7 @@ public class TileSelectionPanel extends JScrollPane implements TileEditModel {
 
     @Override
     public Tile createTile() {
-      Block block = new Block("", 0, 0, Direction.WEST, BlockKind.BLOCK);
+      Block block = new Block("", 0, 0, 0.5F, Direction.WEST, BlockKind.BLOCK);
       block.setId("bl" + TileSelectionPanel.this.blockCounter);
       TileSelectionPanel.this.blockCounter++;
       return block;
@@ -81,7 +81,7 @@ public class TileSelectionPanel extends JScrollPane implements TileEditModel {
 
     @Override
     public Tile createTile() {
-      Block block = new Block("", 0, 0, Direction.NORTH, BlockKind.BLOCK);
+      Block block = new Block("", 0, 0, 0.5F, Direction.NORTH, BlockKind.BLOCK);
       block.setId("bl" + TileSelectionPanel.this.blockCounter);
       TileSelectionPanel.this.blockCounter++;
       return block;
@@ -92,7 +92,7 @@ public class TileSelectionPanel extends JScrollPane implements TileEditModel {
 
     @Override
     public Tile createTile() {
-      Block block = new Block("", 0, 0, Direction.WEST, BlockKind.STELLBLOCK);
+      Block block = new Block("", 0, 0, 0.5F, Direction.WEST, BlockKind.STELLBLOCK);
       block.setId("sb" + TileSelectionPanel.this.stellBlockCounter);
       TileSelectionPanel.this.stellBlockCounter++;
       return block;
@@ -103,7 +103,7 @@ public class TileSelectionPanel extends JScrollPane implements TileEditModel {
 
     @Override
     public Tile createTile() {
-      Block block = new Block("", 0, 0, Direction.NORTH, BlockKind.STELLBLOCK);
+      Block block = new Block("", 0, 0, 0.5F, Direction.NORTH, BlockKind.STELLBLOCK);
       block.setId("sb" + TileSelectionPanel.this.stellBlockCounter);
       TileSelectionPanel.this.stellBlockCounter++;
       return block;
@@ -114,7 +114,7 @@ public class TileSelectionPanel extends JScrollPane implements TileEditModel {
 
     @Override
     public Tile createTile() {
-      Block block = new Block("", 0, 0, Direction.WEST, BlockKind.WATCHBLOCK);
+      Block block = new Block("", 0, 0, 0.5F, Direction.WEST, BlockKind.WATCHBLOCK);
       block.setId("wb" + TileSelectionPanel.this.watchBlockCounter);
       TileSelectionPanel.this.watchBlockCounter++;
       return block;
@@ -125,7 +125,7 @@ public class TileSelectionPanel extends JScrollPane implements TileEditModel {
 
     @Override
     public Tile createTile() {
-      Block block = new Block("", 0, 0, Direction.NORTH, BlockKind.WATCHBLOCK);
+      Block block = new Block("", 0, 0, 0.5F, Direction.NORTH, BlockKind.WATCHBLOCK);
       block.setId("wb" + TileSelectionPanel.this.watchBlockCounter);
       TileSelectionPanel.this.watchBlockCounter++;
       return block;
@@ -141,7 +141,7 @@ public class TileSelectionPanel extends JScrollPane implements TileEditModel {
 
     @Override
     public Tile createTile() {
-      return new Curve("", 0, 0, this.dir);
+      return new Curve("", 0, 0, 0.5F, this.dir);
     }
   };
 
@@ -159,7 +159,7 @@ public class TileSelectionPanel extends JScrollPane implements TileEditModel {
 
     @Override
     public Tile createTile() {
-      return new LeftSwitch("", 0, 0, this.dir);
+      return new LeftSwitch("", 0, 0, 0.5F, this.dir);
     }
   };
 
@@ -177,7 +177,7 @@ public class TileSelectionPanel extends JScrollPane implements TileEditModel {
 
     @Override
     public Tile createTile() {
-      return new RightSwitch("", 0, 0, this.dir);
+      return new RightSwitch("", 0, 0, 0.5F, this.dir);
     }
   };
 

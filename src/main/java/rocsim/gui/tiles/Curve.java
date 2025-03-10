@@ -17,14 +17,9 @@ package rocsim.gui.tiles;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import javax.imageio.ImageIO;
 
 import rocsim.schedule.model.TrackPlanModel.Direction;
 import rocsim.schedule.model.TrackPlanModel.Track;
@@ -32,8 +27,8 @@ import rocsim.schedule.model.TrackPlanModel.TrackKind;
 
 public class Curve extends Tile {
 
-  public Curve(String id, int x, int y, Direction orientation) {
-    super(id, x, y, orientation);
+  public Curve(String id, int x, int y, float length, Direction orientation) {
+    super(id, x, y, length, orientation);
   }
 
   @Override
@@ -98,46 +93,4 @@ public class Curve extends Tile {
     }
     return Optional.empty();
   }
-
-  public static void main(String[] args) {
-    BufferedImage br = new BufferedImage(400, 400, BufferedImage.TYPE_INT_RGB);
-    Curve curve = new Curve("", 3, 4, Direction.NORTH);
-    Graphics2D gr = br.createGraphics();
-    gr.setColor(Color.WHITE);
-    gr.fillRect(1, 1, 398, 398);
-
-    gr.setColor(Color.BLACK);
-    gr.drawRect(0, 0, 40, 40);
-
-    curve.setX(1);
-    curve.setY(1);
-    curve.setOrientation(Direction.NORTH);
-    curve.setState(UseState.BLOCK);
-    curve.draw(40, gr);
-
-    curve.setX(3);
-    curve.setY(1);
-    curve.setOrientation(Direction.WEST);
-    curve.setState(UseState.TRAIN);
-    curve.draw(40, gr);
-
-    curve.setX(5);
-    curve.setY(1);
-    curve.setOrientation(Direction.SOUTH);
-    curve.setState(UseState.FREE);
-    curve.draw(40, gr);
-
-    curve.setX(7);
-    curve.setY(1);
-    curve.setOrientation(Direction.EAST);
-    curve.draw(40, gr);
-
-    try {
-      ImageIO.write(br, "PNG", new File("track.png"));
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-  }
-
 }

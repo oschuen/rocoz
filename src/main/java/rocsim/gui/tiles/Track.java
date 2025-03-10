@@ -26,8 +26,8 @@ import rocsim.schedule.model.TrackPlanModel.TrackKind;
 
 public class Track extends Tile {
 
-  public Track(String id, int x, int y, Direction orientation) {
-    super(id, x, y, orientation);
+  public Track(String id, int x, int y, float length, Direction orientation) {
+    super(id, x, y, length, orientation);
   }
 
   @Override
