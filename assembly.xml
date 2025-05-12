@@ -29,7 +29,7 @@
             <outputDirectory>/</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>target/site</directory>
+            <directory>target/reports</directory>
             <includes>
                 <include>**/**</include>
             </includes>
